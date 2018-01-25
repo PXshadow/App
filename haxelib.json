@@ -1,0 +1,15 @@
+{
+  "name": "app",
+  "url" : "https://github.com/PXshadow/App",
+  "license": "MIT",
+  "tags": ["ui", "openfl", "network", "networking", "client", "tcp","mobile","android","ios","html5"],
+  "description": "openFl UI libary devolped for ThinQbator production Use",
+  "version": "0.0.0",
+  "releasenote": "Inital",
+  "contributors": ["PXshadow"],
+  "dependencies": {
+    "openfl": "",
+    "SVG":""
+  },
+  "classPath": "src"
+}

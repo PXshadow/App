@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	<!-- NMML reference: https://gist.github.com/1763850 -->
+	
+	<!-- metadata, make sure 'package' is at least 3 segments (ie. com.mycompany.myproject) -->
+	<meta title="App" package="com.App" version="1.0.0" />
+	
+	<!-- output -->
+	<app main="Main" file="App" path="bin"/>
+	
+	<window background="#ffffff" fps="61" />
+	<window width="320" height="568" unless="mobile" />
+	<window width="0" height="0" if="html5"/>
+	<window if="mobile" orientation="portrait" fullscreen="false" vsync="false" hardware="true" fps="61" />
+	<window allow-high-dpi="true" if="html5" />
+	
+	<!-- classpath, haxe libs -->
+	<source path="src" />
+	<haxelib name="svg"/>
+	<haxelib name="openfl" />
+	<haxelib name="datetime" />
+	
+	<!-- assets -->
+	<assets path="assets"/>
+	
+	<!-- optimize output
+	<haxeflag name="-dce full" /> -->
+	
+</project>
