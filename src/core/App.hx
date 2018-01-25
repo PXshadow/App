@@ -439,7 +439,7 @@ public static function toggleFullscreen() {
 		if (path.substring(path.length - 4, path.length) == ".png")
 		{
 		var bitmap = Assets.getBitmapData(path);
-		shape.graphics.beginBitmapFill(bitmap);
+		shape.graphics.beginBitmapFill(bitmap,null,true,true);
 		shape.graphics.drawRect(0, 0, bitmap.width, bitmap.height);
 		shape.graphics.endFill();
 		}else{
