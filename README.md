@@ -5,15 +5,15 @@
 [ThinQbator](https://www.thinqbator.net/)
 ## Features
 States
-Mobile Native Scrolling mimiced to be IOS
-Web Socket Client Networking
-Url States
-Camera Restrictions
-Buttons
-Input text with Placeholder
-Easy Asset creation
-Custom Scaling Engine with setting Object Headers (No streching or black bars)
-Info section at bottom
+- Mobile Native Scrolling mimiced to be IOS
+- Web Socket Client Networking
+- Url States
+- Camera Restrictions
+- Buttons
+- Input text with Placeholder
+- Easy Asset creation
+- Custom Scaling Engine with setting Object Headers (No streching or black bars)
+- Info section at bottom with Fps counter, memory , scaling, version , and Mobile bool
 
 ## Installation
 
