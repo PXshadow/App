@@ -1,4 +1,4 @@
-package src.app;
+package core;
 import openfl.display.Sprite;
 import openfl.events.MouseEvent;
 import openfl.display.Bitmap;

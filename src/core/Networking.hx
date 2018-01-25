@@ -1,4 +1,4 @@
-package src.app;
+package core;
 import haxe.Serializer;
 #if html5
 import js.html.WebSocket;

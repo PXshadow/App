@@ -1,10 +1,9 @@
-package src.app;
+package core;
 
 import openfl.text.TextField;
 import openfl.text.TextFormat;
 import openfl.text.TextFormatAlign;
 import openfl.Assets;
-import src.app.App;
 
 /**
  * ...
@@ -28,13 +27,13 @@ class Text extends TextField
 	y = yp;
 	if (fieldWidth == 0)
 	{
-	width = src.app.App.setWidth;
+	width = App.setWidth;
 	}else{
 	width = fieldWidth;
 	multiline = true;
 	}
 	text = textString;
-	defaultTextFormat = new TextFormat(Assets.getFont(src.app.App.textFormat).fontName, size, color, false, false, false, "", "", align);
+	defaultTextFormat = new TextFormat(Assets.getFont(App.textFormat).fontName, size, color, false, false, false, "", "", align);
 	}
 	
 	override function __updateText(value:String):Void 

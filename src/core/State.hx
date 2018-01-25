@@ -1,4 +1,4 @@
-package src.app;
+package core;
 
 //import motion.Actuate;
 //import motion.actuators.GenericActuator;
@@ -13,8 +13,6 @@ import openfl.events.MouseEvent;
 import openfl.geom.Matrix;
 import openfl.system.System;
 import openfl.system.System.gc;
-import src.app.App;
-import src.app.Button;
 
 /**
  * ...
@@ -22,7 +20,10 @@ import src.app.Button;
  */
 class State extends Sprite 
 {
-	private var initResize:Bool = true;
+	/**
+	 * Used internally for Resize Inital
+	 */
+	public var initResize:Bool = true;
 	//carry over between states
 	/**
 	 * State scale Y
@@ -43,7 +44,7 @@ class State extends Sprite
 	/**
 	 * Public refrence to App class 
 	 */
-	public var app:src.app.App;
+	public var app:App;
 	private var startState:Bool = false;
 	/**
 	 * Min and Max Camera Scroll Distances Defualt is no Restrictions
@@ -52,26 +53,26 @@ class State extends Sprite
 	{
 		super();
 		//set camera restrict
-		src.app.App.main.cameraMinY = -minY;
-		src.app.App.main.cameraMaxY = -maxY;
+		App.main.cameraMinY = -minY;
+		App.main.cameraMaxY = -maxY;
 		
-		src.app.App.main.cameraMinX = -minX;
-		src.app.App.main.cameraMaxX = -maxX;
+		App.main.cameraMinX = -minX;
+		App.main.cameraMaxX = -maxX;
 		
-		src.app.App.dragBool = false;
+		App.dragBool = false;
 		
 		Lib.current.stage.frameRate = 61;
 		
-		app = src.app.App.main;
-		src.app.App.mouseDown = false;
+		app = App.main;
+		App.mouseDown = false;
 		//add
 		app.addChild(this);
-		src.app.App.omX = mouseX;
-		src.app.App.omY = mouseY;
-		src.app.App.camY = 0;
-		src.app.App.camX = 0;
-		src.app.App.scrollSpeedY = 0;
-		src.app.App.scrollSpeedX = 0;
+		App.omX = mouseX;
+		App.omY = mouseY;
+		App.camY = 0;
+		App.camX = 0;
+		App.scrollSpeedY = 0;
+		App.scrollSpeedX = 0;
 		mouseEnabled = false;
 	}
 	/**
@@ -84,7 +85,7 @@ class State extends Sprite
 			initResize = false;
 			//set resize for init State
 			if (sx > 0 && sy > 0) resize(px, py, sx, sy);
-			if (src.app.App.inital) src.app.App.main.initalLoaded();
+			if (App.inital) App.main.initalLoaded();
 			
 		}
 	}
@@ -122,15 +123,15 @@ class State extends Sprite
 		for (i in 0...this.numChildren)
 		{
 			var child = getChildAt(i);
-			if (Std.is(child, src.app.Button))
+			if (Std.is(child,Button))
 			{
-			cast(child, src.app.Button).removeEvents();
+			cast(child, Button).removeEvents();
 			}
 		}
 		Lib.current.stage.frameRate = 60;
 		Assets.cache.clear();
-		src.app.App.main.removeChild(this);
-		src.app.App.state = null;
+		App.main.removeChild(this);
+		App.state = null;
 	}
 	/**
 	 * Reset the State scaling
@@ -142,8 +143,8 @@ class State extends Sprite
 			var child = getChildAt(i);
 			child.scaleX = 1;
 			child.scaleY = 1;
-			child.x /= src.app.App.scale;
-			child.y /= src.app.App.scale;
+			child.x /= App.scale;
+			child.y /= App.scale;
 		}
 	}
 	

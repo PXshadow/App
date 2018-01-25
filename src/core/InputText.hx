@@ -1,4 +1,4 @@
-package src.app;
+package core;
 import openfl.events.FocusEvent;
 import openfl.events.MouseEvent;
 import openfl.geom.Matrix;
@@ -8,7 +8,7 @@ import openfl.text.TextFieldType;
 import openfl.Assets;
 import openfl.Lib;
 import openfl.text.TextFormatAlign;
-import src.app.App;
+import core.App;
 /**
  * ...
  * @author 
@@ -76,8 +76,8 @@ class InputText extends TextField
 		}
 		if (App.mobile)
 		{
-		src.app.App.resizeBool = true;
-		src.app.App.state.y = 0;
+		App.resizeBool = true;
+		App.state.y = 0;
 		}
 	}
 	

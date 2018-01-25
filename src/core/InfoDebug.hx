@@ -1,4 +1,4 @@
-package src.app;
+package core;
 
 import openfl.Lib;
 import openfl.system.Capabilities;
@@ -7,7 +7,6 @@ import openfl.events.Event;
 import openfl.text.TextFormat;
 import openfl.system.System;
 import haxe.Timer;
-import src.app.App;
 
 class InfoDebug extends TextField
 {
@@ -21,7 +20,7 @@ class InfoDebug extends TextField
 	public function new(inCol:Int = 16777215) 
 	{
 		super();
-		if (src.app.App.mobile) mobileString = "T";
+		if (App.mobile) mobileString = "T";
 		times = [];
 		y = Lib.current.stage.stageHeight - 20;
 		selectable = false;
@@ -32,15 +31,14 @@ class InfoDebug extends TextField
 		width = 150 * 4;
 		height = 70;
 		Lib.current.addChild(this);
-		y = src.app.App.main.stage.stageHeight - 20 * src.app.App.scale;
+		y = App.main.stage.stageHeight - 20 * App.scale;
 	}
 	public function resize()
 	{
-	scaleX = src.app.App.scale;
-	scaleY = src.app.App.scale;
-	y = Lib.current.stage.stageHeight - 20 * src.app.App.scale;
-	trace("scale " + src.app.App.scale);
-	scaleNum = Math.round(src.app.App.scale * 100) / 100;
+	scaleX = App.scale;
+	scaleY = App.scale;
+	y = Lib.current.stage.stageHeight - 20 * App.scale;
+	scaleNum = Math.round(App.scale * 100) / 100;
 	}
 	
 	public function onEnter()

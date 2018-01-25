@@ -1,4 +1,10 @@
-package src.app;
+package core;
+import core.Button;
+import core.Networking;
+import core.State;
+import core.Text;
+import core.UrlState;
+
 import format.SVG;
 import haxe.Timer;
 import openfl.Assets;
@@ -21,8 +27,6 @@ import openfl.text.TextFormat;
 import openfl.text.TextFormatAlign;
 import haxe.ds.Vector;
 import haxe.crypto.Base64;
-import src.app.Button;
-import src.app.InfoDebug;
 
 /**
  * ...
@@ -332,7 +336,7 @@ class App extends Sprite
     return shapeBitmapData;
 }
 
-private function getUrlParams()
+public function getUrlParams()
 	{
 		#if html5
 		var url = js.Browser.document.URL;
