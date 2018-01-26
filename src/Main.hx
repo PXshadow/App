@@ -16,12 +16,9 @@ class Main extends Sprite
 	public function new() 
 	{
 		super();
-		core.App.urlArray = [new core.UrlState("init", Init)];
-		App.infoBool = false;
 		new core.App();
 		core.App.state = new Init();
 		removeChild(this);
-		
 	}
 }
 
@@ -30,5 +27,7 @@ class Init extends core.State
 	public function new()
 	{
 		super();
+		var toggleSlider = App.createToggleSlider(30,30);
+		addChild(toggleSlider);
 	}
 }

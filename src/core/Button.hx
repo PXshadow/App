@@ -2,7 +2,6 @@ package core;
 import openfl.display.Sprite;
 import openfl.events.MouseEvent;
 import openfl.display.Bitmap;
-import openfl.display.BitmapData;
 import openfl.Assets;
 import format.SVG;
 

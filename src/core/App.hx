@@ -16,17 +16,13 @@ import openfl.display.GradientType;
 import openfl.display.Shape;
 import openfl.display.Sprite;
 import openfl.Lib;
-import openfl.display.Stage;
 import openfl.display.StageAlign;
 import openfl.events.Event;
 import openfl.events.MouseEvent;
 import openfl.geom.Matrix;
 import openfl.geom.Point;
-import openfl.text.TextField;
-import openfl.text.TextFormat;
 import openfl.text.TextFormatAlign;
 import haxe.ds.Vector;
-import haxe.crypto.Base64;
 import openfl.events.KeyboardEvent;
 
 /**
@@ -243,12 +239,12 @@ class App extends Sprite
 	App.camY += App.scrollSpeedY;
 	App.camX += App.scrollSpeedX;
 			state.update();
-			info.onEnter();
+			if(info != null)info.onEnter();
 			omX = App.state.mouseX;
 			omY = App.state.mouseY;
 		//update networkings
 		if(network != null)network.update();
-		});
+		}); 
 		
 		Lib.current.stage.addEventListener (openfl.events.Event.ACTIVATE, function (_) {
 			Lib.current.stage.frameRate = oldFrameRate;
@@ -506,6 +502,11 @@ public static function toggleFullscreen() {
 	public static function createButton(?x:Int, ?y:Int, ?path:String,?sWidth:Int=-1,?sHeight:Int=-1):Button
 	{
 		return new Button(x,y,path,sWidth,sHeight);
+	}
+
+	public static function createToggleSlider(?x:Int,?y:Int,size:Int=80):Button
+	{
+		return new core.Item.ToggleSlider(x,y,size);
 	}
 	/**
 	 * A custom ThinQbator round rectangle that's meant for our TextBubble Ui in code alternative.
