@@ -104,6 +104,22 @@ class State extends Sprite
 		
 	}
 	/**
+	 *  State Keyboard is Up
+	 * @param	e Keyboard Event
+	 */
+	public function keyUp(e:openfl.events.KeyboardEvent)
+	{
+		
+	}
+	/**
+	 *  State Keyboard is Down
+	 * @param	e Keyboard Event
+	 */
+	public function keyDown(e:openfl.events.KeyboardEvent)
+	{
+		
+	}
+	/**
 	 * Resize State used Internally 
 	 */
 	public function resize(prx:Int,pry:Int,ssx:Float, ssy:Float)
@@ -120,6 +136,9 @@ class State extends Sprite
 	 */
 	public function remove()
 	{
+	//protect against null
+	if (this != null)
+	{
 		for (i in 0...this.numChildren)
 		{
 			var child = getChildAt(i);
@@ -132,6 +151,7 @@ class State extends Sprite
 		Assets.cache.clear();
 		App.main.removeChild(this);
 		App.state = null;
+	}
 	}
 	/**
 	 * Reset the State scaling

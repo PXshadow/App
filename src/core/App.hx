@@ -27,6 +27,7 @@ import openfl.text.TextFormat;
 import openfl.text.TextFormatAlign;
 import haxe.ds.Vector;
 import haxe.crypto.Base64;
+import openfl.events.KeyboardEvent;
 
 /**
  * ...
@@ -171,6 +172,17 @@ class App extends Sprite
 		{
 			mouseDown = false;
 		});
+		if (!mobile)
+		{
+		Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, function(e:KeyboardEvent)
+		{
+			state.keyDown(e);
+		});
+		Lib.current.stage.addEventListener(KeyboardEvent.KEY_UP, function(e:KeyboardEvent)
+		{
+			state.keyUp(e);
+		});
+		}
 #end
 	
 		Lib.current.stage.addEventListener(Event.ENTER_FRAME, function(e:Event)

@@ -22,11 +22,10 @@ class Networking
 	public var client:Socket;
 	#end
 	public var secure:Bool = false;
-	public var ip:String = "localhost";
-	//var ip:String = "localhost";
-	var port:Int = 9696;
-	var connected:Bool = false;
-	var oldMessage:String;
+	public static var ip:String = "localhost";
+	public static var port:Int = 9696;
+	public var connected:Bool = false;
+	public var oldMessage:String;
 	/**
 	 * onClose function 
 	 */

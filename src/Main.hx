@@ -17,6 +17,7 @@ class Main extends Sprite
 	{
 		super();
 		core.App.urlArray = [new core.UrlState("init", Init)];
+		App.infoBool = false;
 		new core.App();
 		core.App.state = new Init();
 		removeChild(this);
