@@ -4,8 +4,8 @@
   "license": "MIT",
   "tags": ["ui", "openfl", "network", "networking", "client", "tcp","mobile","android","ios","html5"],
   "description": "openFl UI libary devolped for ThinQbator production Use",
-  "version": "0.0.1",
-  "releasenote": "Getting Started on Wiki! add Keyboard support for states, add null safe for states",
+  "version": "0.0.2",
+  "releasenote": "ToggleScroll",
   "contributors": ["PXshadow"],
   "dependencies": {
     "openfl": "",
