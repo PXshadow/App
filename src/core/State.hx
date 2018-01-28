@@ -3,8 +3,8 @@ package core;
 //import motion.Actuate;
 //import motion.actuators.GenericActuator;
 import openfl.Assets;
-import openfl.Lib;
 import openfl.display.Bitmap;
+import openfl.display.BitmapData;
 import openfl.display.DisplayObject;
 import openfl.display.Shape;
 import openfl.display.Sprite;
@@ -13,6 +13,7 @@ import openfl.events.MouseEvent;
 import openfl.geom.Matrix;
 import openfl.system.System;
 import openfl.system.System.gc;
+import openfl.Lib;
 
 /**
  * ...
@@ -167,15 +168,17 @@ class State extends Sprite
 			child.y /= App.scale;
 		}
 	}
-	
-	/*public function fadeOut(time:Float=1):GenericActuator<Dynamic>
+	/**
+	 * Snapshots the state and creates a bitmap from it
+	 * @return
+	 */
+	public function createScreenBitmap():Bitmap
 	{
-	this.alpha = 1;
-	return Actuate.tween(this, time, {alpha:0});
+		var screen = new BitmapData(Math.floor(App.setWidth), Math.floor(App.setHeight), false);
+		screen.draw(this);
+		var data = new Bitmap(screen, null, true);
+		data.scaleX = 1/scaleX;
+		data.scaleY = 1/scaleY;
+		return data;
 	}
-		public function fadeIn(time:Float=1):GenericActuator<Dynamic>
-	{
-	this.alpha = 0;
-	return Actuate.tween(this, time, {alpha:1});
-	}*/
 }

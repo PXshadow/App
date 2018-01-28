@@ -164,12 +164,12 @@ class App extends Sprite
 		});
 		
 #if !mobile
+if (!mobile)
+		{
 		Lib.current.stage.addEventListener(MouseEvent.MOUSE_WHEEL,function(e:MouseEvent)
 		{
 			mouseDown = false;
 		});
-		if (!mobile)
-		{
 		Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, function(e:KeyboardEvent)
 		{
 			state.keyDown(e);
@@ -504,7 +504,7 @@ public static function toggleFullscreen() {
 		return new Button(x,y,path,sWidth,sHeight);
 	}
 
-	public static function createToggleSlider(?x:Int,?y:Int,size:Int=80):Button
+	public static function createToggleSlider(?x:Int, ?y:Int, size:Int = 80):core.Item.ToggleSlider
 	{
 		return new core.Item.ToggleSlider(x,y,size);
 	}
