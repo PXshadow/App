@@ -104,8 +104,7 @@ class Network
 		#if html5
 		ws.send(str);
 		#else
-		socket.output.writeString(str);
-		socket.output.writeByte(8);
+		socket.output.writeString(str + "\n");
 		#end
 	if(oldMessageBool)oldMessage = str;
 	}
