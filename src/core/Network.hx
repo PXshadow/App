@@ -74,7 +74,7 @@ class Network
 		socket.setBlocking(false);
 		connected = true;
 		//establish to server that it's a tcp socket
-		socket.output.writeByte(8);
+		socket.output.writeString("8");
 		}catch (e:Dynamic)
 		{
 			connected = false;

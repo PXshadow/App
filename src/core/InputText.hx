@@ -24,9 +24,12 @@ class InputText extends TextField
 	/**
 	 *  Input Text For App 
 	 */
-	public function new(?sx:Float=0,?sy:Float=0,placeString:String,fsize:Int=24,fieldWidth:Int=0,pcolor:Int=0,color:Int=0,password:Bool=false) 
+	public function new(?sx:Float=0,?sy:Float=0,placeString:String,fsize:Int=24,fieldWidth:Int=0,pcolor:Int=0,color:Int=0,password:Bool=false,tabBool:Bool=true) 
 	{
 		super();
+		#if (neko || cpp)
+		tabEnabled = tabBool;
+		#end
 		passwordBool = password;
 		newColor = color;
 		pColor = pcolor;

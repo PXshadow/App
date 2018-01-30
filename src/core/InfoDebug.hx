@@ -22,7 +22,6 @@ class InfoDebug extends TextField
 		super();
 		if (App.mobile) mobileString = "T";
 		times = [];
-		y = Lib.current.stage.stageHeight - 20;
 		selectable = false;
 		#if (mobile || desktop)
 		ver = Lib.current.stage.application.config.version;
