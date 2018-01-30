@@ -1,9 +1,10 @@
 package core;
 import core.Button;
-import core.Networking;
 import core.State;
 import core.Text;
 import core.UrlState;
+import core.Network;
+import haxe.crypto.Base64;
 
 import format.SVG;
 import haxe.Timer;
@@ -95,7 +96,7 @@ class App extends Sprite
 	/**
 	 * Networking for App
 	 */
-	public static var network:Networking;
+	public static var network:Network;
 	/**
 	 * mobile check for both html5 and native
 	 */
@@ -348,7 +349,6 @@ public function getUrlParams()
 	{
 		#if html5
 		var url = js.Browser.document.URL;
-		
 		var e:EReg = new EReg("\\?([" + Base64.CHARS + "]+)$", "");
 		if (e.match(url)) {
 		 var pos = url.indexOf("?", 0);

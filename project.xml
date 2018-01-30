@@ -20,6 +20,10 @@
 	<haxelib name="openfl" />
 	<haxelib name="datetime" />
 	
+	<include path="extensionkit" if="mobile" />
+	<include path="nativetext" if="mobile" />
+	<setenv name="ANDROID_GRADLE_TASK" value="assembleDebug --info" />
+	
 	<!-- assets -->
 	<assets path="assets"/>
 	

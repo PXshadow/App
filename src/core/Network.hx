@@ -1,4 +1,5 @@
 package core;
+
 import haxe.Serializer;
 #if html5
 import js.html.WebSocket;
@@ -7,11 +8,13 @@ import sys.net.Socket;
 import sys.net.Host;
 #end
 import haxe.Unserializer;
+import haxe.io.Bytes;
+import haxe.io.Error;
 /**
  * ...
  * @author 
  */
-class Networking 
+class Network 
 {
 	#if html5
 	/**
@@ -19,13 +22,14 @@ class Networking
 	 */
 	public var ws:WebSocket;
 	#else
-	public var client:Socket;
+	public var socket:Socket;
 	#end
 	public var secure:Bool = false;
-	public static var ip:String = "localhost";
-	public static var port:Int = 9696;
+	private var ip:String = "localhost";
+	private var port:Int = 9696;
 	public var connected:Bool = false;
 	public var oldMessage:String;
+	public var oldMessageBool:Bool;
 	/**
 	 * onClose function 
 	 */
@@ -38,11 +42,15 @@ class Networking
 /**
  * Setup networking
  */
-	public function new() 
+	public function new(ipString:String,portInt:Int,blockSameMessage:Bool=true) 
 	{
-		#if html5
+		ip = ipString;
+		port = portInt;
+		oldMessageBool = blockSameMessage;
 		var param:String = "ws";
 		if (secure) param = "wss";
+		
+		#if html5
 		ws = new WebSocket(param + "://" + ip + ":" + Std.string(port));
 		ws.onopen = function()
 		{
@@ -51,14 +59,7 @@ class Networking
 		}
 		ws.onmessage = function(line)
 		{
-			try
-			{
-			onMessage(new Unserializer(line.data).unserialize());
-			}
-			catch (e:Dynamic)
-			{
-				trace("unseri " + e);
-			}
+			unSer(line.data);
 		}
 		ws.onclose = function()
 		{
@@ -66,8 +67,19 @@ class Networking
 			onClose(null);
 		}
 		#else
-		throw("System Sockets not working yet");
+		try
+		{
+		socket = new Socket();
+		socket.setBlocking(false);
+		socket.connect(new Host(ip), port);
 		connected = true;
+		//establish to server that it's a tcp socket
+		socket.output.writeByte(8);
+		}catch (e:Dynamic)
+		{
+			connected = false;
+			trace(e);
+		}
 		#end
 		
 	}
@@ -92,9 +104,10 @@ class Networking
 		#if html5
 		ws.send(str);
 		#else
-		
+		socket.output.writeString(str);
+		socket.output.writeByte(8);
 		#end
-	oldMessage = str;
+	if(oldMessageBool)oldMessage = str;
 	}
 		}
 		catch (e:Dynamic)
@@ -126,21 +139,34 @@ class Networking
 			trace("serialize send " + e);
 		}
 	}
-	
-	public function readRaw()
+	public function read()
 	{
-		#if !html5
-		try{
-       	    	trace(client.input.readLine());
-    	      
-          	} catch (err:Dynamic){
-             //s trace("no Message to read");
-          	}
+		#if (cpp || neko)
+		try
+		{
+		unSer(socket.input.readLine());
+		}catch (e:Dynamic)
+		{
+		//trace(e);
+		}
 		#end
 	}
-	
+	public function unSer(str:String)
+	{
+		try
+			{
+			onMessage(new Unserializer(str).unserialize());
+			}
+			catch (e:Dynamic)
+			{
+				trace("unser " + e);
+			}
+	}
+  
 	public function update()
 	{
-		//readRaw();
+		#if (cpp || neko)
+		read();
+		#end
 	}
 }

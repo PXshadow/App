@@ -1,12 +1,15 @@
 package;
 import core.App;
 import core.Item.ToggleSlider;
+import core.Network;
 import core.State;
 import core.UrlState;
+import haxe.Timer;
 import openfl.display.Sprite;
 import openfl.display.Bitmap;
 import openfl.Assets;
 import openfl.events.KeyboardEvent;
+import core.App;
 
 /**
  * ...
@@ -18,42 +21,36 @@ class Main extends Sprite
 	public function new() 
 	{
 		super();
-		new core.App();
-		core.App.state = new Init();
+		new App();
+		App.state = new Init();
 		removeChild(this);
+		App.network = new Network("localhost",9696);
+		
+		
 	}
 }
 
 class Init extends core.State
 {
-	var screen:Bitmap;
 	public function new()
 	{
 		super();
-		var toggleSlider:ToggleSlider = App.createToggleSlider(30, 30);
-		toggleSlider.toggle = function(b:Bool)
+		var time = new Timer(200);
+		time.run = function()
 		{
-			trace("toggle " + b);
+		App.network.onMessage = message;
+		time.stop();
 		}
-		addChild(toggleSlider);
+	}
+	
+	public function message(data:Dynamic)
+	{
+		trace("data " + data);
 	}
 	
 	override public function keyDown(e:openfl.events.KeyboardEvent) 
 	{
 		super.keyDown(e);
-		addChild(screenShot());
-	}
-	override public function mouseDown() 
-	{
-		super.mouseDown();
-		if (screen != null)
-		{
-		screen.x = mouseX;
-		screen.y = mouseY;
-		}
-	}
-	override public function mouseUp() 
-	{
-		super.mouseUp();
+		App.network.send({v:0, u:"hey", p:"hi"});
 	}
 }
