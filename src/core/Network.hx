@@ -70,8 +70,8 @@ class Network
 		try
 		{
 		socket = new Socket();
-		socket.setBlocking(false);
 		socket.connect(new Host(ip), port);
+		socket.setBlocking(false);
 		connected = true;
 		//establish to server that it's a tcp socket
 		socket.output.writeByte(8);

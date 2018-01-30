@@ -24,7 +24,7 @@ class Main extends Sprite
 		new App();
 		App.state = new Init();
 		removeChild(this);
-		App.network = new Network("localhost",9696);
+		App.network = new Network("174.66.172.96", 9696);
 		
 		
 	}
