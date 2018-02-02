@@ -68,8 +68,9 @@ class ToggleSlider extends Button
     track.graphics.moveTo(rad * 3,-1);track.graphics.lineTo(rad * 3,rad * 2 - 3);
  }
  
- public function Down(_)
+ override public function mouseDown(_)
  {
+super.mouseDown(_);
 if(toggleBool)
 {
 circle.x += -trackDis;
@@ -81,12 +82,11 @@ toggleBool = true;
 createTrack();
 }
 if(toggle != null)toggle(toggleBool);
-trace("down");
  }
- public function Up(_)
+ override public function mouseUp(_)
  {
+super.mouseUp(_);
 stopDrag();
-trace("up");
  }
 
 }
@@ -126,36 +126,18 @@ class ProfileIcon extends Button
         outline.graphics.drawCircle(width/2 ,width/2,width/2 - line/2);
         outline.visible = false;
         addChild(outline);
-        //set functions
-        addEventListener(MouseEvent.MOUSE_DOWN,Down);
-        addEventListener(MouseEvent.MOUSE_UP,Up);
-        addEventListener(MouseEvent.MOUSE_OVER,Over);
-        addEventListener(MouseEvent.MOUSE_OUT,Out);
     }
-
-    public function Down(_)
-    {
-        outline.visible = true;
+	
+	override public function mouseDown(_) 
+	{
+		super.mouseDown(_);
+		outline.visible = true;
         alpha = 1;
-    }
-    public function Up(_)
+	}
+	
+    override public function mouseUp(_)
     {
+		super.mouseUp(_);
         outline.visible = false;
-    }
-    public function Over(_)
-    {
-        alpha = 0.9;
-    }
-    public function Out(_)
-    {
-        alpha = 1;
-    }
-
-    public function clearEvents()
-    {
-        removeEventListener(MouseEvent.MOUSE_DOWN,Down);
-        removeEventListener(MouseEvent.MOUSE_DOWN,Up);
-        removeEventListener(MouseEvent.MOUSE_OVER,Over);
-        removeEventListener(MouseEvent.MOUSE_OUT,Out);
     }
 }

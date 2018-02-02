@@ -1,4 +1,5 @@
 package core;
+import haxe.Constraints.Function;
 import openfl.display.Sprite;
 import openfl.events.MouseEvent;
 import openfl.display.Bitmap;
@@ -10,8 +11,11 @@ class Button extends Sprite
 {
 
     var bitmap:Bitmap;
-	public var mouseClick:Dynamic->Void;
-	private var mo:Bool = true;
+	//functions 
+	public var Down:Dynamic->Void;
+	public var Up:Dynamic->Void;
+	public var Click:Dynamic->Void;
+	public var mouseOut:Bool = true;
 	public var pathString:String;
 	public var rectBool:Bool = false;
 	public var bool:Bool = false;
@@ -66,13 +70,17 @@ addEventListener(Event.ADDED, add);
 		removeEventListener(Event.REMOVED, remove);
 		removeEventListener(Event.ADDED, add);
     }
-	public function mouseDown(_)
+	public function mouseDown(e:MouseEvent)
 	{
-		
+		if (Down != null) Down(e);
 	}
-	public function mouseUp(_)
+	public function mouseUp(e:MouseEvent)
 	{
-		
+		if (Up != null) Up(e);
+	}
+	public function mouseClick(e:MouseEvent)
+	{
+		if (Click != null) Click(e);
 	}
 	public function drawRect()
 	{
