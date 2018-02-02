@@ -26,7 +26,9 @@ if(path.length > 0)
 {
 if(path.substring(path.length - 4, path.length) == ".png")
 {
-bitmap = new Bitmap(Assets.getBitmapData(path));
+bitmap = new Bitmap(Assets.getBitmapData(path),null,true);
+if(sWidth > 0)bitmap.width = sWidth;
+if(sHeight > 0)bitmap.height = sHeight;
 this.addChild(bitmap);
 }else{
 //svg

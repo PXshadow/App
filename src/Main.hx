@@ -10,6 +10,7 @@ import openfl.display.Bitmap;
 import openfl.Assets;
 import openfl.events.KeyboardEvent;
 import core.App;
+import core.Item.ProfileIcon;
 
 /**
  * ...
@@ -25,7 +26,7 @@ class Main extends Sprite
 		App.state = new Init();
 		removeChild(this);
 		//App.network = new Network("localhost", 9696);
-		App.network = new Network("174.66.172.96", 9696,false);
+		//App.network = new Network("174.66.172.96", 9696,false);
 		
 		
 	}
@@ -36,22 +37,15 @@ class Init extends core.State
 	public function new()
 	{
 		super();
-		var time = new Timer(200);
-		time.run = function()
-		{
-		App.network.onMessage = message;
-		time.stop();
-		}
-	}
-	
-	public function message(data:Dynamic)
-	{
-		trace("data " + data);
+
+		var profile = new ProfileIcon(0,0,"assets/data/1.png");
+		addChild(profile);
+
 	}
 	
 	override public function keyDown(e:openfl.events.KeyboardEvent) 
 	{
 		super.keyDown(e);
-		App.network.send({v:0, u:"hey", p:"hi"});
+		
 	}
 }

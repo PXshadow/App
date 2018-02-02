@@ -14,6 +14,7 @@ import openfl.geom.Matrix;
 import openfl.system.System;
 import openfl.system.System.gc;
 import openfl.Lib;
+import core.Item.ProfileIcon;
 
 /**
  * ...
@@ -143,12 +144,17 @@ class State extends Sprite
 		for (i in 0...this.numChildren)
 		{
 			var child = getChildAt(i);
+			if(Std.is(child,ProfileIcon))
+			{
+			cast(child,ProfileIcon).clearEvents();
+			}else{
 			if (Std.is(child,Button))
 			{
 			cast(child, Button).removeEvents();
-			}
+			}else{
+			//nothing
+			}}
 		}
-		Lib.current.stage.frameRate = 60;
 		Assets.cache.clear();
 		App.main.removeChild(this);
 		App.state = null;
