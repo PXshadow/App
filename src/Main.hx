@@ -1,5 +1,6 @@
 package;
 import core.App;
+import core.InputText;
 import core.Item.ToggleSlider;
 import core.Network;
 import core.State;
@@ -40,6 +41,9 @@ class Init extends core.State
 
 		var profile = new ProfileIcon(0,0,"assets/data/1.png");
 		addChild(profile);
+		
+		var text = new InputText(100, 100, "Hello world", 20, 200);
+		addChild(text);
 
 	}
 	

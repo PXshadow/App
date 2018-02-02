@@ -4,13 +4,12 @@ import openfl.events.MouseEvent;
 import openfl.display.Bitmap;
 import openfl.Assets;
 import format.SVG;
+import openfl.events.Event;
 
 class Button extends Sprite 
 {
 
     var bitmap:Bitmap;
-	public var mouseDown:Dynamic->Void;
-	public var mouseUp:Dynamic->Void;
 	public var mouseClick:Dynamic->Void;
 	private var mo:Bool = true;
 	public var pathString:String;
@@ -18,7 +17,7 @@ class Button extends Sprite
 	public var bool:Bool = false;
                                                                              //invis button
 	public function new(?xpos:Int=0,?ypos:Int=0,path:String="",sWidth:Int=-1,sHeight:Int=-1) 
-	{
+{	
     super();
 buttonMode = true;
 cacheAsBitmap = true;
@@ -45,28 +44,36 @@ this.graphics.drawRect(0, 0, sWidth, sHeight);
 }
 x = xpos;
 y = ypos;
-   }
+addEventListener(Event.REMOVED, remove);
+addEventListener(Event.ADDED, add);
+}
   /*
    * Mouse out is true
    * */
-	public function createEvents(mouseOut:Bool=true)
+	public function add(_)
 	{
-
-if(mouseDown != null)addEventListener(MouseEvent.MOUSE_DOWN,mouseDown);
-if(mouseUp != null)addEventListener(MouseEvent.MOUSE_UP, mouseUp);
-if(mouseClick != null)addEventListener(MouseEvent.CLICK, mouseClick);
-mo = mouseOut;
-if(mo && mouseUp != null) addEventListener(MouseEvent.MOUSE_OUT, mouseUp);
+		addEventListener(MouseEvent.MOUSE_DOWN,mouseDown);
+		addEventListener(MouseEvent.MOUSE_UP, mouseUp);
+		addEventListener(MouseEvent.CLICK, mouseClick);
+		addEventListener(MouseEvent.MOUSE_OUT, mouseUp);
 	}
-
-    public function removeEvents()
+    public function remove(_)
     {
-        if(mouseDown != null)removeEventListener(MouseEvent.MOUSE_DOWN,mouseDown);
-        if(mouseUp != null)removeEventListener(MouseEvent.MOUSE_UP, mouseUp);
-		if (mo && mouseUp != null) removeEventListener(MouseEvent.MOUSE_OUT, mouseUp);
-		if(mouseClick != null)removeEventListener(MouseEvent.CLICK, mouseClick);
+        removeEventListener(MouseEvent.MOUSE_DOWN,mouseDown);
+        removeEventListener(MouseEvent.MOUSE_UP, mouseUp);
+		removeEventListener(MouseEvent.MOUSE_OUT, mouseUp);
+		removeEventListener(MouseEvent.CLICK, mouseClick);
+		removeEventListener(Event.REMOVED, remove);
+		removeEventListener(Event.ADDED, add);
     }
-	
+	public function mouseDown(_)
+	{
+		
+	}
+	public function mouseUp(_)
+	{
+		
+	}
 	public function drawRect()
 	{
 		graphics.beginFill(0, 0);
@@ -74,7 +81,6 @@ if(mo && mouseUp != null) addEventListener(MouseEvent.MOUSE_OUT, mouseUp);
 		graphics.endFill();
 		rectBool = true;
 	}
-	
 	public function pressed(stg:String)
 	{
 		graphics.clear();

@@ -5,6 +5,7 @@ import core.Text;
 import core.UrlState;
 import core.Network;
 import haxe.crypto.Base64;
+import openfl.display.DisplayObjectContainer;
 
 import format.SVG;
 import haxe.Timer;
@@ -30,7 +31,7 @@ import openfl.events.KeyboardEvent;
  * ...
  * @author 
  */
-class App extends Sprite
+class App extends DisplayObjectContainer
 {
 	public static var colorArray = [755381, 16761913, 11654726];
 	//main
@@ -132,6 +133,9 @@ class App extends Sprite
 			)mobile = true;
 		    
 	}
+		#end
+		#if mobile
+		nativetext.NativeText.Initialize();
 		#end
 		
 		setWidth = sx;

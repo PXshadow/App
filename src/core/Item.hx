@@ -24,9 +24,6 @@ class ToggleSlider extends Button
  {
      super(sx,sy);
      rad = Math.floor(size/2);
-     mouseDown = Down;
-     mouseUp = Up;
-     createEvents();
      circle = new Shape();
        //track
      track = new Shape();
@@ -70,6 +67,7 @@ class ToggleSlider extends Button
     track.graphics.lineStyle(4,color);
     track.graphics.moveTo(rad * 3,-1);track.graphics.lineTo(rad * 3,rad * 2 - 3);
  }
+ 
  public function Down(_)
  {
 if(toggleBool)
@@ -104,18 +102,6 @@ class ScrollBar extends Button
     graphics.beginGradientFill(GradientType.RADIAL,[0,0],[1,0.1],[0,255],matrix);
     graphics.drawRoundRect(0,0,setWidth,setHeight,50,50);
     graphics.endFill();
-
-     mouseDown = Down;
-     mouseUp = Up;
-     createEvents();
- }
- public function Down(_)
- {
-
- }
- public function Up(_)
- {
-
  }
 
 }

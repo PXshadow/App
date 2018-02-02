@@ -6,6 +6,7 @@ import openfl.Assets;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
 import openfl.display.DisplayObject;
+import openfl.display.DisplayObjectContainer;
 import openfl.display.Shape;
 import openfl.display.Sprite;
 import openfl.events.Event;
@@ -20,7 +21,7 @@ import core.Item.ProfileIcon;
  * ...
  * @author 
  */
-class State extends Sprite 
+class State extends DisplayObjectContainer
 {
 	/**
 	 * Used internally for Resize Inital
@@ -141,20 +142,6 @@ class State extends Sprite
 	//protect against null
 	if (this != null)
 	{
-		for (i in 0...this.numChildren)
-		{
-			var child = getChildAt(i);
-			if(Std.is(child,ProfileIcon))
-			{
-			cast(child,ProfileIcon).clearEvents();
-			}else{
-			if (Std.is(child,Button))
-			{
-			cast(child, Button).removeEvents();
-			}else{
-			//nothing
-			}}
-		}
 		Assets.cache.clear();
 		App.main.removeChild(this);
 		App.state = null;
