@@ -141,3 +141,41 @@ class ProfileIcon extends Button
         outline.visible = false;
     }
 }
+
+class PageCounter extends Button
+{
+    public var color:Int = 0;
+    public var activeColor:Int = 0;
+    public var size:Int = 20;
+    public var spacing:Int = 10;
+    public var page:Int=0;
+    public var amount:Int=0;
+    public var transparency:Float = 1;
+
+    public function new(?x:Int=0,?y:Int=0,pages:Int=3,setSie:Int=19,setSpacing:Int=17,setColor:Int=14607592,setAlpha=1,setActiveColor:Int=5921512,startPage:Int=0)
+    {
+        super(x + Math.floor(size/2),y);
+       // color = setColor;
+        color = setColor;
+        activeColor = setActiveColor;
+        size = setSie;
+        amount = pages;
+        page = startPage;
+        transparency = setAlpha;
+        spacing = setSpacing;
+
+        for(i in 0...amount)
+        {
+        if(page == i)
+        {
+        graphics.beginFill(activeColor);
+        graphics.drawCircle((size + spacing) * i,size/2,size/2);
+        graphics.endFill();
+        }else{
+        graphics.beginFill(color,transparency);
+        graphics.drawCircle((size + spacing) * i,size/2,size/2);
+        graphics.endFill();
+       }
+        }
+    }
+}
