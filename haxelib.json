@@ -4,8 +4,8 @@
   "license": "MIT",
   "tags": ["ui", "openfl", "network", "networking", "client", "tcp","mobile","android","ios","html5"],
   "description": "openFl UI libary devolped for ThinQbator production Use",
-  "version": "0.0.6",
-  "releasenote": "Fix native text Extension",
+  "version": "0.0.7",
+  "releasenote": "Fix deleting remove events for Button and Input Text create include xml",
   "contributors": ["PXshadow"],
   "dependencies": {
     "openfl": "",

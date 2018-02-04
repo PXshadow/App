@@ -137,18 +137,21 @@ class InputText extends DisplayObjectContainer
 	{
 		super();
 		#if mobile
+		oldX = sx * App.scale;
+		oldY = sy * App.scale;
+		
 		if (_keyType == null)_keyType = NativeTextFieldKeyboardType.Default;
 		if (_returnType == null)_returnType = NativeTextFieldReturnKeyType.Default;
 		nativeText = new NativeTextField({
-		x:sx, 
-		y:sy,
+		x:oldX, 
+		y:oldY,
 		width:fieldWidth,
 		height:NativeTextField.AUTOSIZE,
 		visible:true,
 		enabled:true,
 		placeholder:placeString,
 		fontAsset:App.textFormat,
-		fontSize:Math.round(fsize / App.scale),
+		fontSize:Math.round(fsize),
 		fontColor:color,
 		textAlignment:NativeTextFieldAlignment.Left,
 		keyboardType:_keyType,
@@ -183,7 +186,7 @@ class InputText extends DisplayObjectContainer
 	//events
 	addEventListener(MouseEvent.MOUSE_DOWN, text_onMouseDown);
 	addEventListener(FocusEvent.FOCUS_OUT, text_onFocusOut);
-	addEventListener(Event.REMOVED, removed);
+	addEventListener(Event.REMOVED_FROM_STAGE, removed);
 	}
 	
 	public function text_onMouseDown(event:MouseEvent):Void 
@@ -247,8 +250,10 @@ if (App.mobile)
 	}
 	public function removed(_)
 	{
+	trace("hi");
 	removeEventListener(MouseEvent.MOUSE_DOWN, text_onMouseDown);
 	removeEventListener(FocusEvent.FOCUS_OUT, text_onFocusOut);
+	removeEventListener(Event.REMOVED_FROM_STAGE, removed);
 	#if mobile
 	nativeText.Destroy();
 	#else

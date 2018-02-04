@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project>
+<source path="src" />
+<include path="src/ext/NativeText" if="mobile" />
+<include path="src/ext/Extensionkit" if="mobile" />
+<assets path="assets"/>
+</project>

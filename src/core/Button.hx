@@ -48,7 +48,7 @@ this.graphics.drawRect(0, 0, sWidth, sHeight);
 }
 x = xpos;
 y = ypos;
-addEventListener(Event.REMOVED, remove);
+addEventListener(Event.REMOVED_FROM_STAGE, remove);
 addEventListener(Event.ADDED, add);
 }
   /*
@@ -67,7 +67,7 @@ addEventListener(Event.ADDED, add);
         removeEventListener(MouseEvent.MOUSE_UP, mouseUp);
 		removeEventListener(MouseEvent.MOUSE_OUT, mouseUp);
 		removeEventListener(MouseEvent.CLICK, mouseClick);
-		removeEventListener(Event.REMOVED, remove);
+		removeEventListener(Event.REMOVED_FROM_STAGE, remove);
 		removeEventListener(Event.ADDED, add);
     }
 	public function mouseDown(e:MouseEvent)
