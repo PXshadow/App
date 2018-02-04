@@ -19,8 +19,8 @@
 	<haxelib name="svg"/>
 	<haxelib name="openfl" />
 	
-	<include path="ext/extensionkit" if="mobile" />
-	<include path="ext/nativetext" if="mobile" />
+	<include path="src/ext/extensionkit" if="mobile" />
+	<include path="src/ext/nativetext" if="mobile" />
 	<setenv name="ANDROID_GRADLE_TASK" value="assembleDebug --info" />
 	
 	<!-- assets -->

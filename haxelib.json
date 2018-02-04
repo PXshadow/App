@@ -4,8 +4,8 @@
   "license": "MIT",
   "tags": ["ui", "openfl", "network", "networking", "client", "tcp","mobile","android","ios","html5"],
   "description": "openFl UI libary devolped for ThinQbator production Use",
-  "version": "0.0.5",
-  "releasenote": "Native mobile Text, Rework of event Handling,Object container improvments",
+  "version": "0.0.6",
+  "releasenote": "Fix native text Extension",
   "contributors": ["PXshadow"],
   "dependencies": {
     "openfl": "",

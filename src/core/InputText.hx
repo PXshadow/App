@@ -1,5 +1,6 @@
 package core;
 
+import core.InputText.NativeTextFieldKeyboardType;
 import haxe.Utf8;
 import openfl.display.DisplayObject;
 import openfl.display.DisplayObjectContainer;
@@ -62,24 +63,6 @@ class InputText extends DisplayObjectContainer
 	private var updateInt:Int =  0;
 	#if mobile
 	public var nativeText:NativeTextField;
-	@:isVar public var keyboardType(get, set):NativeTextFieldKeyboardType;
-	function get_keyboardType():NativeTextFieldKeyboardType
-	{
-		return keyboardType;
-	}
-	function set_keyboardType(value:NativeTextFieldKeyboardType):NativeTextFieldKeyboardType
-	{
-		return keyboardType = value;
-	}
-	@:isVar public var returnType(get, set):NativeTextFieldReturnKeyType;
-	function get_returnType():NativeTextFieldReturnKeyType
-	{
-		return returnType;
-	}
-	function set_returnType(value:NativeTextFieldReturnKeyType):NativeTextFieldReturnKeyType
-	{
-		return returnType = value;
-	}
 	#else
 	public var textfield:TextField;
 	#end
@@ -147,15 +130,15 @@ class InputText extends DisplayObjectContainer
 	 * @param	_returnType 
 	 */
 	#if mobile
-	public function new(?sx:Float = 0, ?sy:Float = 0, placeString:String, fsize:Int = 24, fieldWidth:Int = 0, pcolor:Int = 0, color:Int = 0, password:Bool = false, _multiline:Bool = false, _keyType:NativeTextFieldReturnKeyType = null, _returnType:NativeTextFieldReturnKeyType = null) 
+	public function new(?sx:Float = 0, ?sy:Float = 0, placeString:String, fsize:Int = 24, fieldWidth:Int = 0, pcolor:Int = 0, color:Int = 0, password:Bool = false, _multiline:Bool = false, _keyType:NativeTextFieldKeyboardType = null, _returnType:NativeTextFieldReturnKeyType = null) 
 	#else
 	public function new(?sx:Float=0,?sy:Float=0,placeString:String,fsize:Int=24,fieldWidth:Int=0,pcolor:Int=0,color:Int=0,password:Bool=false,_multiline:Bool = false,_keyType:Dynamic = null, _returnType:Dynamic = null) 
 	#end
 	{
 		super();
 		#if mobile
-		if (_keyType != null && Std.is(_keyType,NativeTextFieldKeyboardType)) set_keyboardType(cast(_keyType, NativeTextFieldKeyboardType));
-		if (_returnType != null && Std.is(_returnType, NativeTextFieldReturnKeyType)) set_returnType(cast(_returnType, NativeTextFieldReturnKeyType));
+		if (_keyType == null)_keyType = NativeTextFieldKeyboardType.Default;
+		if (_returnType == null)_returnType = NativeTextFieldReturnKeyType.Default;
 		nativeText = new NativeTextField({
 		x:sx, 
 		y:sy,
@@ -168,8 +151,8 @@ class InputText extends DisplayObjectContainer
 		fontSize:Math.round(fsize / App.scale),
 		fontColor:color,
 		textAlignment:NativeTextFieldAlignment.Left,
-		keyboardType:NativeTextFieldKeyboardType.Default,
-		returnKeyType:NativeTextFieldReturnKeyType.Default,
+		keyboardType:_keyType,
+		returnKeyType:_returnType,
 		multiline:_multiline,
 		placeholderColor:pcolor
 		});
