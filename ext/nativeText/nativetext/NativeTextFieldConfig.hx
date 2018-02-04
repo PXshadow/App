@@ -14,8 +14,8 @@ typedef NativeTextFieldConfig = {
     ?fontSize : Int,
     ?fontColor : Int,
     ?textAlignment : NativeTextFieldAlignment,
-    ?keyboardType : NativeTextFieldKeyboardType,
-    ?returnKeyType : NativeTextFieldReturnKeyType,
+    ?keyboardType : core.InputText.NativeTextFieldKeyboardType,
+    ?returnKeyType : core.InputText.NativeTextFieldReturnKeyType,
     ?multiline: Bool, // It works only during creating
 	?placeholderColor:Int,
 	?backgroundColor:Int

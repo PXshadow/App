@@ -27,7 +27,6 @@ class Main extends Sprite
 		App.state = new Init();
 		removeChild(this);
 		//App.network = new Network("localhost", 9696);
-		//App.network = new Network("174.66.172.96", 9696,false);
 		
 		
 	}
@@ -35,6 +34,7 @@ class Main extends Sprite
 
 class Init extends core.State
 {
+	var text:InputText;
 	public function new()
 	{
 		super();
@@ -42,14 +42,10 @@ class Init extends core.State
 		var profile = new ProfileIcon(0,0,"assets/data/1.png");
 		addChild(profile);
 		
-		var text = new InputText(100, 100, "Hello world", 20, 200);
+		text = new InputText(100, 100, "Hello world", 20, 200, 0);
 		addChild(text);
 
 	}
 	
-	override public function keyDown(e:openfl.events.KeyboardEvent) 
-	{
-		super.keyDown(e);
-		
-	}
+
 }

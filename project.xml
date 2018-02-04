@@ -18,7 +18,6 @@
 	<source path="src" />
 	<haxelib name="svg"/>
 	<haxelib name="openfl" />
-	<haxelib name="datetime" />
 	
 	<include path="ext/extensionkit" if="mobile" />
 	<include path="ext/nativetext" if="mobile" />
