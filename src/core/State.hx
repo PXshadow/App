@@ -2,6 +2,7 @@ package core;
 
 //import motion.Actuate;
 //import motion.actuators.GenericActuator;
+import haxe.Timer;
 import openfl.Assets;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
@@ -26,7 +27,7 @@ class State extends DisplayObjectContainer
 	/**
 	 * Used internally for Resize Inital
 	 */
-	public var initResize:Bool = true;
+	//public var initResize:Bool = true;
 	//carry over between states
 	/**
 	 * State scale Y
@@ -48,13 +49,13 @@ class State extends DisplayObjectContainer
 	 * Public refrence to App class 
 	 */
 	public var app:App;
-	private var startState:Bool = false;
 	/**
 	 * Min and Max Camera Scroll Distances Defualt is no Restrictions
 	 */
 	public function new(minY:Int=0,maxY:Int=0,minX:Int=0,maxX:Int=0) 
 	{
 		super();
+		visible = false;
 		//set camera restrict
 		App.main.cameraMinY = -minY;
 		App.main.cameraMaxY = -maxY;
@@ -77,20 +78,29 @@ class State extends DisplayObjectContainer
 		App.scrollSpeedY = 0;
 		App.scrollSpeedX = 0;
 		mouseEnabled = false;
+		//resize
+		var tim = new Timer(1);
+		tim.run = function()
+		{
+		resize(px, py, sx, sy);
+		tim.stop();
+		tim = null;
+		}
 	}
 	/**
 	 * Update State
 	 */
 	public function update()
 	{
-		if (initResize)
+	/*	if (initResize)
 		{
+			trace("resize");
 			initResize = false;
 			//set resize for init State
 			if (sx > 0 && sy > 0) resize(px, py, sx, sy);
 			if (App.inital) App.main.initalLoaded();
 			
-		}
+		}*/
 	}
 	/**
 	 * State mouse/touch is Down
@@ -133,6 +143,11 @@ class State extends DisplayObjectContainer
 		scaleY = sy;
 		this.x = px;
 		this.y = py;
+		for (i in 0...numChildren)
+		{
+			getChildAt(i).cacheAsBitmap = true;
+		}
+		visible = true;
 	}
 	/**
 	 * Remove State

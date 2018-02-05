@@ -1,5 +1,5 @@
 
-# App, is an openFl UI libary devolped for ThinQbator production Use
+# App, is an openFl UI libary devolped for ThinQbator.
 - [Getting Started](https://github.com/PXshadow/App/wiki/Getting-Started)
 - [Contact me](https://github.com/PXshadow/App/wiki/Contact)
 - [Haxelib](https://lib.haxe.org/p/app)

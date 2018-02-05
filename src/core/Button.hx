@@ -24,7 +24,6 @@ class Button extends Sprite
 {	
     super();
 buttonMode = true;
-cacheAsBitmap = true;
 if(path.length > 0)
 {
 if(path.substring(path.length - 4, path.length) == ".png")

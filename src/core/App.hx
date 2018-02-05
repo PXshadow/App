@@ -63,6 +63,8 @@ class App extends DisplayObjectContainer
 	public static var camX:Float = 0;
 	public static var scrollSpeedY:Float = 0;
 	public static var scrollSpeedX:Float = 0;
+	var oldSSX:Float = 0;
+	var oldSSY:Float = 0;
 	public static var scrollDuration:Int = 0;
 	public static var scrollBool:Bool = false;
 	public var scrollInt:Int = 0;
@@ -153,6 +155,8 @@ class App extends DisplayObjectContainer
 		
 		Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, function(e:MouseEvent)
 		{
+		if (state != null)
+		{
 		spX = App.state.mouseX;
 		spY = App.state.mouseY;
 		omX = spX;
@@ -160,12 +164,16 @@ class App extends DisplayObjectContainer
 		scrollPress = false;
 		mouseDown = true;
 		state.mouseDown();
+		}
 		});
 		
 		Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, function(e:MouseEvent)
 		{
 			mouseDown = false;
+			if (state != null)
+			{
 			state.mouseUp();
+			}
 		});
 		
 #if !mobile
@@ -189,8 +197,8 @@ if (!mobile)
 		Lib.current.stage.addEventListener(Event.ENTER_FRAME, function(e:Event)
 		{
 		//set old
-		var oldSSX:Float = App.scrollSpeedX;
-		var oldSSY:Float = App.scrollSpeedY;
+		oldSSX= App.scrollSpeedX;
+		oldSSY = App.scrollSpeedY;
 		
 		if (App.mouseDown && App.dragBool)
 		{
@@ -243,10 +251,13 @@ if (!mobile)
 	
 	App.camY += App.scrollSpeedY;
 	App.camX += App.scrollSpeedX;
+			if (info != null) info.onEnter();
+			if (state != null)
+			{
 			state.update();
-			if(info != null)info.onEnter();
 			omX = App.state.mouseX;
 			omY = App.state.mouseY;
+			}
 		//update networkings
 		if(network != null)network.update();
 		}); 
@@ -363,7 +374,7 @@ public function getUrlParams()
 	{
 			if (urlObj.name == name)
 			{
-				var k = new Timer(20);
+				var k = new Timer(5);
 				k.run = function()
 				{
 				App.state.remove();
@@ -371,6 +382,7 @@ public function getUrlParams()
 				App.state.initResize = true;
 				App.background.visible = false;
 				k.stop();
+				k = null;
 				}
 			}
 	}
@@ -447,7 +459,6 @@ public static function toggleFullscreen() {
 		public static function createSprite(?x:Float = 0, ?y:Float = 0, path:String,w:Int=-1,h:Int=-1):Shape
 	{
 		var shape = new Shape();
-		shape.cacheAsBitmap = true;
 		if (path.substring(path.length - 4, path.length) == ".png")
 		{
 		var bitmap = Assets.getBitmapData(path);
@@ -476,7 +487,6 @@ public static function toggleFullscreen() {
 		sprite.graphics.beginFill(color);
 		sprite.graphics.drawRect(0, 0, width, height);
 		sprite.graphics.endFill();
-		sprite.cacheAsBitmap = true;
 		sprite.x = sx;
 		sprite.y = sy;
 		return sprite;
@@ -628,36 +638,13 @@ public static function toggleFullscreen() {
 		background.width = stage.stageWidth;
 		background.height = stage.stageHeight;
 		}
-		stage.align = StageAlign.TOP;
-		
 		var tempX:Float = stage.stageWidth / setWidth;
 		var tempY:Float = stage.stageHeight / setHeight;
 		scale = Math.min(tempX, tempY);
-		//uncache objects
-		var cacheArray = [];
-		for (i in 0...state.numChildren)
-		{
-			if (state.getChildAt(i).cacheAsBitmap)
-			{
-				cacheArray[i] = true;
-				state.getChildAt(i).cacheAsBitmap = false;
-			}
-		}
-		
 		if (resizeBool)
 		{
 		App.state.resize(Math.floor((stage.stageWidth - setWidth * App.scale) / 2), 0, scale, scale);
 	    if(info != null)info.resize();
-		}
-		//re cache objects
-		var timmy = new Timer(100);
-		timmy.run = function()
-		{
-		if (state != null)
-		{
-		for (i in 0...state.numChildren) if (cacheArray[i]) state.getChildAt(i).cacheAsBitmap = true;
-		timmy.stop();
-		}
 		}
 		
 		}
