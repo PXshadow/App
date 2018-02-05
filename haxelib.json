@@ -4,8 +4,8 @@
   "license": "MIT",
   "tags": ["ui", "openfl", "network", "networking", "client", "tcp","mobile","android","ios","html5"],
   "description": "openFl UI libary devolped for ThinQbator production Use",
-  "version": "0.0.8",
-  "releasenote": "New CHANGELOG",
+  "version": "0.0.9",
+  "releasenote": "First haxelib android NativeText stable release",
   "contributors": ["PXshadow"],
   "dependencies": {
     "openfl": "",
