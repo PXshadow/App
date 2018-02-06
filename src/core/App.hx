@@ -280,7 +280,9 @@ if (!mobile)
 				
 				if (Math.abs(spY - App.state.mouseY) < 10) scrollPress = true;
 			mouseDown = false;
-			scrollDuration = Math.floor(1950 / (1000 / App.main.info.tL));
+			var framerate = Lib.current.stage.frameRate;
+			if (App.main.info != null) framerate = App.main.info.tL;
+			scrollDuration = Math.floor(1950 / (1000 / framerate));
 			App.main.vectorY = new Vector(scrollDuration);
 			App.main.vectorX = new Vector(scrollDuration);
 			

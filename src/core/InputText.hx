@@ -28,7 +28,7 @@ import nativetext.*;
  enum NativeTextFieldKeyboardType 
 {
     Default;
-    Password;
+    Password; //use password bool to keep InputText Cross platform 
     Decimal;
     Name;
     Email;
@@ -56,11 +56,6 @@ class InputText extends DisplayObjectContainer
 	public var keyboardDis:Int = 0;
 	public var oldX:Float = 0;
 	public var oldY:Float = 0;
-	/**
-	 * Amount of Update checks for Native Text movement, If move cycle turns to 0 untill movment has stopped
-	 */
-	public var updateCycle:Int = 15;
-	private var updateInt:Int =  0;
 	#if mobile
 	public var nativeText:NativeTextField;
 	#else
@@ -130,28 +125,33 @@ class InputText extends DisplayObjectContainer
 	 * @param	_returnType 
 	 */
 	#if mobile
-	public function new(?sx:Float = 0, ?sy:Float = 0, placeString:String, fsize:Int = 24, fieldWidth:Int = 0, pcolor:Int = 0, color:Int = 0, password:Bool = false, _multiline:Bool = false, _keyType:NativeTextFieldKeyboardType = null, _returnType:NativeTextFieldReturnKeyType = null) 
+	public function new(?sx:Float = 0, ?sy:Float = 0, placeString:String, fsize:Int = 24, fieldWidth:Int = 0, pcolor:Int = 0, color:Int = 0, password:Bool = false, _multiline:Bool = false,textfieldHeight:Int=0, _keyType:NativeTextFieldKeyboardType = null, _returnType:NativeTextFieldReturnKeyType = null) 
 	#else
-	public function new(?sx:Float=0,?sy:Float=0,placeString:String,fsize:Int=24,fieldWidth:Int=0,pcolor:Int=0,color:Int=0,password:Bool=false,_multiline:Bool = false,_keyType:Dynamic = null, _returnType:Dynamic = null) 
+	public function new(?sx:Float=0,?sy:Float=0,placeString:String,fsize:Int=24,fieldWidth:Int=0,pcolor:Int=0,color:Int=0,password:Bool=false,_multiline:Bool = false,textfieldHeight:Int=0,_keyType:Dynamic = null, _returnType:Dynamic = null) 
 	#end
 	{
 		super();
 		#if mobile
-		oldX = sx * App.scale;
-		oldY = sy * App.scale;
-		
 		if (_keyType == null)_keyType = NativeTextFieldKeyboardType.Default;
 		if (_returnType == null)_returnType = NativeTextFieldReturnKeyType.Default;
+		if (password)_keyType = NativeTextFieldKeyboardType.Password;
+		var setHeight:Dynamic;
+		if (textfieldHeight > 0)
+		{
+		setHeight = textfieldHeight;
+		}else{
+		setHeight = NativeTextField.AUTOSIZE;
+		}
 		nativeText = new NativeTextField({
-		x:oldX, 
-		y:oldY,
+		x:0, 
+		y:0,
 		width:fieldWidth,
-		height:NativeTextField.AUTOSIZE,
+		height:setHeight,
 		visible:true,
 		enabled:true,
 		placeholder:placeString,
 		fontAsset:App.textFormat,
-		fontSize:Math.round(fsize),
+		fontSize:Math.round(fsize), //* App.scale),
 		fontColor:color,
 		textAlignment:NativeTextFieldAlignment.Left,
 		keyboardType:_keyType,
@@ -161,6 +161,9 @@ class InputText extends DisplayObjectContainer
 		});
 		#else
 		textfield = new TextField();
+		textfield.multiline = _multiline;
+		textfield.wordWrap = !_multiline;
+		if(textfieldHeight > 0)textfield.height = textfieldHeight;
 		passwordBool = password;
 		newColor = color;
 		pColor = pcolor;
@@ -171,6 +174,7 @@ class InputText extends DisplayObjectContainer
 		textfield.defaultTextFormat = new TextFormat(Assets.getFont(App.textFormat).fontName, Math.floor(fsize), pcolor, false, false, false, "", "", TextFormatAlign.LEFT);
 		textfield.restrict = "\u0020-\u007E";
 		textfield.multiline = _multiline;
+		if (_multiline) textfield.wordWrap = true;
 		if (fieldWidth > 0)
 		{
 			textfield.width = fieldWidth;
@@ -178,16 +182,33 @@ class InputText extends DisplayObjectContainer
 		   width = App.main.stage.stageWidth;
 		}
 		textfield.text = placeholderString;
-	this.x = sx;
-	this.y = sy;
 	addChild(textfield);
 	textfield.addEventListener(openfl.events.TextEvent.TEXT_INPUT, __updateText);
 	#end
+	this.x = sx;
+	this.y = sy;
 	//events
 	addEventListener(MouseEvent.MOUSE_DOWN, text_onMouseDown);
 	addEventListener(FocusEvent.FOCUS_OUT, text_onFocusOut);
 	addEventListener(Event.REMOVED_FROM_STAGE, removed);
+	#if mobile
+	addEventListener(Event.ENTER_FRAME, update);
+	#end
 	}
+	#if mobile
+	public function update(_)
+	{
+		if (App.state.resizeBool)
+		{
+		if (oldX != x || oldY != y)
+		{
+		trace("x " + Std.string(x * App.scale) + " y " + Std.string(y * App.scale));
+		nativeText.Configure({x:x * App.scale,y:y * App.scale});
+		oldX = x; oldY = y;
+		}
+		}
+	}
+	#end
 	
 	public function text_onMouseDown(event:MouseEvent):Void 
 	{
@@ -256,6 +277,7 @@ if (App.mobile)
 	removeEventListener(Event.REMOVED_FROM_STAGE, removed);
 	#if mobile
 	nativeText.Destroy();
+	removeEventListener(Event.ENTER_FRAME, update);
 	#else
 	textfield.removeEventListener(openfl.events.TextEvent.TEXT_INPUT, __updateText);
 	#end

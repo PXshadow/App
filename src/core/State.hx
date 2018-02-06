@@ -50,6 +50,10 @@ class State extends DisplayObjectContainer
 	 */
 	public var app:App;
 	/**
+	 * If resize inital of stage has happened
+	 */
+	public var resizeBool:Bool = false;
+	/**
 	 * Min and Max Camera Scroll Distances Defualt is no Restrictions
 	 */
 	public function new(minY:Int=0,maxY:Int=0,minX:Int=0,maxX:Int=0) 
@@ -83,6 +87,7 @@ class State extends DisplayObjectContainer
 		tim.run = function()
 		{
 		resize(px, py, sx, sy);
+		resizeBool = true;
 		tim.stop();
 		tim = null;
 		}

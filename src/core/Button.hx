@@ -81,10 +81,12 @@ addEventListener(Event.ADDED, add);
 	{
 		if (Click != null) Click(e);
 	}
-	public function drawRect()
+	public function drawRect(setWidth:Float=0,setHeight:Float=0)
 	{
 		graphics.beginFill(0, 0);
-		graphics.drawRect(0, 0, width, height);
+		if (setWidth <= 0) setWidth = width;
+		if (setHeight <= 0) setHeight = height;
+		graphics.drawRect(0, 0, setWidth, setHeight);
 		graphics.endFill();
 		rectBool = true;
 	}
