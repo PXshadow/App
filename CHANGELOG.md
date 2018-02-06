@@ -8,4 +8,3 @@ _________________
 * Fixes to Bitmap Caching
 * Changes to resizing for State
 * Fixed memory leak of haxe Timers
-
