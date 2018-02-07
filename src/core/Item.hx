@@ -5,6 +5,7 @@ import openfl.display.SpreadMethod;
 import openfl.geom.Matrix;
 import openfl.display.Shape;
 import openfl.events.MouseEvent;
+import openfl.events.Event;
 
 class Item 
 {
@@ -87,10 +88,21 @@ stopDrag();
 }
 class ScrollBar extends Button
 {
-     public function new(?x:Int=0,?y:Int=0,dem:Int = 80)
+    public var downBool:Bool = false;
+    public var moveDistance:Float = 0;
+    public var cycle:Int = 3;
+    public var cycleInt:Int = 0;
+    public var scrollView:Array<openfl.display.DisplayObject> = [];
+
+     public function new(?x:Int=0,?y:Int=0,dem:Int = 40)
  {
      super(x,y);
      create(Math.floor(dem/2));
+     addEventListener(Event.ENTER_FRAME,update);
+     //addEventListener(Event.)
+     mouseOut = false;
+     App.main.onMouseUp = mouseUp;
+     App.dragBool = true;
  }
  private function create(rad:Int=0)
  {
@@ -98,19 +110,51 @@ class ScrollBar extends Button
     graphics.lineStyle(1,13158600);
      //add circles to both side
      graphics.beginFill(color);
-     graphics.drawCircle(rad + 2,-2 + rad,rad + 2);
+     graphics.drawCircle(rad + 1,rad,rad + 2);
      graphics.beginFill(color);
-     graphics.drawCircle(rad * 3,-2 + rad,rad + 2);
+     graphics.drawCircle(rad + 1,-2 + rad * 5,rad + 2);
      //rect
      graphics.beginFill(color);
      graphics.drawRect(0,rad,rad * 2 + 2,rad * 4 + 4);
      //create line
     graphics.lineStyle(4,color);
-    graphics.moveTo(-2 + rad,-1);graphics.lineTo(-2 + rad,rad * 2 - 3);
+    graphics.moveTo(2,rad);graphics.lineTo(rad * 2,rad);
     graphics.lineStyle(4,color);
-    graphics.moveTo(rad * 3,-1);graphics.lineTo(rad * 3,rad * 2 - 3);
+    graphics.moveTo(2,rad * 5 + 4);graphics.lineTo(rad * 2,rad * 5 + 4);
+    App.main.onResize = resize;
  }
+ override public function mouseDown(_)
+ {
+     super.mouseDown(_);
+     trace("mouseOut " + mouseOut);
+     downBool = true;
+ }
+  override public function mouseUp(_)
+ {
+     super.mouseDown(_);
+     downBool = false; 
+     App.scrollCamera();
+ }
+  public function update(_)
+  {
+    //cycle scroll bar
 
+    //move all Objects in Scroll View
+    for(obj in scrollView)
+    {
+        obj.y += App.scrollSpeedY;
+    }
+    y += App.scrollSpeedY;
+  }
+  override public function remove(_)
+ {
+     super.remove(_);
+     removeEventListener(Event.ENTER_FRAME,update);
+ }
+ public function resize(_)
+ {
+     this.x = (-State.px + openfl.Lib.current.stage.stageWidth - this.width/2) * 1/App.scale;
+ }
 }
 class ProfileIcon extends Button
 {

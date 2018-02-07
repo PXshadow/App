@@ -109,6 +109,14 @@ class App extends DisplayObjectContainer
 	 */
 	public static var resizeBool:Bool = true;
 	/**
+	* Resize that is called when Resize
+	**/
+	public var onResize:Dynamic->Void;
+	/**
+	* When Mouse is up
+	**/
+	public var onMouseUp:Dynamic->Void;
+	/**
 	 * 
 	 * @param	sx Width of App
 	 * @param	sy Height of App
@@ -174,6 +182,7 @@ class App extends DisplayObjectContainer
 			{
 			state.mouseUp();
 			}
+			onMouseUp(e);
 		});
 		
 #if !mobile
@@ -630,8 +639,9 @@ public static function toggleFullscreen() {
 	 * triggered Resize event that deals with all of the App's resizing calls and Math
 	 * @param	_
 	 */
-	public function resize(_)
+	public function resize(e:Event)
 	{
+		//safe NEP
 		if (state != null)
 		{
 		//resize bg 
@@ -648,8 +658,9 @@ public static function toggleFullscreen() {
 		App.state.resize(Math.floor((stage.stageWidth - setWidth * App.scale) / 2), 0, scale, scale);
 	    if(info != null)info.resize();
 		}
-		
 		}
+		//call on resize
+		onResize(e);
 	}
 /**
  * A way to set a bottom bar a header etc. Make's it so it can strech to the edges of the screen or be at absoulte postion x r

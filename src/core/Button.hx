@@ -58,16 +58,16 @@ addEventListener(Event.ADDED, add);
 		addEventListener(MouseEvent.MOUSE_DOWN,mouseDown);
 		addEventListener(MouseEvent.MOUSE_UP, mouseUp);
 		addEventListener(MouseEvent.CLICK, mouseClick);
-		addEventListener(MouseEvent.MOUSE_OUT, mouseUp);
+		if(mouseOut)addEventListener(MouseEvent.MOUSE_OUT, mouseUp);
+		removeEventListener(Event.ADDED, add);
 	}
     public function remove(_)
     {
         removeEventListener(MouseEvent.MOUSE_DOWN,mouseDown);
         removeEventListener(MouseEvent.MOUSE_UP, mouseUp);
-		removeEventListener(MouseEvent.MOUSE_OUT, mouseUp);
+		if(mouseOut)removeEventListener(MouseEvent.MOUSE_OUT, mouseUp);
 		removeEventListener(MouseEvent.CLICK, mouseClick);
 		removeEventListener(Event.REMOVED_FROM_STAGE, remove);
-		removeEventListener(Event.ADDED, add);
     }
 	public function mouseDown(e:MouseEvent)
 	{
