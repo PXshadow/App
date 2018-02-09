@@ -97,15 +97,7 @@ class State extends DisplayObjectContainer
 	 */
 	public function update()
 	{
-	/*	if (initResize)
-		{
-			trace("resize");
-			initResize = false;
-			//set resize for init State
-			if (sx > 0 && sy > 0) resize(px, py, sx, sy);
-			if (App.inital) App.main.initalLoaded();
-			
-		}*/
+		
 	}
 	/**
 	 * State mouse/touch is Down

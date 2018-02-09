@@ -2,6 +2,7 @@ package ;
 import openfl.display.Sprite;
 import core.App;
 import core.Item.ScrollBar;
+import core.Item.NavigationBar;
 import core.State;
 import openfl.display.Shape;
 
@@ -19,6 +20,7 @@ class Main extends Sprite
 class Menu extends State
 {
     var scrollBar:ScrollBar;
+    var navBar:NavigationBar;
 
     public function new()
     {
@@ -36,6 +38,9 @@ class Menu extends State
             scrollBar.scrollView.push(shape);
             addChild(shape);
         }
+
+        navBar = new NavigationBar(50,["Why","is","this","such","a","bad","talk"]);
+        addChild(navBar);
     }
     override public function mouseDown()
     {

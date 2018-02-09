@@ -10,7 +10,7 @@ import openfl.events.Event;
 class Button extends Sprite 
 {
 
-    var bitmap:Bitmap;
+    public var bitmap:Bitmap;
 	//functions 
 	public var Down:Dynamic->Void;
 	public var Up:Dynamic->Void;
@@ -23,15 +23,16 @@ class Button extends Sprite
 	public function new(?xpos:Int=0,?ypos:Int=0,path:String="",sWidth:Int=-1,sHeight:Int=-1) 
 {	
     super();
+bitmap = new Bitmap();
+bitmap.smoothing = true;
 buttonMode = true;
 if(path.length > 0)
 {
 if(path.substring(path.length - 4, path.length) == ".png")
 {
-bitmap = new Bitmap(Assets.getBitmapData(path),null,true);
+bitmap.bitmapData = Assets.getBitmapData(path);
 if(sWidth > 0)bitmap.width = sWidth;
 if(sHeight > 0)bitmap.height = sHeight;
-this.addChild(bitmap);
 }else{
 //svg
 new SVG(Assets.getText(path)).render(this.graphics, 0, 0, sWidth, sHeight);
@@ -47,6 +48,7 @@ this.graphics.drawRect(0, 0, sWidth, sHeight);
 }
 x = xpos;
 y = ypos;
+addChild(bitmap);
 addEventListener(Event.REMOVED_FROM_STAGE, remove);
 addEventListener(Event.ADDED, add);
 }
