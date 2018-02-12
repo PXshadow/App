@@ -63,6 +63,25 @@ class InputText extends DisplayObjectContainer
 	#end
 	@:isVar public var text(get, set):String;
 	@:isVar public var focus(get, set):Bool;
+	@:isVar public var show(get, set):Bool;
+	
+	function get_show():Bool
+	{
+		#if mobile
+		return false;
+		#else
+		return textfield.visible;
+		#end
+	}
+	function set_show(value:Bool):Bool
+	{
+		#if mobile
+		nativeText.Configure({enabled:value, visible:value});
+		#else
+		textfield.visible = value;
+		#end
+		return value;
+	}
 	
 	function get_focus():Bool
 	{

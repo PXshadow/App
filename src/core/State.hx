@@ -63,16 +63,14 @@ class State extends DisplayObjectContainer
 		//set camera restrict
 		App.main.cameraMinY = -minY;
 		App.main.cameraMaxY = -maxY;
-		
 		App.main.cameraMinX = -minX;
 		App.main.cameraMaxX = -maxX;
-		
 		App.dragBool = false;
-		
 		Lib.current.stage.frameRate = 61;
-		
 		app = App.main;
 		App.mouseDown = false;
+		App.main.onResize = null;
+		App.main.onMouseUp = null;
 		//add
 		app.addChild(this);
 		App.omX = mouseX;

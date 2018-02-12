@@ -182,7 +182,7 @@ class App extends DisplayObjectContainer
 			{
 			state.mouseUp();
 			}
-			onMouseUp(e);
+			if(onMouseUp != null)onMouseUp(e);
 		});
 		
 #if !mobile
@@ -390,7 +390,6 @@ public function getUrlParams()
 				{
 				App.state.remove();
 				App.state = Type.createInstance(urlObj.state, []);
-				App.state.initResize = true;
 				App.background.visible = false;
 				k.stop();
 				k = null;
@@ -660,7 +659,7 @@ public static function toggleFullscreen() {
 		}
 		}
 		//call on resize
-		onResize(e);
+		if(onResize != null)onResize(e);
 	}
 /**
  * A way to set a bottom bar a header etc. Make's it so it can strech to the edges of the screen or be at absoulte postion x r
