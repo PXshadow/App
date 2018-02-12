@@ -27,6 +27,11 @@ Add the library to your `project.xml`:
 
 And use `haxelib` to install it:
 
+Github Version
+```shell
+haxelib git app https://github.com/PXshadow/App
+```
+Haxelib Version 
 ```shell
 haxelib install app
 ```
