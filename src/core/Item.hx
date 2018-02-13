@@ -298,6 +298,37 @@ class Dropdown extends Button
     }
 }
 
+class Option extends Button
+{
+    public var type:Int = 0;
+    public var list:Array<String> = new Array<String>();
+    /**
+    * Type 0 = Check box single select, Type 1 = Check box multi select , Type 2 = option single select, Type 3 = option multi select.
+    **/
+    public function new(setType:Int=0,array:Array<String>)
+    {
+        type = setType;
+        list = array;
+        super();
+        switch(type)
+        {
+            case 0:
+            for(i in 0...list.length)
+            {
+                
+            }
+        }
+    }
+    override public function mouseDown(_)
+    {
+
+    }
+    override public function mouseUp(_)
+    {
+
+    }
+}
+
 class PageCounter extends Shape
 {
     public var color:Int = 0;

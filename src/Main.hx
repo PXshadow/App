@@ -38,7 +38,6 @@ class Menu extends State
     public function new()
     {
         super();
-        addChild(new Item.ScrollBar(0,App.setHeight,40,false));
-        //addChild(new Item.ScrollBar(0,0,40,true));
+        addChild(new Item.Option(0,["Hello","hi"]));
     }
 }
