@@ -36,16 +36,13 @@ Haxelib Version
 haxelib install app
 ```
 
-## Usage
-
-add a new extended State Class [Inital State]
+## Inital Setup 
+Main.hx File 
 ```
-new App();
-App.state = new [Inital State]();
-removeChild(this);
+
 ```
 
 ## TODO
-
-- Add Api docs page
-- Comment everything
+- Create more Widgets and get feedback.
+- Optomization 
+- Demo Projects

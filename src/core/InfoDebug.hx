@@ -17,16 +17,17 @@ class InfoDebug extends TextField
 	private var times:Array<Float>;
 	public var tL:Int = 60;
 	var mobileString:String = "F";
-	public function new(inCol:Int = 16777215) 
+	public function new(inCol:Int = 16777215,size:Int=0) 
 	{
 		super();
 		if (App.mobile) mobileString = "T";
 		times = [];
 		selectable = false;
+		mouseEnabled = false;
 		#if (mobile || desktop)
 		ver = Lib.current.stage.application.config.version;
 		#end
-		defaultTextFormat = new TextFormat("_sans", 15, inCol);
+		defaultTextFormat = new TextFormat("_sans", size, inCol);
 		width = 150 * 4;
 		height = 70;
 		Lib.current.addChild(this);

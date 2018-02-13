@@ -9,7 +9,6 @@
 	<app main="Main" file="App" path="bin"/>
 	
 	<window background="#ffffff" fps="61" />
-	<window width="320" height="568" unless="mobile" />
 	<window width="0" height="0" if="html5"/>
 	<window if="mobile" orientation="portrait" fullscreen="false" vsync="false" hardware="true" fps="61" />
 	<window allow-high-dpi="true" if="html5" />

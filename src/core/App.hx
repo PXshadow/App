@@ -83,6 +83,10 @@ class App extends DisplayObjectContainer
 	 * color of Info Text Defualt Black = 0 white = 16777215
 	 */
 	public static var infoColor:Int = 0;
+	/**
+	* info Text size
+	**/
+	public static var infoSize:Int = 12;
 	//refrence self in static
 	public static var main:App;
 	//Performance Idler
@@ -158,7 +162,7 @@ class App extends DisplayObjectContainer
 		//add self
 		Lib.current.addChild(this);
 		#if debug
-		info = new InfoDebug(0);
+		if(infoBool)info = new InfoDebug(0,infoSize);
 		#end
 		
 		Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, function(e:MouseEvent)
@@ -409,6 +413,7 @@ public function getUrlParams()
 
 public static function toggleFullscreen() {
 #if html5
+trace("Toggle Full screen for html5 does not work yet :(");
             var isInFullScreen = untyped __js__("(document.fullscreenElement && document.fullscreenElement !== null) ||
             (document.webkitFullscreenElement && document.webkitFullscreenElement !== null) ||
             (document.mozFullScreenElement && document.mozFullScreenElement !== null) ||
@@ -436,6 +441,8 @@ public static function toggleFullscreen() {
                     untyped __js__('document.getElementById("openfl-content").msRequestFullscreen()');
                 }
             }
+#else
+Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
 #end
         }
 	/**
