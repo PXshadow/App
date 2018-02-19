@@ -17,6 +17,7 @@ import openfl.system.System;
 import openfl.system.System.gc;
 import openfl.Lib;
 import core.Item.ProfileIcon;
+import openfl.text.TextField;
 
 /**
  * ...
@@ -66,7 +67,6 @@ class State extends DisplayObjectContainer
 		App.main.cameraMinX = -minX;
 		App.main.cameraMaxX = -maxX;
 		App.dragBool = false;
-		Lib.current.stage.frameRate = 61;
 		app = App.main;
 		App.mouseDown = false;
 		App.main.onResize = null;
@@ -140,7 +140,10 @@ class State extends DisplayObjectContainer
 		this.y = py;
 		for (i in 0...numChildren)
 		{
-			getChildAt(i).cacheAsBitmap = true;
+		if (!Std.is(getChildAt(i), openfl.display.Tilemap) 
+		&&!Std.is(getChildAt(i), openfl.display.Bitmap) 
+		//&& !Std.is(getChildAt(i), TextField)
+		)getChildAt(i).cacheAsBitmap = true;
 		}
 		visible = true;
 	}

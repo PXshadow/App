@@ -27,13 +27,11 @@ class NativeTextField extends EventDispatcher
 
     // Can use this for width/height in NativeTextFieldConfig
     public static inline var AUTOSIZE = -1.0;
-    
     public var eventDispatcherId(default, null):Int = 0;
-    
+	
     public function new(?config:NativeTextFieldConfig)
     {
         super();
-        
         this.eventDispatcherId = ExtensionKit.RegisterEventDispatcher(this);
         nativetext_create_text_field(this.eventDispatcherId, PrepareConfigForNativeCall(config));
     }

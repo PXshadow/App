@@ -20,6 +20,8 @@ class InfoDebug extends TextField
 	public function new(inCol:Int = 16777215,size:Int=0) 
 	{
 		super();
+		trace("input debug");
+		ver = "";
 		if (App.mobile) mobileString = "T";
 		times = [];
 		selectable = false;
@@ -27,6 +29,7 @@ class InfoDebug extends TextField
 		#if (mobile || desktop)
 		ver = Lib.current.stage.application.config.version;
 		#end
+		
 		defaultTextFormat = new TextFormat("_sans", size, inCol);
 		width = 150 * 4;
 		height = 70;

@@ -94,7 +94,6 @@ class App extends DisplayObjectContainer
 	 *  Set FrameRate when App is De Activated 
 	 */
 	public var idle:Int = 5;
-	private var oldFrameRate:Int = 0;
 	/**
 	 *  Set Url's to Diffrent States
 	 */
@@ -128,7 +127,6 @@ class App extends DisplayObjectContainer
 	public function new(sx:Int=640,sy:Int=1136) 
 	{
 		super();
-		oldFrameRate = Math.floor(Lib.current.stage.frameRate);
 		//set mobile 
 		#if mobile
 		mobile = true;
@@ -161,9 +159,9 @@ class App extends DisplayObjectContainer
 		Lib.current.stage.addEventListener(Event.RESIZE, resize);
 		//add self
 		Lib.current.addChild(this);
-		#if debug
+		//#if debug
 		if(infoBool)info = new InfoDebug(0,infoSize);
-		#end
+		//#end
 		
 		Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, function(e:MouseEvent)
 		{
@@ -276,26 +274,25 @@ if (!mobile)
 		}); 
 		
 		Lib.current.stage.addEventListener (openfl.events.Event.ACTIVATE, function (_) {
-			Lib.current.stage.frameRate = oldFrameRate;
 			
 		});
 		
 		Lib.current.stage.addEventListener (openfl.events.Event.DEACTIVATE, function (_) {
 			scrollSpeedY = 0;
-			oldFrameRate = Math.floor(Lib.current.stage.frameRate);
-			Lib.current.stage.frameRate = idle;
+			
 		});
+		
 		
 	}
 	
 		public static function scrollCamera()
 			{
 				
-				if (Math.abs(spY - App.state.mouseY) < 10) scrollPress = true;
+			if (Math.abs(spY - App.state.mouseY) < 10) scrollPress = true;
 			mouseDown = false;
-			var framerate = Lib.current.stage.frameRate;
-			if (App.main.info != null) framerate = App.main.info.tL;
-			scrollDuration = Math.floor(1950 / (1000 / framerate));
+			//Math.floor(1950 / (1000 / 60) = 117;
+			scrollDuration = 117;
+			if (Math.abs(scrollSpeedY) > 0 && Math.abs(scrollSpeedY) < 70 || Math.abs(scrollSpeedX) > 0 && Math.abs(scrollSpeedX) < 70) scrollDuration = 80;
 			App.main.vectorY = new Vector(scrollDuration);
 			App.main.vectorX = new Vector(scrollDuration);
 			
@@ -312,7 +309,6 @@ if (!mobile)
 			App.main.scrollInt = 0;
 			scrollDuration += -1;
 			scrollBool = true;
-			
 			}
 			
 			public static function enableCameraMovement()
@@ -385,6 +381,8 @@ public function getUrlParams()
 		 var pos2 = url.indexOf("/", pos);
 		   var name = url.substring(pos + 1, pos2);
 		   UrlState.data = url.substring(pos2, url.length);
+		   trace("URL name " + name + " data " + UrlState.data);
+		   
 	for (urlObj in urlArray)
 	{
 			if (urlObj.name == name)
@@ -612,7 +610,7 @@ Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
 	 */
 	public static function createNext(?x:Int = 0, ?y:Int = 0, color:Int = 16777215):Button
 	{
-		var nextButton = new Button(x, y);
+		var nextButton = new Button(x + 28, y + 22);
 		var thick:Int = 4;
 		var radius:Int = 40;
 		nextButton.graphics.lineStyle(thick, color);

@@ -1,5 +1,6 @@
 package core;
 import haxe.Constraints.Function;
+import openfl.display.PixelSnapping;
 import openfl.display.Sprite;
 import openfl.events.MouseEvent;
 import openfl.display.Bitmap;
@@ -23,14 +24,13 @@ class Button extends Sprite
 	public function new(?xpos:Int=0,?ypos:Int=0,path:String="",sWidth:Int=-1,sHeight:Int=-1) 
 {	
     super();
-bitmap = new Bitmap();
-bitmap.smoothing = true;
 buttonMode = true;
 if(path.length > 0)
 {
 if(path.substring(path.length - 4, path.length) == ".png")
 {
-bitmap.bitmapData = Assets.getBitmapData(path);
+bitmap = new Bitmap(Assets.getBitmapData(path), PixelSnapping.ALWAYS, true);
+addChild(bitmap);
 if(sWidth > 0)bitmap.width = sWidth;
 if(sHeight > 0)bitmap.height = sHeight;
 }else{
@@ -48,7 +48,6 @@ this.graphics.drawRect(0, 0, sWidth, sHeight);
 }
 x = xpos;
 y = ypos;
-addChild(bitmap);
 addEventListener(Event.REMOVED_FROM_STAGE, remove);
 addEventListener(Event.ADDED, add);
 }

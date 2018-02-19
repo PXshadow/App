@@ -15,7 +15,6 @@ import openfl.Assets;
 import openfl.Lib;
 import openfl.text.TextFormatAlign;
 import core.App;
-import lime.text.UTF8String;
 import openfl.events.FocusEvent;
 #if mobile
 import nativetext.*;
@@ -202,7 +201,9 @@ class InputText extends DisplayObjectContainer
 		}
 		textfield.text = placeholderString;
 	addChild(textfield);
-	textfield.addEventListener(openfl.events.TextEvent.TEXT_INPUT, __updateText);
+	#if html5
+	textfield.addEventListener(openfl.events.TextEvent.TEXT_INPUT, updateText);
+	#end
 	#end
 	this.x = sx;
 	this.y = sy;
@@ -267,12 +268,11 @@ class InputText extends DisplayObjectContainer
 		}
 		#end
 	}
-	
-public function __updateText(value:String):Void 
-	{
-		#if html5
-if (App.mobile)
+#if html5
+public function updateText(value:String):Void 
 {
+/* if (App.mobile)
+ {
 	if (value != placeholderString)
 	{
 		var word:String = "";
@@ -285,9 +285,9 @@ if (App.mobile)
 		
 		}
 	}
+ }*/
 }
-		#end
-	}
+#end
 	public function removed(_)
 	{
 	trace("hi");
@@ -298,7 +298,9 @@ if (App.mobile)
 	nativeText.Destroy();
 	removeEventListener(Event.ENTER_FRAME, update);
 	#else
-	textfield.removeEventListener(openfl.events.TextEvent.TEXT_INPUT, __updateText);
+	#if html5
+	textfield.removeEventListener(openfl.events.TextEvent.TEXT_INPUT, updateText);
+	#end
 	#end
 	}
 }

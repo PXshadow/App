@@ -194,10 +194,9 @@ class ProfileIcon extends Button
     public var maskShape:Shape;
     public var outline:Shape;
 
-    public function new(?x:Int=0,?y:Int=0,path:String="",size:Int=90,outlineColor:Int=0)
+    public function new(?x:Int=0,?y:Int=0,path:String="",size:Int=90,outlineColor:Int=0,lineSize:Int=4)
     {
         super(x,y,path,size,size);
-        var line:Int = 4;
         maskShape = new Shape();
         maskShape.graphics.beginFill();
         maskShape.graphics.drawCircle(width/2,width/2,width/2);
@@ -206,8 +205,8 @@ class ProfileIcon extends Button
         addChild(maskShape);
         //outline
         outline = new Shape();
-        outline.graphics.lineStyle(line,outlineColor);
-        outline.graphics.drawCircle(width/2 ,width/2,width/2 - line/2);
+        outline.graphics.lineStyle(lineSize,outlineColor);
+        outline.graphics.drawCircle(width/2 ,width/2,width/2 - lineSize/2);
         outline.visible = false;
         addChild(outline);
     }
