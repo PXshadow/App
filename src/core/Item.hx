@@ -193,10 +193,20 @@ class ProfileIcon extends Button
 {
     public var maskShape:Shape;
     public var outline:Shape;
+	public var id:Int;
+	private var _lineSize:Int;
+	private var _outlineColor:Int;
+	private var _size:Int;
 
-    public function new(?x:Int=0,?y:Int=0,path:String="",size:Int=90,outlineColor:Int=0,lineSize:Int=4)
+    public function new(?x:Int=0,?y:Int=0,path:String="",size:Int=90,outlineColor:Int=0,lineSize:Int=4,setId:Int=0)
     {
-        super(x,y,path,size,size);
+        super(x, y, path, size, size);
+		id = setId;
+		_size = size;
+		_outlineColor = outlineColor;
+		_lineSize = lineSize;
+		if (path != "")
+		{
         maskShape = new Shape();
         maskShape.graphics.beginFill();
         maskShape.graphics.drawCircle(width/2,width/2,width/2);
@@ -209,19 +219,36 @@ class ProfileIcon extends Button
         outline.graphics.drawCircle(width/2 ,width/2,width/2 - lineSize/2);
         outline.visible = false;
         addChild(outline);
+		}
     }
+	
+	public function update(path:String)
+	{
+		maskShape = new Shape();
+        maskShape.graphics.beginFill();
+        maskShape.graphics.drawCircle(width/2,width/2,width/2);
+        maskShape.graphics.endFill();
+        mask = maskShape;
+        addChild(maskShape);
+        //outline
+        outline = new Shape();
+        outline.graphics.lineStyle(_lineSize,_outlineColor);
+        outline.graphics.drawCircle(width/2 ,width/2,width/2 - _lineSize/2);
+        outline.visible = false;
+        addChild(outline);
+	}
 	
 	override public function mouseDown(_) 
 	{
 		super.mouseDown(_);
-		outline.visible = true;
+		if(outline != null)outline.visible = true;
         alpha = 1;
 	}
 	
     override public function mouseUp(_)
     {
 		super.mouseUp(_);
-        outline.visible = false;
+        if(outline != null)outline.visible = false;
     }
 }
 

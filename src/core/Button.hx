@@ -7,19 +7,18 @@ import openfl.display.Bitmap;
 import openfl.Assets;
 import format.SVG;
 import openfl.events.Event;
+import openfl.geom.Matrix;
 
 class Button extends Sprite 
 {
-
-    public var bitmap:Bitmap;
 	//functions 
 	public var Down:Dynamic->Void;
 	public var Up:Dynamic->Void;
 	public var Click:Dynamic->Void;
 	public var mouseOut:Bool = true;
-	public var pathString:String;
 	public var rectBool:Bool = false;
 	public var bool:Bool = false;
+	public var vector:Bool = true;
                                                                              //invis button
 	public function new(?xpos:Int=0,?ypos:Int=0,path:String="",sWidth:Int=-1,sHeight:Int=-1) 
 {	
@@ -27,17 +26,7 @@ class Button extends Sprite
 buttonMode = true;
 if(path.length > 0)
 {
-if(path.substring(path.length - 4, path.length) == ".png")
-{
-bitmap = new Bitmap(Assets.getBitmapData(path), PixelSnapping.ALWAYS, true);
-addChild(bitmap);
-if(sWidth > 0)bitmap.width = sWidth;
-if(sHeight > 0)bitmap.height = sHeight;
-}else{
-//svg
-new SVG(Assets.getText(path)).render(this.graphics, 0, 0, sWidth, sHeight);
-pathString = path.substring(0,path.length - 4);
-}
+updateGraphic(path,sWidth,sHeight,false);
 }else{
 if(sWidth > 0)
 {
@@ -50,6 +39,30 @@ x = xpos;
 y = ypos;
 addEventListener(Event.REMOVED_FROM_STAGE, remove);
 addEventListener(Event.ADDED, add);
+}
+
+public function updateGraphic(path:String,sWidth:Int=-1,sHeight:Int=-1,clear:Bool=true)
+{
+	if(clear)graphics.clear();
+	
+if(path.substring(path.length - 4, path.length) == ".png")
+{
+var bmd = Assets.getBitmapData(path);
+var mat = new Matrix();
+var sx:Float = 1;
+var sy:Float = 1;
+if(sWidth > 0) sx = 1 / bmd.width * sWidth;
+if(sHeight > 0) sy = 1 / bmd.height * sHeight;
+mat.scale(sx, sy);
+graphics.beginBitmapFill(bmd,mat, false, true);
+graphics.drawRect(0, 0, sx * bmd.width, sy * bmd.height);
+vector = false;
+}else{
+//svg
+new SVG(Assets.getText(path)).render(this.graphics, 0, 0, sWidth, sHeight);
+vector = true;
+}
+	
 }
   /*
    * Mouse out is true
@@ -91,20 +104,5 @@ addEventListener(Event.ADDED, add);
 		graphics.endFill();
 		rectBool = true;
 	}
-	public function pressed(stg:String)
-	{
-		graphics.clear();
-		new SVG(Assets.getText(stg + ".svg")).render(graphics);
-		if (rectBool) drawRect();
-	}
-	public function unPressed()
-	{
-		graphics.clear();
-		new SVG(Assets.getText(pathString + ".svg")).render(graphics);
-		if (rectBool) drawRect();
-	}
-	
-
-
 
 }

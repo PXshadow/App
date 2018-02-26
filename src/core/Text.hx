@@ -30,14 +30,11 @@ class Text extends TextField
 	width = App.setWidth;
 	}else{
 	width = fieldWidth;
-	//multiline = true;
 	}
 	text = textString;
 	defaultTextFormat = new TextFormat(Assets.getFont(App.textFormat).fontName, size, color, false, false, false, "", "", align);
 	embedFonts = true;
 	}
-	
-	
 	@:noCompletion override private function __updateText(value:String):Void
 	{
 		super.__updateText(value);
@@ -54,5 +51,4 @@ class Text extends TextField
 		}
 		initalTextRender = false;
 	}
-	
 }

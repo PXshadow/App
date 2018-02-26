@@ -47,10 +47,6 @@ class State extends DisplayObjectContainer
 	 */
 	public static var py:Int = 0;
 	/**
-	 * Public refrence to App class 
-	 */
-	public var app:App;
-	/**
 	 * If resize inital of stage has happened
 	 */
 	public var resizeBool:Bool = false;
@@ -67,18 +63,22 @@ class State extends DisplayObjectContainer
 		App.main.cameraMinX = -minX;
 		App.main.cameraMaxX = -maxX;
 		App.dragBool = false;
-		app = App.main;
 		App.mouseDown = false;
 		App.main.onResize = null;
 		App.main.onMouseUp = null;
+		App.main.maxEventX = null;
+		App.main.maxEventY = null;
+		App.main.minEventX = null;
+		App.main.minEventY = null;
 		//add
-		app.addChild(this);
+		App.main.addChild(this);
 		App.omX = mouseX;
 		App.omY = mouseY;
 		App.camY = 0;
 		App.camX = 0;
 		App.scrollSpeedY = 0;
 		App.scrollSpeedX = 0;
+		App.scrollBool = false;
 		mouseEnabled = false;
 		//resize
 		var tim = new Timer(1);

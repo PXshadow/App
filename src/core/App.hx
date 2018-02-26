@@ -5,7 +5,9 @@ import core.Text;
 import core.UrlState;
 import core.Network;
 import haxe.crypto.Base64;
+import lime.ui.KeyCode;
 import openfl.display.DisplayObjectContainer;
+import openfl.ui.Keyboard;
 
 import format.SVG;
 import haxe.Timer;
@@ -51,6 +53,11 @@ class App extends DisplayObjectContainer
 	public var cameraMaxY:Int = 0;
 	public var cameraMinX:Int = 0;
 	public var cameraMaxX:Int = 0;
+	public var maxEventY:Void->Bool;
+	public var maxEventX:Void->Bool;
+	public var minEventX:Void->Bool;
+	public var minEventY:Void->Bool;
+	private var restrictInt:Int = 0;
 	
 	//if camera is scrolling used to have buttons not go off during
 	public static var scrollPress:Bool = false;
@@ -68,13 +75,9 @@ class App extends DisplayObjectContainer
 	public static var scrollDuration:Int = 0;
 	public static var scrollBool:Bool = false;
 	public var scrollInt:Int = 0;
-	public var vectorY = new Vector(0);
-	public var vectorX = new Vector(0);
+	public var vectorY:Vector<Float>;
+	public var vectorX:Vector<Float>;
 	//debug
-	/**
-	 * Debug Text showing framerate elasped time,scale,memory,version,mobile bool
-	 */
-	public var info:InfoDebug;
 	/**
 	 * Set to False to Remove Info Bool
 	 */
@@ -124,9 +127,13 @@ class App extends DisplayObjectContainer
 	 * @param	sx Width of App
 	 * @param	sy Height of App
 	 */
+	/**
+	 * Back button , Android back button, Computer 
+	 */
 	public function new(sx:Int=640,sy:Int=1136) 
 	{
 		super();
+		Lib.current.mouseEnabled = false;
 		//set mobile 
 		#if mobile
 		mobile = true;
@@ -159,10 +166,6 @@ class App extends DisplayObjectContainer
 		Lib.current.stage.addEventListener(Event.RESIZE, resize);
 		//add self
 		Lib.current.addChild(this);
-		//#if debug
-		if(infoBool)info = new InfoDebug(0,infoSize);
-		//#end
-		
 		Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, function(e:MouseEvent)
 		{
 		if (state != null)
@@ -176,7 +179,6 @@ class App extends DisplayObjectContainer
 		state.mouseDown();
 		}
 		});
-		
 		Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, function(e:MouseEvent)
 		{
 			mouseDown = false;
@@ -186,9 +188,8 @@ class App extends DisplayObjectContainer
 			}
 			if(onMouseUp != null)onMouseUp(e);
 		});
-		
-#if !mobile
-if (!mobile)
+		#if !mobile
+		if (!mobile)
 		{
 		Lib.current.stage.addEventListener(MouseEvent.MOUSE_WHEEL,function(e:MouseEvent)
 		{
@@ -203,24 +204,25 @@ if (!mobile)
 			state.keyUp(e);
 		});
 		}
-#end
-	
+		#end
+		
 		Lib.current.stage.addEventListener(Event.ENTER_FRAME, function(e:Event)
 		{
 		//set old
 		oldSSX= App.scrollSpeedX;
 		oldSSY = App.scrollSpeedY;
 		
-		if (App.mouseDown && App.dragBool)
-		{
-		App.scrollSpeedY = App.state.mouseY - App.omY;
-		App.scrollSpeedX = App.state.mouseX - App.omX;
-		}else{
+	if (App.mouseDown && App.dragBool)
+	{
+	App.scrollSpeedY = App.state.mouseY - App.omY;
+	App.scrollSpeedX = App.state.mouseX - App.omX;
+	}else{
+		
 		if (scrollBool)
 		{
 		App.scrollSpeedY = vectorY[scrollInt];
 		App.scrollSpeedX = vectorX[scrollInt];
-		if (scrollInt == scrollDuration)
+		if (scrollInt >= scrollDuration)
 		{
 		scrollBool = false;
 		scrollSpeedY = 0;
@@ -228,41 +230,60 @@ if (!mobile)
 		}
 		scrollInt ++;
 		}
+	}
+		//SEND OUT restrict events
+		if (restrictInt > 0)
+		{
+			switch(restrictInt)
+			{
+				case 1:
+				minEventY();
+				case 2:
+				maxEventY();
+				case 3:
+				minEventX();
+				case 4:
+				maxEventX();
+			}
+			restrictInt = 0;
 		}
-	
-		
-	//RESTRICT Y
-	if (App.main.cameraMinY != App.main.cameraMaxY)
-	{
-	if (App.camY + App.scrollSpeedY > App.main.cameraMinY && App.scrollSpeedY >= 0)
-	{
+		//RESTRICT Y
+	   if (App.main.cameraMinY != App.main.cameraMaxY)
+	   {
+		if (App.camY + App.scrollSpeedY > App.main.cameraMinY && App.scrollSpeedY >= 0)
+		{
 		App.scrollSpeedY = -App.camY + App.main.cameraMinY;
-		scrollInt = scrollDuration;
-	}
-	if (App.camY + App.scrollSpeedY < App.main.cameraMaxY && App.scrollSpeedY <= 0)
-	{
+		scrollInt = scrollDuration + 1;
+		if (minEventY != null) restrictInt = 1;
+		}
+		if (App.camY + App.scrollSpeedY < App.main.cameraMaxY && App.scrollSpeedY <= 0)
+		{
 		App.scrollSpeedY = -App.camY + App.main.cameraMaxY;
-		scrollInt = scrollDuration;
-	}
-	}
-	//X
-	if (App.main.cameraMinX != App.main.cameraMaxX)
-	{
-	if (App.camX + App.scrollSpeedX > App.main.cameraMinX && App.scrollSpeedX >= 0)
-	{
+		scrollInt = scrollDuration + 1;
+		if (maxEventY != null) restrictInt = 2;
+		}
+		//Speed
+		App.camY += App.scrollSpeedY;
+	   }
+		//X
+	   if (App.main.cameraMinX != App.main.cameraMaxX)
+	   {
+		if (App.camX + App.scrollSpeedX > App.main.cameraMinX && App.scrollSpeedX >= 0)
+		{
 		App.scrollSpeedX = -App.camX + App.main.cameraMinX;
-		scrollInt = scrollDuration;
-	}
-	if (App.camX + App.scrollSpeedX < App.main.cameraMaxX && App.scrollSpeedX <= 0)
-	{
+		scrollInt = scrollDuration + 1;
+		if (minEventX != null) restrictInt = 3;
+		}
+		if (App.camX + App.scrollSpeedX < App.main.cameraMaxX && App.scrollSpeedX <= 0)
+		{
 		App.scrollSpeedX = -App.camX + App.main.cameraMaxX;
-		scrollInt = scrollDuration;
-	}
-	}
-	
-	App.camY += App.scrollSpeedY;
-	App.camX += App.scrollSpeedX;
-			if (info != null) info.onEnter();
+		scrollInt = scrollDuration + 1;
+		if (maxEventX != null) restrictInt = 4;
+		}
+		//speed 
+		App.camX += App.scrollSpeedX;
+		//infinite scroll
+	   }
 			if (state != null)
 			{
 			state.update();
@@ -270,31 +291,35 @@ if (!mobile)
 			omY = App.state.mouseY;
 			}
 		//update networkings
-		if(network != null)network.update();
+		if (network != null) network.update();
 		}); 
 		
 		Lib.current.stage.addEventListener (openfl.events.Event.ACTIVATE, function (_) {
-			
+		Lib.current.stage.frameRate = 60;
 		});
 		
 		Lib.current.stage.addEventListener (openfl.events.Event.DEACTIVATE, function (_) {
 			scrollSpeedY = 0;
-			
+			Lib.current.stage.frameRate = 5;
 		});
-		
-		
 	}
 	
 		public static function scrollCamera()
-			{
-				
+		{
+			//1950 / (1000 / 60) = 117;
 			if (Math.abs(spY - App.state.mouseY) < 10) scrollPress = true;
 			mouseDown = false;
-			//Math.floor(1950 / (1000 / 60) = 117;
 			scrollDuration = 117;
 			if (Math.abs(scrollSpeedY) > 0 && Math.abs(scrollSpeedY) < 70 || Math.abs(scrollSpeedX) > 0 && Math.abs(scrollSpeedX) < 70) scrollDuration = 80;
-			App.main.vectorY = new Vector(scrollDuration);
-			App.main.vectorX = new Vector(scrollDuration);
+			//speed limiter
+			var limit = 140;
+			if (scrollSpeedY > limit) scrollSpeedY = limit;
+			if (scrollSpeedY < -limit) scrollSpeedY = -limit;
+			if (scrollSpeedX > limit) scrollSpeedX = limit;
+			if (scrollSpeedX < limit) scrollSpeedX = -limit;
+			
+			App.main.vectorY = new Vector<Float>(scrollDuration);
+			App.main.vectorX = new Vector<Float>(scrollDuration);
 			
 			for (i in 0...scrollDuration)
 			{
@@ -309,7 +334,7 @@ if (!mobile)
 			App.main.scrollInt = 0;
 			scrollDuration += -1;
 			scrollBool = true;
-			}
+		}
 			
 			public static function enableCameraMovement()
 			{
@@ -320,6 +345,7 @@ if (!mobile)
 			{
 				scrollBool = false;
 				dragBool = false;
+				scrollDuration = 0;
 				scrollSpeedX = 0;
 				scrollSpeedY = 0;
 			}
@@ -336,7 +362,7 @@ if (!mobile)
 				if (frameX > 0)
 				{
 				App.main.vectorX = new Vector(frameX + 1);
-				var vX = disX / frameX;
+				var vX:Int = Math.round(disX / frameX);
 				for (i in 0...frameX)
 				{
 					App.main.vectorX[i] = vX;
@@ -347,7 +373,7 @@ if (!mobile)
 				if (frameY > 0)
 				{
 				App.main.vectorY = new Vector(frameY + 1);
-				var vY = disY / frameY;
+				var vY:Int = Math.round(disY / frameY);
 				for (i in 0...frameY)
 				{
 					App.main.vectorY[i] = vY;
@@ -379,10 +405,10 @@ public function getUrlParams()
 		if (e.match(url)) {
 		 var pos = url.indexOf("?", 0);
 		 var pos2 = url.indexOf("/", pos);
-		   var name = url.substring(pos + 1, pos2);
-		   UrlState.data = url.substring(pos2, url.length);
-		   trace("URL name " + name + " data " + UrlState.data);
-		   
+		 var name = url.substring(pos + 1, pos2);
+		 UrlState.data = url.substring(pos2, url.length);
+		 trace("URL name " + name + " data " + UrlState.data);  
+		 
 	for (urlObj in urlArray)
 	{
 			if (urlObj.name == name)
@@ -660,7 +686,6 @@ Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
 		if (resizeBool)
 		{
 		App.state.resize(Math.floor((stage.stageWidth - setWidth * App.scale) / 2), 0, scale, scale);
-	    if(info != null)info.resize();
 		}
 		}
 		//call on resize

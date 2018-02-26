@@ -163,13 +163,13 @@ class InputText extends DisplayObjectContainer
 		nativeText = new NativeTextField({
 		x:0, 
 		y:0,
-		width:fieldWidth,
+		width:Math.round(fieldWidth * App.scale),
 		height:setHeight,
 		visible:true,
 		enabled:true,
 		placeholder:placeString,
 		fontAsset:App.textFormat,
-		fontSize:Math.round(fsize), //* App.scale),
+		fontSize:Math.round(fsize * App.scale),
 		fontColor:color,
 		textAlignment:NativeTextFieldAlignment.Left,
 		keyboardType:_keyType,
@@ -222,7 +222,6 @@ class InputText extends DisplayObjectContainer
 		{
 		if (oldX != x || oldY != y)
 		{
-		trace("x " + Std.string(x * App.scale) + " y " + Std.string(y * App.scale));
 		nativeText.Configure({x:x * App.scale,y:y * App.scale});
 		oldX = x; oldY = y;
 		}
