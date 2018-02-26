@@ -17,7 +17,15 @@ class Button extends Sprite
 	public var Click:Dynamic->Void;
 	public var mouseOut:Bool = true;
 	public var rectBool:Bool = false;
-	public var bool:Bool = false;
+	@:isVar public var bool(get,set):Bool = false;
+	public function get_bool():Bool
+	{
+		return bool;
+	}
+	public function set_bool(value:Bool):Bool
+	{
+		return bool = value;
+	}
 	public var vector:Bool = true;
                                                                              //invis button
 	public function new(?xpos:Int=0,?ypos:Int=0,path:String="",sWidth:Int=-1,sHeight:Int=-1) 
@@ -97,6 +105,7 @@ vector = true;
 	}
 	public function drawRect(setWidth:Float=0,setHeight:Float=0)
 	{
+		graphics.endFill();
 		graphics.beginFill(0, 0);
 		if (setWidth <= 0) setWidth = width;
 		if (setHeight <= 0) setHeight = height;
