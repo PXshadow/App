@@ -1,6 +1,7 @@
 package core;
 
 import core.InputText.NativeTextFieldKeyboardType;
+import haxe.Timer;
 import haxe.Utf8;
 import openfl.display.DisplayObject;
 import openfl.display.DisplayObjectContainer;
@@ -55,11 +56,11 @@ class InputText extends DisplayObjectContainer
 	public var keyboardDis:Int = 0;
 	public var oldX:Float = 0;
 	public var oldY:Float = 0;
+	var isDrag:Bool = false;
 	#if mobile
 	public var nativeText:NativeTextField;
-	#else
-	public var textfield:TextField;
 	#end
+	public var textfield:TextField;
 	@:isVar public var text(get, set):String;
 	@:isVar public var focus(get, set):Bool;
 	@:isVar public var show(get, set):Bool;
@@ -165,8 +166,8 @@ class InputText extends DisplayObjectContainer
 		y:0,
 		width:Math.round(fieldWidth * App.scale),
 		height:setHeight,
-		visible:true,
-		enabled:true,
+		visible:false,
+		enabled:false,
 		placeholder:placeString,
 		fontAsset:App.textFormat,
 		fontSize:Math.round(fsize * App.scale),
@@ -177,7 +178,18 @@ class InputText extends DisplayObjectContainer
 		multiline:_multiline,
 		placeholderColor:pcolor
 		});
-		#else
+		nativeText.addEventListener(nativetext.event.NativeTextEvent.FOCUS_OUT, function(_)
+		{
+		//if state scrolls turn scroll back on
+		App.dragBool = isDrag;
+		App.scrollBool = false;
+		//change to placeholder text
+		textfield.visible = true;
+		if(Utf8.validate(nativeText.GetText()))textfield.text = Utf8.decode(nativeText.GetText());
+		textfield.defaultTextFormat = new TextFormat(null, null, newColor);
+		nativeText.Configure({visible:false, enabled:false});	
+		});
+		#end
 		textfield = new TextField();
 		textfield.multiline = _multiline;
 		textfield.wordWrap = !_multiline;
@@ -187,8 +199,11 @@ class InputText extends DisplayObjectContainer
 		pColor = pcolor;
 		size = fsize;
 		placeholderString = placeString;
+		textfield.selectable = false;
+		#if !mobile
 		textfield.selectable = true;
 		textfield.type = TextFieldType.INPUT;
+		#end
 		textfield.defaultTextFormat = new TextFormat(Assets.getFont(App.textFormat).fontName, Math.floor(fsize), pcolor, false, false, false, "", "", TextFormatAlign.LEFT);
 		textfield.restrict = "\u0020-\u007E";
 		textfield.multiline = _multiline;
@@ -204,35 +219,29 @@ class InputText extends DisplayObjectContainer
 	#if html5
 	textfield.addEventListener(openfl.events.TextEvent.TEXT_INPUT, updateText);
 	#end
-	#end
 	this.x = sx;
 	this.y = sy;
 	//events
 	addEventListener(MouseEvent.MOUSE_DOWN, text_onMouseDown);
 	addEventListener(FocusEvent.FOCUS_OUT, text_onFocusOut);
 	addEventListener(Event.REMOVED_FROM_STAGE, removed);
-	#if mobile
-	addEventListener(Event.ENTER_FRAME, update);
-	#end
+	
 	}
-	#if mobile
-	public function update(_)
-	{
-		if (App.state.resizeBool)
-		{
-		if (oldX != x || oldY != y)
-		{
-		nativeText.Configure({x:x * App.scale,y:y * App.scale});
-		oldX = x; oldY = y;
-		}
-		}
-	}
-	#end
 	
 	public function text_onMouseDown(event:MouseEvent):Void 
 	{
 		#if mobile
-		
+		isDrag = App.dragBool;
+		App.disableCameraMovment();
+		textfield.visible = false;
+		nativeText.Configure({enabled:true, visible:true, x:x * App.scale, y:y * App.scale});
+		var tim = new Timer(20);
+		tim.run = function()
+		{
+		nativeText.SetFocus();
+		tim.stop();
+		tim = null;
+		}
 		#else
 		if (textfield.text == placeholderString)
 		{
@@ -289,13 +298,11 @@ public function updateText(value:String):Void
 #end
 	public function removed(_)
 	{
-	trace("hi");
 	removeEventListener(MouseEvent.MOUSE_DOWN, text_onMouseDown);
 	removeEventListener(FocusEvent.FOCUS_OUT, text_onFocusOut);
 	removeEventListener(Event.REMOVED_FROM_STAGE, removed);
 	#if mobile
 	nativeText.Destroy();
-	removeEventListener(Event.ENTER_FRAME, update);
 	#else
 	#if html5
 	textfield.removeEventListener(openfl.events.TextEvent.TEXT_INPUT, updateText);

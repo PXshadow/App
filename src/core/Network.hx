@@ -128,7 +128,6 @@ class Network
 	{
 		try
 		{
-		trace("obj " + obj);
 		var ser = new Serializer();
 		ser.serialize(obj);
 		write(ser.toString());
@@ -152,14 +151,14 @@ class Network
 	}
 	public function unSer(str:String)
 	{
-		try
-			{
+		    //try
+			//{
 			onMessage(new Unserializer(str).unserialize());
-			}
+			/*}
 			catch (e:Dynamic)
 			{
 				trace("unser " + e);
-			}
+			}*/
 	}
   
 	public function update()

@@ -42,7 +42,6 @@ class App extends DisplayObjectContainer
 	public static var scale:Float = 0;
 	
 	public static var state:State;
-	public static var background:Bitmap;
 	//old mouse postions
 	public static var omX:Float = 0;
 	public static var omY:Float = 0;
@@ -160,8 +159,6 @@ class App extends DisplayObjectContainer
 		setWidth = sx;
 		setHeight = sy;
 		mouseEnabled = false;
-		//add background
-		if (background != null) addChild(background);
 		main = this;
 		Lib.current.stage.addEventListener(Event.RESIZE, resize);
 		//add self
@@ -284,6 +281,7 @@ class App extends DisplayObjectContainer
 		App.camX += App.scrollSpeedX;
 		//infinite scroll
 	   }
+	   
 			if (state != null)
 			{
 			state.update();
@@ -307,6 +305,8 @@ class App extends DisplayObjectContainer
 		public static function scrollCamera()
 		{
 			//1950 / (1000 / 60) = 117;
+			if (dragBool)
+			{
 			if (Math.abs(spY - App.state.mouseY) < 10) scrollPress = true;
 			mouseDown = false;
 			scrollDuration = 117;
@@ -324,16 +324,17 @@ class App extends DisplayObjectContainer
 			for (i in 0...scrollDuration)
 			{
 				scrollSpeedY *= 0.95;
-			   App.main.vectorY[i] = scrollSpeedY;
+			   App.main.vectorY[i] = Math.round(scrollSpeedY);
 			}
 				for (i in 0...scrollDuration)
 			{
 				scrollSpeedX *= 0.95;
-			   App.main.vectorX[i] = scrollSpeedX;
+			   App.main.vectorX[i] = Math.round(scrollSpeedX);
 			}
 			App.main.scrollInt = 0;
 			scrollDuration += -1;
 			scrollBool = true;
+			}
 		}
 			
 			public static function enableCameraMovement()
@@ -359,8 +360,6 @@ class App extends DisplayObjectContainer
 				mouseDown = false;
 				scrollDuration = Math.floor(Math.max(frameX, frameY));
 				
-				if (frameX > 0)
-				{
 				App.main.vectorX = new Vector(frameX + 1);
 				var vX:Int = Math.round(disX / frameX);
 				for (i in 0...frameX)
@@ -368,10 +367,7 @@ class App extends DisplayObjectContainer
 					App.main.vectorX[i] = vX;
 				}
 				App.main.vectorX[frameX] = 0;
-				}
 				
-				if (frameY > 0)
-				{
 				App.main.vectorY = new Vector(frameY + 1);
 				var vY:Int = Math.round(disY / frameY);
 				for (i in 0...frameY)
@@ -379,7 +375,7 @@ class App extends DisplayObjectContainer
 					App.main.vectorY[i] = vY;
 				}
 				App.main.vectorY[frameY] = 0;
-				}
+				
 				App.main.scrollInt = 0;
 			    scrollBool = true;
 			}
@@ -418,7 +414,6 @@ public function getUrlParams()
 				{
 				App.state.remove();
 				App.state = Type.createInstance(urlObj.state, []);
-				App.background.visible = false;
 				k.stop();
 				k = null;
 				}
@@ -674,12 +669,6 @@ Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
 		//safe NEP
 		if (state != null)
 		{
-		//resize bg 
-		if (background != null)
-		{
-		background.width = stage.stageWidth;
-		background.height = stage.stageHeight;
-		}
 		var tempX:Float = stage.stageWidth / setWidth;
 		var tempY:Float = stage.stageHeight / setHeight;
 		scale = Math.min(tempX, tempY);

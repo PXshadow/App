@@ -67,7 +67,7 @@ graphics.drawRect(0, 0, sx * bmd.width, sy * bmd.height);
 vector = false;
 }else{
 //svg
-new SVG(Assets.getText(path)).render(this.graphics, 0, 0, sWidth, sHeight);
+new SVG(Assets.getText(path)).render(graphics, 0, 0, sWidth, sHeight);
 vector = true;
 }
 	
@@ -103,13 +103,13 @@ vector = true;
 	{
 		if (Click != null) Click(e);
 	}
-	public function drawRect(setWidth:Float=0,setHeight:Float=0)
+	public function drawRect(setWidth:Float=0,setHeight:Float=0,setX:Int=0,setY:Int=0)
 	{
 		graphics.endFill();
 		graphics.beginFill(0, 0);
 		if (setWidth <= 0) setWidth = width;
 		if (setHeight <= 0) setHeight = height;
-		graphics.drawRect(0, 0, setWidth, setHeight);
+		graphics.drawRect(setX,setY, setWidth, setHeight);
 		graphics.endFill();
 		rectBool = true;
 	}

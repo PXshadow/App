@@ -12,10 +12,9 @@ States
 - Url States
 - Camera Restrictions
 - Buttons
-- Input text with Placeholder
+- Input text with Placeholder and NativeText implementation for ios and android.
 - Easy Asset creation
 - Custom Scaling Engine with setting Object Headers (No streching or black bars)
-- Info section at bottom with Fps counter, memory , scaling, version , and Mobile bool
 
 ## Installation
 

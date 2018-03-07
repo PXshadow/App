@@ -53,9 +53,15 @@ class State extends DisplayObjectContainer
 	/**
 	 * Min and Max Camera Scroll Distances Defualt is no Restrictions
 	 */
+	/**
+	 *  Object that is below the entire state can be any display object
+	 */
+	public var background:DisplayObject;
 	public function new(minY:Int=0,maxY:Int=0,minX:Int=0,maxX:Int=0) 
 	{
 		super();
+		if (background != null)addChild(background);
+		
 		visible = false;
 		//set camera restrict
 		App.main.cameraMinY = -minY;
@@ -144,6 +150,13 @@ class State extends DisplayObjectContainer
 		&&!Std.is(getChildAt(i), openfl.display.Bitmap) 
 		//&& !Std.is(getChildAt(i), TextField)
 		)getChildAt(i).cacheAsBitmap = true;
+		}
+		//background sizing
+		if (background != null)
+		{
+		background.x = -State.px * 1 / App.scale;
+		background.width = Lib.current.stage.stageWidth * 1 / App.scale;
+		background.height = Lib.current.stage.stageHeight * 1 / App.scale;
 		}
 		visible = true;
 	}

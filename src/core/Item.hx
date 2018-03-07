@@ -252,37 +252,28 @@ class ProfileIcon extends Button
 		_size = size;
 		_outlineColor = outlineColor;
 		_lineSize = lineSize;
-		if (path != "")
-		{
-        maskShape = new Shape();
-        maskShape.graphics.beginFill();
-        maskShape.graphics.drawCircle(width/2,width/2,width/2);
-        maskShape.graphics.endFill();
-        mask = maskShape;
-        addChild(maskShape);
-        //outline
-        outline = new Shape();
-        outline.graphics.lineStyle(lineSize,outlineColor);
-        outline.graphics.drawCircle(width/2 ,width/2,width/2 - lineSize/2);
-        outline.visible = false;
-        addChild(outline);
-		}
+		maskShape = new Shape();
+		addChild(maskShape);
+		outline = new Shape();
+		addChild(outline);
+		if (path != "") update(false);
     }
 	
-	public function update(path:String)
+	public function update(clear:Bool=true)
 	{
-		maskShape = new Shape();
+		if (clear)
+		{
+			maskShape.graphics.clear();
+			outline.graphics.clear();
+		}
         maskShape.graphics.beginFill();
         maskShape.graphics.drawCircle(width/2,width/2,width/2);
         maskShape.graphics.endFill();
         mask = maskShape;
-        addChild(maskShape);
         //outline
-        outline = new Shape();
         outline.graphics.lineStyle(_lineSize,_outlineColor);
         outline.graphics.drawCircle(width/2 ,width/2,width/2 - _lineSize/2);
         outline.visible = false;
-        addChild(outline);
 	}
 	
 	override public function mouseDown(_) 
