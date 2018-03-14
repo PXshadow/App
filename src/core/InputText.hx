@@ -60,6 +60,9 @@ class InputText extends DisplayObjectContainer
 	#if mobile
 	public var nativeText:NativeTextField;
 	#end
+	#if html5
+	public var htmlText:js.html.Element;
+	#end
 	public var textfield:TextField;
 	@:isVar public var text(get, set):String;
 	@:isVar public var focus(get, set):Bool;
@@ -76,10 +79,9 @@ class InputText extends DisplayObjectContainer
 	function set_show(value:Bool):Bool
 	{
 		#if mobile
-		nativeText.Configure({enabled:value, visible:value});
-		#else
-		textfield.visible = value;
+		if(value == false)nativeText.Configure({enabled:value, visible:value});
 		#end
+		textfield.visible = value;
 		return value;
 	}
 	
@@ -144,15 +146,20 @@ class InputText extends DisplayObjectContainer
 	 * @param	_returnType 
 	 */
 	#if mobile
-	public function new(?sx:Float = 0, ?sy:Float = 0, placeString:String, fsize:Int = 24, fieldWidth:Int = 0, pcolor:Int = 0, color:Int = 0, password:Bool = false, _multiline:Bool = false,textfieldHeight:Int=0, _keyType:NativeTextFieldKeyboardType = null, _returnType:NativeTextFieldReturnKeyType = null) 
+	public function new(?sx:Float = 0, ?sy:Float = 0, placeString:String, fsize:Int = 24, fieldWidth:Int = 0, pcolor:Int = 0, color:Int = 0, password:Bool = false, _multiline:Bool = false,textfieldHeight:Int=0, _keyType:NativeTextFieldKeyboardType = null, _returnType:NativeTextFieldReturnKeyType = null,align:String=null) 
 	#else
-	public function new(?sx:Float=0,?sy:Float=0,placeString:String,fsize:Int=24,fieldWidth:Int=0,pcolor:Int=0,color:Int=0,password:Bool=false,_multiline:Bool = false,textfieldHeight:Int=0,_keyType:Dynamic = null, _returnType:Dynamic = null) 
+	public function new(?sx:Float=0,?sy:Float=0,placeString:String,fsize:Int=24,fieldWidth:Int=0,pcolor:Int=0,color:Int=0,password:Bool=false,_multiline:Bool = false,textfieldHeight:Int=0,_keyType:Dynamic = null, _returnType:Dynamic = null,align:String=null) 
 	#end
 	{
 		super();
 		#if mobile
 		if (_keyType == null)_keyType = NativeTextFieldKeyboardType.Default;
 		if (_returnType == null)_returnType = NativeTextFieldReturnKeyType.Default;
+		var nativeTextAlign = NativeTextFieldAlignment.Left;
+		if (align == null) align = TextFormatAlign.LEFT;
+		if (align == TextFormatAlign.CENTER) nativeTextAlign = NativeTextFieldAlignment.Center;
+		if (align == TextFormatAlign.RIGHT) nativeTextAlign = NativeTextFieldAlignment.Right;
+		
 		if (password)_keyType = NativeTextFieldKeyboardType.Password;
 		var setHeight:Dynamic;
 		if (textfieldHeight > 0)
@@ -172,7 +179,7 @@ class InputText extends DisplayObjectContainer
 		fontAsset:App.textFormat,
 		fontSize:Math.round(fsize * App.scale),
 		fontColor:color,
-		textAlignment:NativeTextFieldAlignment.Left,
+		textAlignment:nativeTextAlign,
 		keyboardType:_keyType,
 		returnKeyType:_returnType,
 		multiline:_multiline,
@@ -204,7 +211,7 @@ class InputText extends DisplayObjectContainer
 		textfield.selectable = true;
 		textfield.type = TextFieldType.INPUT;
 		#end
-		textfield.defaultTextFormat = new TextFormat(Assets.getFont(App.textFormat).fontName, Math.floor(fsize), pcolor, false, false, false, "", "", TextFormatAlign.LEFT);
+		textfield.defaultTextFormat = new TextFormat(Assets.getFont(App.textFormat).fontName, Math.floor(fsize), pcolor, false, false, false, "", "", align);
 		textfield.restrict = "\u0020-\u007E";
 		textfield.multiline = _multiline;
 		if (_multiline) textfield.wordWrap = true;
@@ -217,7 +224,22 @@ class InputText extends DisplayObjectContainer
 		textfield.text = placeholderString;
 	addChild(textfield);
 	#if html5
-	textfield.addEventListener(openfl.events.TextEvent.TEXT_INPUT, updateText);
+	if (_multiline)
+	{
+	htmlText = cast js.Browser.document.createElement("textArea");
+	}else{
+	htmlText = cast js.Browser.document.createElement("input");
+	}
+	htmlText.setAttribute("placeholder", placeholderString);
+	htmlText.setAttribute("spellcheck", "false");
+	htmlText.setAttribute("size", Std.string(Math.round(fieldWidth)));
+	htmlText.style.setProperty("border","none");
+    htmlText.style.setProperty("background","none");
+    htmlText.style.setProperty("outline","none");
+    htmlText.style.setProperty("resize", "none");
+	//js.Browser.document.body.replaceChild(htmlText,js.Browser.document.getElementById("openfl-content"));
+	//js.Browser.document.body.appendChild(htmlText);
+	//js.Browser.document.body.appendChild(htmlText);
 	#end
 	this.x = sx;
 	this.y = sy;
@@ -231,14 +253,18 @@ class InputText extends DisplayObjectContainer
 	public function text_onMouseDown(event:MouseEvent):Void 
 	{
 		#if mobile
-		isDrag = App.dragBool;
-		App.disableCameraMovment();
+		textfield.selectable = false;
+		nativeText.Configure({enabled:true, visible:true, x:Math.round(x * App.scale), y:Math.round(y * App.scale)});
 		textfield.visible = false;
-		nativeText.Configure({enabled:true, visible:true, x:x * App.scale, y:y * App.scale});
-		var tim = new Timer(20);
+		var tim = new Timer(50);
 		tim.run = function()
 		{
 		nativeText.SetFocus();
+		
+		isDrag = App.dragBool;
+		App.dragBool = false;
+		App.disableCameraMovment();
+		
 		tim.stop();
 		tim = null;
 		}
@@ -261,7 +287,16 @@ class InputText extends DisplayObjectContainer
 	public function text_onFocusOut(event:FocusEvent):Void 
 	{
 		#if mobile
-		
+		if (nativeText.GetText() == "")
+		{
+			textfield.text = placeholderString;
+			textfield.displayAsPassword = false;
+			textfield.defaultTextFormat = new TextFormat(null, null, pColor);
+		}
+		textfield.visible = true;
+		textfield.selectable = true;
+		nativeText.Configure({enabled:false, visible:false});
+		trace("unfocus");
 		#else
 		if (textfield.text == "")
 		{
@@ -276,26 +311,7 @@ class InputText extends DisplayObjectContainer
 		}
 		#end
 	}
-#if html5
-public function updateText(value:String):Void 
-{
-/* if (App.mobile)
- {
-	if (value != placeholderString)
-	{
-		var word:String = "";
-		var par:String = "";
-		if (value.length - 1 > text.length)
-		{
-		par = text.substring(text.lastIndexOf(" ") + 1, text.length);
-		word = value.substring(text.length, value.length);
-		value = value.substring(0, text.lastIndexOf(" ") + 1) + word;
-		
-		}
-	}
- }*/
-}
-#end
+	
 	public function removed(_)
 	{
 	removeEventListener(MouseEvent.MOUSE_DOWN, text_onMouseDown);
@@ -305,7 +321,7 @@ public function updateText(value:String):Void
 	nativeText.Destroy();
 	#else
 	#if html5
-	textfield.removeEventListener(openfl.events.TextEvent.TEXT_INPUT, updateText);
+	
 	#end
 	#end
 	}

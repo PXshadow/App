@@ -62,12 +62,12 @@ class Preview extends Window
 class ToggleSlider extends Button
 {
     public var circle:Shape;
-    public var toggleBool:Bool = false;
     public var toggle:Bool->Void;
-    public var colorArray = [16777215,65280];
+    public var colorArray = [5131854,65280];
     public var rad:Int = 0;
     var trackDis:Int = 0;
- public function new(?sx:Int=0,?sy:Int=1,?size:Int=80)
+	public var int:Int = 0;
+	public function new(?sx:Int=0,?sy:Int=1,?size:Int=80,def:Bool=true)
  {
      super(sx,sy);
      rad = Math.floor(size/2);
@@ -86,6 +86,16 @@ class ToggleSlider extends Button
      addChild(circle);
      //set distance
      trackDis = Math.floor(rad * 2);
+	 //create track
+	 this.bool = def;
+	 //set circle postion 
+	 if (bool)
+	 {
+	 circle.x = trackDis; 
+	 }else{
+	 circle.x = 0;
+	 }
+	 createTrack();
  }
 
  public function createTrack()
@@ -93,8 +103,8 @@ class ToggleSlider extends Button
      graphics.clear();
      var color:Int = 0;
      //color
-     if(!toggleBool)color = colorArray[0];
-     if(toggleBool)color = colorArray[1];
+     if(!bool)color = colorArray[0];
+     if(bool)color = colorArray[1];
       graphics.lineStyle(1,13158600);
      //add circles to both side
      graphics.beginFill(color);
@@ -114,17 +124,15 @@ class ToggleSlider extends Button
  override public function mouseDown(_)
  {
 super.mouseDown(_);
-if(toggleBool)
+if(bool)
 {
-circle.x += -trackDis;
-toggleBool = false;
-createTrack();
+circle.x = 0;
 }else{
-circle.x += trackDis;
-toggleBool = true;
-createTrack();
+circle.x = trackDis;
 }
-if(toggle != null)toggle(toggleBool);
+bool = !bool;
+createTrack();
+if(toggle != null)toggle(bool);
  }
  override public function mouseUp(_)
  {

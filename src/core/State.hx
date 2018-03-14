@@ -13,6 +13,7 @@ import openfl.display.Sprite;
 import openfl.events.Event;
 import openfl.events.MouseEvent;
 import openfl.geom.Matrix;
+import openfl.geom.Rectangle;
 import openfl.system.System;
 import openfl.system.System.gc;
 import openfl.Lib;
@@ -69,6 +70,7 @@ class State extends DisplayObjectContainer
 		App.main.cameraMinX = -minX;
 		App.main.cameraMaxX = -maxX;
 		App.dragBool = false;
+		App.dragRect = new Rectangle(0, 0,App.setWidth,App.setHeight);
 		App.mouseDown = false;
 		App.main.onResize = null;
 		App.main.onMouseUp = null;
@@ -76,6 +78,7 @@ class State extends DisplayObjectContainer
 		App.main.maxEventY = null;
 		App.main.minEventX = null;
 		App.main.minEventY = null;
+		App.network.onMessage = null;
 		//add
 		App.main.addChild(this);
 		App.omX = mouseX;

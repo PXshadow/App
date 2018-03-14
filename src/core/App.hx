@@ -7,6 +7,7 @@ import core.Network;
 import haxe.crypto.Base64;
 import lime.ui.KeyCode;
 import openfl.display.DisplayObjectContainer;
+import openfl.geom.Rectangle;
 import openfl.ui.Keyboard;
 
 import format.SVG;
@@ -62,6 +63,7 @@ class App extends DisplayObjectContainer
 	public static var scrollPress:Bool = false;
 	//start postion of scroll
 	public static var dragBool:Bool = false;
+	public static var dragRect:Rectangle;
 	public static var spX:Float = 0;
 	public static var spY:Float = 0;
 	public static var mouseDown:Bool = false;
@@ -165,7 +167,7 @@ class App extends DisplayObjectContainer
 		Lib.current.addChild(this);
 		Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, function(e:MouseEvent)
 		{
-		if (state != null)
+		if (state != null && pointRect(App.state.mouseX, App.state.mouseY, dragRect))
 		{
 		spX = App.state.mouseX;
 		spY = App.state.mouseY;
@@ -209,7 +211,10 @@ class App extends DisplayObjectContainer
 		oldSSX= App.scrollSpeedX;
 		oldSSY = App.scrollSpeedY;
 		
-	if (App.mouseDown && App.dragBool)
+	if (App.dragBool)
+	{
+	//trace("bool " + pointRect(App.state.mouseX, App.state.mouseY, dragRect));
+	if (App.mouseDown)
 	{
 	App.scrollSpeedY = App.state.mouseY - App.omY;
 	App.scrollSpeedX = App.state.mouseX - App.omX;
@@ -227,6 +232,7 @@ class App extends DisplayObjectContainer
 		}
 		scrollInt ++;
 		}
+	}
 	}
 		//SEND OUT restrict events
 		if (restrictInt > 0)
@@ -380,7 +386,8 @@ class App extends DisplayObjectContainer
 			    scrollBool = true;
 			}
 	
-		public static function cutShapeFromBitmapData( bitmapData : BitmapData, shape : Shape ):BitmapData {
+	public static function cutShapeFromBitmapData( bitmapData : BitmapData, shape : Shape ):BitmapData 
+	{
     // Copy the shape to a bitmap
     var shapeBitmapData : BitmapData = new BitmapData( bitmapData.width, bitmapData.height, true, 0x00000000 );
     shapeBitmapData.draw( shape, shape.transform.matrix, null, null, null, true );
@@ -389,9 +396,18 @@ class App extends DisplayObjectContainer
     shapeBitmapData.copyChannel( bitmapData, bitmapData.rect, p, BitmapDataChannel.RED, BitmapDataChannel.RED );
     shapeBitmapData.copyChannel( bitmapData, bitmapData.rect, p, BitmapDataChannel.GREEN, BitmapDataChannel.GREEN );
     shapeBitmapData.copyChannel( bitmapData, bitmapData.rect, p, BitmapDataChannel.BLUE, BitmapDataChannel.BLUE );
-    // Tada!
     return shapeBitmapData;
-}
+	}
+	public static function pointRect(pX:Float, pY:Float, rect:Rectangle):Bool
+	{
+		//y
+		if (pY < rect.y) return false;
+		if (pY > rect.y + rect.height) return false;
+		//x
+		if (pX < rect.x) return false;
+		if (pX > rect.x + rect.width) return false;
+		return true;
+	}
 
 public function getUrlParams()
 	{
@@ -642,6 +658,10 @@ Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
 		nextButton.graphics.moveTo( -radius / 2, thick/2);
 		nextButton.graphics.lineTo(0, Math.floor(radius / 3) + thick);
 		nextButton.graphics.endFill();
+		//rect
+		nextButton.graphics.endFill();
+		nextButton.graphics.beginFill(0, 0);
+		nextButton.graphics.drawRect( -40, -40, 80, 80);
 		return nextButton;
 	}
 	/**

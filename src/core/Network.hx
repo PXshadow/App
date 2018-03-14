@@ -38,7 +38,10 @@ class Network
 	 * OnMessage function
 	 */
 	public var onMessage(default, default):Dynamic->Void;
-	 
+	/**
+	 * main
+	 */
+	public var mainMessage(default, default):Dynamic->Void;
 /**
  * Setup networking
  */
@@ -153,7 +156,9 @@ class Network
 	{
 		    //try
 			//{
-			onMessage(new Unserializer(str).unserialize());
+			var data = new Unserializer(str).unserialize();
+			onMessage(data);
+			mainMessage(data);
 			/*}
 			catch (e:Dynamic)
 			{
