@@ -34,7 +34,7 @@ class Text extends TextField
 	}
 	text = textString;
 	defaultTextFormat = new TextFormat(Assets.getFont(App.textFormat).fontName, size, color, false, false, false, "", "", align);
-	embedFonts = true;
+	//embedFonts = true;
 	}
 	
 	@:noCompletion override private function __updateText(value:String):Void

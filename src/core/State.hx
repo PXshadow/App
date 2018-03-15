@@ -78,7 +78,7 @@ class State extends DisplayObjectContainer
 		App.main.maxEventY = null;
 		App.main.minEventX = null;
 		App.main.minEventY = null;
-		App.network.onMessage = null;
+		if(App.network != null)App.network.onMessage = null;
 		//add
 		App.main.addChild(this);
 		App.omX = mouseX;

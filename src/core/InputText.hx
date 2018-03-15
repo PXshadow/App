@@ -237,9 +237,9 @@ class InputText extends DisplayObjectContainer
     htmlText.style.setProperty("background","none");
     htmlText.style.setProperty("outline","none");
     htmlText.style.setProperty("resize", "none");
-	//js.Browser.document.body.replaceChild(htmlText,js.Browser.document.getElementById("openfl-content"));
-	//js.Browser.document.body.appendChild(htmlText);
-	//js.Browser.document.body.appendChild(htmlText);
+	if(password)htmlText.style.setProperty("type","password");
+	htmlText.style.display = "none";
+	js.Browser.document.body.insertBefore(htmlText,js.Browser.document.getElementById("openfl-content"));
 	#end
 	this.x = sx;
 	this.y = sy;
