@@ -76,8 +76,8 @@ class App extends DisplayObjectContainer
 	public static var scrollDuration:Int = 0;
 	public static var scrollBool:Bool = false;
 	public var scrollInt:Int = 0;
-	public var vectorY:Vector<Float>;
-	public var vectorX:Vector<Float>;
+	public var vectorY:Vector<Int>;
+	public var vectorX:Vector<Int>;
 	//debug
 	/**
 	 * Set to False to Remove Info Bool
@@ -216,8 +216,8 @@ class App extends DisplayObjectContainer
 	//trace("bool " + pointRect(App.state.mouseX, App.state.mouseY, dragRect));
 	if (App.mouseDown)
 	{
-	App.scrollSpeedY = App.state.mouseY - App.omY;
-	App.scrollSpeedX = App.state.mouseX - App.omX;
+	App.scrollSpeedY = Math.round(App.state.mouseY - App.omY);
+	App.scrollSpeedX = Math.round(App.state.mouseX - App.omX);
 	}else{
 		
 		if (scrollBool)
@@ -324,8 +324,8 @@ class App extends DisplayObjectContainer
 			if (scrollSpeedX > limit) scrollSpeedX = limit;
 			if (scrollSpeedX < limit) scrollSpeedX = -limit;
 			
-			App.main.vectorY = new Vector<Float>(scrollDuration);
-			App.main.vectorX = new Vector<Float>(scrollDuration);
+			App.main.vectorY = new Vector<Int>(scrollDuration);
+			App.main.vectorX = new Vector<Int>(scrollDuration);
 			
 			for (i in 0...scrollDuration)
 			{
@@ -508,16 +508,27 @@ Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
 	 * @param	h height
 	 * @return
 	 */
-		public static function createSprite(?x:Float = 0, ?y:Float = 0, path:String,w:Int=-1,h:Int=-1):Shape
+		public static function createSprite(?x:Float = 0, ?y:Float = 0, path:String,w:Int=-1,h:Int=-1,oval:Bool=false):Shape
 	{
 		var shape = new Shape();
 		if (path.substring(path.length - 4, path.length) == ".png")
 		{
-		var bitmap = Assets.getBitmapData(path);
-		shape.graphics.beginBitmapFill(bitmap,null,true,true);
-		shape.graphics.drawRect(0, 0, bitmap.width, bitmap.height);
-		shape.graphics.endFill();
+		var bmd = Assets.getBitmapData(path);
+	var mat = new Matrix();
+	var sx:Float = 1;
+	var sy:Float = 1;
+	if(w > 0) sx = 1 / bmd.width * w;
+	if(h > 0) sy = 1 / bmd.height * h;
+	mat.scale(sx, sy);
+	shape.graphics.beginBitmapFill(bmd, mat, false, true);
+	if (oval)
+	{
+	shape.graphics.drawEllipse(0, 0, sx * bmd.width, sy * bmd.height);	
+	}else{
+	shape.graphics.drawRect(0, 0, sx * bmd.width, sy * bmd.height);
+	}
 		}else{
+		if (oval) trace("vector graphic does not support Oval");
 		new SVG(Assets.getText(path)).render(shape.graphics, 0, 0, w, h);
 		}
 		shape.x = x;
