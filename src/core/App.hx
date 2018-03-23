@@ -46,8 +46,6 @@ class App extends DisplayObjectContainer
 	//old mouse postions
 	public static var omX:Float = 0;
 	public static var omY:Float = 0;
-	
-	public static var textFormat:String = "assets/data/proximanova-regular-webfont.ttf";
 	//CameraScroll
 	public var cameraMinY:Int = 0;
 	public var cameraMaxY:Int = 0;
@@ -108,6 +106,10 @@ class App extends DisplayObjectContainer
 	 */
 	public static var network:Network;
 	/**
+	 * Font Libary for App
+	 */
+	public static var font:Font;
+	/**
 	 * mobile check for both html5 and native
 	 */
 	public static var mobile:Bool = false;
@@ -131,9 +133,10 @@ class App extends DisplayObjectContainer
 	/**
 	 * Back button , Android back button, Computer 
 	 */
-	public function new(sx:Int=640,sy:Int=1136) 
+	public function new(sx:Int=640,sy:Int=1136,_font:Font) 
 	{
 		super();
+		font = _font;
 		Lib.current.mouseEnabled = false;
 		//set mobile 
 		#if mobile
@@ -144,7 +147,7 @@ class App extends DisplayObjectContainer
 	if (browserAgent != null) 
 	{
 	if	(	browserAgent.indexOf("Android") >= 0
-	   ||	browserAgent.indexOf("BlackBerry") >= 0
+	    ||	browserAgent.indexOf("BlackBerry") >= 0
 		||	browserAgent.indexOf("iPhone") >= 0
 		||	browserAgent.indexOf("iPad") >= 0
 		||	browserAgent.indexOf("iPod") >= 0
@@ -211,13 +214,14 @@ class App extends DisplayObjectContainer
 		oldSSX= App.scrollSpeedX;
 		oldSSY = App.scrollSpeedY;
 		
-	if (App.dragBool)
-	{
-	//trace("bool " + pointRect(App.state.mouseX, App.state.mouseY, dragRect));
+
 	if (App.mouseDown)
+	{
+	if (App.dragBool)
 	{
 	App.scrollSpeedY = Math.round(App.state.mouseY - App.omY);
 	App.scrollSpeedX = Math.round(App.state.mouseX - App.omX);
+	}
 	}else{
 		
 		if (scrollBool)
@@ -233,20 +237,19 @@ class App extends DisplayObjectContainer
 		scrollInt ++;
 		}
 	}
-	}
 		//SEND OUT restrict events
 		if (restrictInt > 0)
 		{
 			switch(restrictInt)
 			{
 				case 1:
-				minEventY();
+				if(minEventY != null)minEventY();
 				case 2:
-				maxEventY();
+				if(maxEventY != null)maxEventY();
 				case 3:
-				minEventX();
+				if(minEventX != null)minEventX();
 				case 4:
-				maxEventX();
+				if(maxEventX != null)maxEventX();
 			}
 			restrictInt = 0;
 		}
@@ -687,9 +690,9 @@ Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
 	 * @param	scaleAddAuto
 	 * @return
 	 */
-	public static function createText (?textString:String = "", ?x:Int = 0, ?y:Int = 0, ?size:Int = 24, ?color:Int, ?align:TextFormatAlign = TextFormatAlign.LEFT, fieldWidth:Int = 0, scaleAddAuto:Bool = true):Text
+	public static function createText (?textString:String = "", ?x:Int = 0, ?y:Int = 0, ?size:Int = 24, ?color:Int, ?align:TextFormatAlign = TextFormatAlign.LEFT, fieldWidth:Int = 0,indent:Null<Int>=null):Text
 	{
-	return new Text(x, y, fieldWidth, textString, size, color, align);
+	return new Text(x, y, fieldWidth, textString, size, color, align,indent);
 	}
 	/**
 	 * triggered Resize event that deals with all of the App's resizing calls and Math

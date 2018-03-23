@@ -158,7 +158,7 @@ class ScrollBar extends Button
      create(Math.floor(dem/2));
      if(!vertical)rotation = 90;
      addEventListener(Event.ENTER_FRAME,update);
-     mouseOut = false;
+     mouseOutBool = false;
      scaleX = 0.7;
      scaleY = 0.9;
      App.main.onMouseUp = setRelease;
@@ -408,11 +408,15 @@ class Shadow extends Shape
 	public function new(sx:Int,sy:Int,setWidth:Int=0)
 	{
 		super();
-		if(setWidth == 0)setWidth = App.setWidth;
+		if (setWidth == 0) setWidth = App.setWidth;
+		#if html5
+		graphics.beginFill(0);
+		#else
 		var mat = new Matrix();
 		mat.createGradientBox(400,8,Math.PI/2);
 		//16777215,9211020,10197915
-		graphics.beginGradientFill(openfl.display.GradientType.LINEAR,[0,9211020,16777215],[1,1],[0,40,255],mat);
+		graphics.beginGradientFill(openfl.display.GradientType.LINEAR, [0, 9211020, 16777215], [1, 1], [0, 40, 255]);//,mat);
+		#end
 		graphics.drawRect(0,0,setWidth,8);
 		x = sx;
 		y = sy;

@@ -13,17 +13,18 @@ import openfl.Assets;
  */
 class Text extends TextField
 {
+	public var initalTextRender:Bool = true;
 	/**
 	 * Static App text
 	 **/
-	public var initalTextRender:Bool = true;
-	public function new(?xp:Int,?yp:Int,fieldWidth:Int,textString:String,size:Int,color:Int,align:TextFormatAlign) 
+	public function new(?xp:Int,?yp:Int,fieldWidth:Int,textString:String,size:Int,color:Int,align:TextFormatAlign,ident:Null<Int>=null) 
 	{
 	super();
 	mouseEnabled = false;
 	tabEnabled = false;
 	selectable = false;
 	wordWrap = true;
+	cacheAsBitmap = true;
 	x = xp;
 	y = yp;
 	if (fieldWidth == 0)
@@ -33,10 +34,9 @@ class Text extends TextField
 	width = fieldWidth;
 	}
 	text = textString;
-	defaultTextFormat = new TextFormat(Assets.getFont(App.textFormat).fontName, size, color, false, false, false, "", "", align);
+	defaultTextFormat = new TextFormat(Assets.getFont(App.font.format).fontName, size, color, false, false, false, "", "", align,null,null,null,ident);
 	//embedFonts = true;
 	}
-	
 	@:noCompletion override private function __updateText(value:String):Void
 	{
 		super.__updateText(value);

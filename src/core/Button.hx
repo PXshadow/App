@@ -14,8 +14,10 @@ class Button extends Sprite
 	//functions 
 	public var Down:Dynamic->Void;
 	public var Up:Dynamic->Void;
+	public var Over:Dynamic->Void;
+	public var Out:Dynamic->Void;
 	public var Click:Dynamic->Void;
-	public var mouseOut:Bool = true;
+	public var mouseOutBool:Bool = true;
 	public var rectBool:Bool = false;
 	@:isVar public var bool(get,set):Bool = false;
 	public function get_bool():Bool
@@ -80,14 +82,24 @@ vector = true;
 		addEventListener(MouseEvent.MOUSE_DOWN,mouseDown);
 		addEventListener(MouseEvent.MOUSE_UP, mouseUp);
 		addEventListener(MouseEvent.CLICK, mouseClick);
-		if(mouseOut)addEventListener(MouseEvent.MOUSE_OUT, mouseUp);
+	    if (mouseOver != null)
+		{
+		addEventListener(MouseEvent.MOUSE_OVER, mouseOver);
+		addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
+		}
+		if(mouseOutBool)addEventListener(MouseEvent.MOUSE_OUT, mouseUp);
 		removeEventListener(Event.ADDED, add);
 	}
     public function remove(_)
     {
         removeEventListener(MouseEvent.MOUSE_DOWN,mouseDown);
         removeEventListener(MouseEvent.MOUSE_UP, mouseUp);
-		if(mouseOut)removeEventListener(MouseEvent.MOUSE_OUT, mouseUp);
+		if (mouseOver != null)
+		{
+		removeEventListener(MouseEvent.MOUSE_OVER, mouseOver);
+		removeEventListener(MouseEvent.MOUSE_OUT, mouseOut);
+		}
+		if(mouseOutBool)removeEventListener(MouseEvent.MOUSE_OUT, mouseUp);
 		removeEventListener(MouseEvent.CLICK, mouseClick);
 		removeEventListener(Event.REMOVED_FROM_STAGE, remove);
     }
@@ -102,6 +114,14 @@ vector = true;
 	public function mouseClick(e:MouseEvent)
 	{
 		if (Click != null) Click(e);
+	}
+	public function mouseOver(e:MouseEvent)
+	{
+		if (Over != null) Over(e);
+	}
+	public function mouseOut(e:MouseEvent)
+	{
+	   if (Out != null) Out(e);
 	}
 	public function drawRect(setWidth:Float=0,setHeight:Float=0,setX:Int=0,setY:Int=0)
 	{

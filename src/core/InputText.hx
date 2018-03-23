@@ -61,7 +61,7 @@ class InputText extends DisplayObjectContainer
 	public var nativeText:NativeTextField;
 	#end
 	#if html5
-	public var htmlText:js.html.Element;
+	//public var htmlText:js.html.Element;
 	#end
 	public var textfield:TextField;
 	@:isVar public var text(get, set):String;
@@ -80,6 +80,10 @@ class InputText extends DisplayObjectContainer
 	{
 		#if mobile
 		if(value == false)nativeText.Configure({enabled:value, visible:value});
+		#end
+		#if html5
+		//if (value) htmlText.style.display = "";
+		//if (!value) htmlText.style.display = "none";
 		#end
 		textfield.visible = value;
 		return value;
@@ -118,7 +122,7 @@ class InputText extends DisplayObjectContainer
 		#if mobile
 		return Utf8.decode(nativeText.GetText());
 		#else
-		return textfield.text; 
+		return textfield.text;
 		#end
 	}
 	function set_text(value:String):String
@@ -129,6 +133,8 @@ class InputText extends DisplayObjectContainer
 		return text = value;
 		#else
 		textfield.text = value;
+		textfield.defaultTextFormat = new TextFormat(null, null, newColor);
+	    if (value == placeholderString) placeholderString = "";
 		return text = value;
 		#end
 	}
@@ -176,7 +182,7 @@ class InputText extends DisplayObjectContainer
 		visible:false,
 		enabled:false,
 		placeholder:placeString,
-		fontAsset:App.textFormat,
+		fontAsset:App.font.regular,
 		fontSize:Math.round(fsize * App.scale),
 		fontColor:color,
 		textAlignment:nativeTextAlign,
@@ -211,7 +217,7 @@ class InputText extends DisplayObjectContainer
 		textfield.selectable = true;
 		textfield.type = TextFieldType.INPUT;
 		#end
-		textfield.defaultTextFormat = new TextFormat(Assets.getFont(App.textFormat).fontName, Math.floor(fsize), pcolor, false, false, false, "", "", align);
+		textfield.defaultTextFormat = new TextFormat(Assets.getFont(App.font.regular).fontName, Math.floor(fsize), pcolor, false, false, false, "", "", align);
 		textfield.restrict = "\u0020-\u007E";
 		textfield.multiline = _multiline;
 		if (_multiline) textfield.wordWrap = true;
@@ -224,7 +230,7 @@ class InputText extends DisplayObjectContainer
 		textfield.text = placeholderString;
 	addChild(textfield);
 	#if html5
-	if (_multiline)
+	/*if (_multiline)
 	{
 	htmlText = cast js.Browser.document.createElement("textArea");
 	}else{
@@ -232,14 +238,17 @@ class InputText extends DisplayObjectContainer
 	}
 	htmlText.setAttribute("placeholder", placeholderString);
 	htmlText.setAttribute("spellcheck", "false");
-	htmlText.setAttribute("size", Std.string(Math.round(fieldWidth)));
+	//htmlText.setAttribute("size", Std.string(Math.round(fieldWidth * App.scale)));
 	htmlText.style.setProperty("border","none");
     htmlText.style.setProperty("background","none");
     htmlText.style.setProperty("outline","none");
     htmlText.style.setProperty("resize", "none");
+	htmlText.style.position = "absolute";
+	htmlText.setAttribute("user-scable", "no");
+	htmlText.style.zIndex = "1000";
 	if(password)htmlText.style.setProperty("type","password");
 	htmlText.style.display = "none";
-	js.Browser.document.body.insertBefore(htmlText,js.Browser.document.getElementById("openfl-content"));
+	js.Browser.document.body.insertBefore(htmlText,js.Browser.document.getElementById("openfl-content"));*/
 	#end
 	this.x = sx;
 	this.y = sy;
@@ -254,7 +263,7 @@ class InputText extends DisplayObjectContainer
 	{
 		#if mobile
 		textfield.selectable = false;
-		nativeText.Configure({enabled:true, visible:true, x:Math.round(x * App.scale), y:Math.round(y * App.scale)});
+		nativeText.Configure({enabled:true, visible:true, x:Math.round(x * App.scale + App.state.x), y:Math.round(y * App.scale)});
 		textfield.visible = false;
 		var tim = new Timer(50);
 		tim.run = function()
@@ -264,23 +273,45 @@ class InputText extends DisplayObjectContainer
 		isDrag = App.dragBool;
 		App.dragBool = false;
 		App.disableCameraMovment();
-		
 		tim.stop();
 		tim = null;
 		}
 		#else
+		#if html5
+		/*if (App.mobile)
+		{
+		App.resizeBool = false;
+		keyboardDis = Math.floor(y/2);
+		App.state.y = -keyboardDis;
+		}*/
+		/*htmlText.style.display = "";
+		textfield.visible = false;
+		//postion
+		var setWidth = js.Browser.window.innerWidth / Math.round(App.setWidth * App.scale);
+		var setHeight = js.Browser.window.innerHeight / Math.round(App.setHeight * App.scale);
+		trace(setWidth + " , " + setHeight);
+		htmlText.style.left = Std.string(Math.round(x * App.scale + App.state.x)) + "px";
+	    htmlText.style.top =  Std.string(Math.round(y * App.scale + App.state.y)) + "px";
+		cast(htmlText, js.html.InputElement).focus();
+		var tim = new Timer(50);
+		tim.run = function()
+		{
+		js.Browser.window.scrollTo(0, 0);
+		isDrag = App.dragBool;
+		App.dragBool = false;
+		App.disableCameraMovment();
+		tim.stop();
+		tim = null;
+		}*/
+		#else
+		trace("text " + textfield.text + " place " + placeholderString);
 		if (textfield.text == placeholderString)
 		{
 			textfield.displayAsPassword = passwordBool;
 			textfield.text = "";
 			textfield.defaultTextFormat = new TextFormat(null, null, newColor);
 		}
-		if (App.mobile)
-		{
-		App.resizeBool = false;
-		keyboardDis = Math.floor(y/2);
-		App.state.y = -keyboardDis;
-		}
+		#end
 		#end
 	}
 	
@@ -304,11 +335,11 @@ class InputText extends DisplayObjectContainer
 			textfield.displayAsPassword = false;
 			textfield.defaultTextFormat = new TextFormat(null, null, pColor);
 		}
-		if (App.mobile)
+		/*if (App.mobile)
 		{
 		App.resizeBool = true;
 		App.state.y = 0;
-		}
+		}*/
 		#end
 	}
 	
@@ -321,7 +352,7 @@ class InputText extends DisplayObjectContainer
 	nativeText.Destroy();
 	#else
 	#if html5
-	
+	//js.Browser.document.body.removeChild(htmlText);
 	#end
 	#end
 	}

@@ -42,6 +42,11 @@ class Network
 	 * main
 	 */
 	public var mainMessage(default, default):Dynamic->Void;
+	 /** Callback used called when a connection is established. This callback should not be handled manually. **/
+  public var onConnect(default, default): Dynamic->Void;
+   /** Callback used when a connection fails from the beginning. This callback should not be handled manually. **/
+  public var onFailure(default, default): Dynamic->Void;
+  
 /**
  * Setup networking
  */
@@ -58,7 +63,7 @@ class Network
 		ws.onopen = function()
 		{
 			connected = true;
-			onConnect();
+			if(onConnect != null)onConnect(null);
 		}
 		ws.onmessage = function(line)
 		{
@@ -67,29 +72,22 @@ class Network
 		ws.onclose = function()
 		{
 			ws.close(0, "Lost Connection");
-			onClose(null);
+			if(onClose != null)onClose(null);
 		}
 		#else
-		try
-		{
-		socket = new Socket();
+    try {
+	  socket = new Socket();
 		socket.connect(new Host(ip), port);
 		socket.setBlocking(false);
 		connected = true;
 		//establish to server that it's a tcp socket
 		socket.output.writeString("8");
-		}catch (e:Dynamic)
-		{
-			connected = false;
-			trace(e);
-		}
-		#end
-		
-	}
-	//client connected to the server
-	public function onConnect()
-	{
-		trace("connected");
+    }
+    catch (e: Dynamic) {
+      //onFailure(e);
+      connected = false;
+    }
+	#end
 	}
 	/**
 	 * write to server
@@ -157,8 +155,8 @@ class Network
 		    //try
 			//{
 			var data = new Unserializer(str).unserialize();
-			onMessage(data);
-			mainMessage(data);
+			if(onMessage != null)onMessage(data);
+			if(mainMessage != null)mainMessage(data);
 			/*}
 			catch (e:Dynamic)
 			{

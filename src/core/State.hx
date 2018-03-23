@@ -162,6 +162,11 @@ class State extends DisplayObjectContainer
 		background.height = Lib.current.stage.stageHeight * 1 / App.scale;
 		}
 		visible = true;
+		
+		
+		#if html5
+		trace("640 by 1136 | " + Std.string(App.setWidth * App.scale) + " by " + Std.string(App.setHeight * App.scale) + " -> " + js.Browser.window.innerWidth + " by " + js.Browser.window.innerHeight);
+		#end
 	}
 	/**
 	 * Remove State
