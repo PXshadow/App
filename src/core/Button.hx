@@ -30,13 +30,13 @@ class Button extends Sprite
 	}
 	public var vector:Bool = true;
                                                                              //invis button
-	public function new(?xpos:Int=0,?ypos:Int=0,path:String="",sWidth:Int=-1,sHeight:Int=-1) 
+	public function new(?xpos:Int=0,?ypos:Int=0,path:String="",sWidth:Int=-1,sHeight:Int=-1,oval:Bool=false) 
 {	
     super();
 buttonMode = true;
 if(path.length > 0)
 {
-updateGraphic(path,sWidth,sHeight,false);
+updateGraphic(path,sWidth,sHeight,false,oval);
 }else{
 if(sWidth > 0)
 {
@@ -51,7 +51,7 @@ addEventListener(Event.REMOVED_FROM_STAGE, remove);
 addEventListener(Event.ADDED, add);
 }
 
-public function updateGraphic(path:String,sWidth:Int=-1,sHeight:Int=-1,clear:Bool=true)
+public function updateGraphic(path:String,sWidth:Int=-1,sHeight:Int=-1,clear:Bool=true,oval:Bool=false)
 {
 	if(clear)graphics.clear();
 	
@@ -64,8 +64,13 @@ var sy:Float = 1;
 if(sWidth > 0) sx = 1 / bmd.width * sWidth;
 if(sHeight > 0) sy = 1 / bmd.height * sHeight;
 mat.scale(sx, sy);
-graphics.beginBitmapFill(bmd,mat, false, true);
+graphics.beginBitmapFill(bmd, mat, false, true);
+if(oval)
+{
+graphics.drawEllipse(0,0,sx * bmd.width,sy * bmd.height);
+}else{
 graphics.drawRect(0, 0, sx * bmd.width, sy * bmd.height);
+}
 vector = false;
 }else{
 //svg

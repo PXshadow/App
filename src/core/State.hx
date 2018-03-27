@@ -58,6 +58,7 @@ class State extends DisplayObjectContainer
 	 *  Object that is below the entire state can be any display object
 	 */
 	public var background:DisplayObject;
+	
 	public function new(minY:Int=0,maxY:Int=0,minX:Int=0,maxX:Int=0) 
 	{
 		super();
@@ -70,6 +71,7 @@ class State extends DisplayObjectContainer
 		App.main.cameraMinX = -minX;
 		App.main.cameraMaxX = -maxX;
 		App.dragBool = false;
+		App.main.backExit = false;
 		App.dragRect = new Rectangle(0, 0,App.setWidth,App.setHeight);
 		App.mouseDown = false;
 		App.main.onResize = null;
@@ -122,7 +124,7 @@ class State extends DisplayObjectContainer
 	}
 	/**
 	 *  State Keyboard is Up
-	 * @param	e Keyboard Event
+	 * @param	e KeyboardEvent
 	 */
 	public function keyUp(e:openfl.events.KeyboardEvent)
 	{
@@ -130,9 +132,17 @@ class State extends DisplayObjectContainer
 	}
 	/**
 	 *  State Keyboard is Down
-	 * @param	e Keyboard Event
+	 * @param	e KeyboardEvent
 	 */
 	public function keyDown(e:openfl.events.KeyboardEvent)
+	{
+		
+	}
+	/**
+	 * When Android back button, escape are pressed
+	 * @param	e KeyboardEvent
+	 */
+	public function back(e:openfl.events.KeyboardEvent)
 	{
 		
 	}
@@ -165,7 +175,7 @@ class State extends DisplayObjectContainer
 		
 		
 		#if html5
-		trace("640 by 1136 | " + Std.string(App.setWidth * App.scale) + " by " + Std.string(App.setHeight * App.scale) + " -> " + js.Browser.window.innerWidth + " by " + js.Browser.window.innerHeight);
+		//trace("640 by 1136 | " + Std.string(App.setWidth * App.scale) + " by " + Std.string(App.setHeight * App.scale) + " -> " + js.Browser.window.innerWidth + " by " + js.Browser.window.innerHeight);
 		#end
 	}
 	/**

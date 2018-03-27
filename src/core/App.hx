@@ -73,9 +73,14 @@ class App extends DisplayObjectContainer
 	var oldSSY:Float = 0;
 	public static var scrollDuration:Int = 0;
 	public static var scrollBool:Bool = false;
+	public var moveBool:Bool = false;
 	public var scrollInt:Int = 0;
-	public var vectorY:Vector<Int>;
-	public var vectorX:Vector<Int>;
+	public var vectorY:Vector<Int> = new Vector<Int>(0);
+	public var vectorX:Vector<Int> = new Vector<Int>(0);
+	/**
+	 * Enabled let's android back button leave app
+	 */
+	public var backExit:Bool = false;
 	//debug
 	/**
 	 * Set to False to Remove Info Bool
@@ -121,6 +126,10 @@ class App extends DisplayObjectContainer
 	* Resize that is called when Resize
 	**/
 	public var onResize:Dynamic->Void;
+	/**
+	 * When Exit or android Back button are pressed
+	 */
+	public var onBack:Dynamic->Void;
 	/**
 	* When Mouse is up
 	**/
@@ -190,23 +199,30 @@ class App extends DisplayObjectContainer
 			}
 			if(onMouseUp != null)onMouseUp(e);
 		});
-		#if !mobile
+		#if ! mobile
 		if (!mobile)
 		{
 		Lib.current.stage.addEventListener(MouseEvent.MOUSE_WHEEL,function(e:MouseEvent)
 		{
 			mouseDown = false;
 		});
-		Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, function(e:KeyboardEvent)
+		Lib.current.addEventListener(KeyboardEvent.KEY_DOWN, function(e:KeyboardEvent)
 		{
 			state.keyDown(e);
 		});
-		Lib.current.stage.addEventListener(KeyboardEvent.KEY_UP, function(e:KeyboardEvent)
-		{
-			state.keyUp(e);
-		});
 		}
 		#end
+		Lib.current.stage.addEventListener(KeyboardEvent.KEY_UP, function(e:KeyboardEvent)
+		{
+			#if !mobile
+			if(!mobile)state.keyUp(e);
+			#end
+			if (!backExit && e.keyCode == KeyCode.APP_CONTROL_BACK)
+			{
+			e.preventDefault();
+			state.back(e);
+			}
+		});
 		
 		Lib.current.stage.addEventListener(Event.ENTER_FRAME, function(e:Event)
 		{
@@ -214,29 +230,24 @@ class App extends DisplayObjectContainer
 		oldSSX= App.scrollSpeedX;
 		oldSSY = App.scrollSpeedY;
 		
-
-	if (App.mouseDown)
-	{
-	if (App.dragBool)
+	if (App.dragBool && App.mouseDown)
 	{
 	App.scrollSpeedY = Math.round(App.state.mouseY - App.omY);
 	App.scrollSpeedX = Math.round(App.state.mouseX - App.omX);
 	}
-	}else{
-		
-		if (scrollBool)
+		if (scrollBool && !App.mouseDown || moveBool)
 		{
 		App.scrollSpeedY = vectorY[scrollInt];
 		App.scrollSpeedX = vectorX[scrollInt];
 		if (scrollInt >= scrollDuration)
 		{
 		scrollBool = false;
+		moveBool = false;
 		scrollSpeedY = 0;
 		scrollSpeedX = 0;
 		}
 		scrollInt ++;
 		}
-	}
 		//SEND OUT restrict events
 		if (restrictInt > 0)
 		{
@@ -367,6 +378,7 @@ class App extends DisplayObjectContainer
 				disX = dx;
 				disY = dy;
 				mouseDown = false;
+				App.main.moveBool = true;
 				scrollDuration = Math.floor(Math.max(frameX, frameY));
 				
 				App.main.vectorX = new Vector(frameX + 1);
@@ -412,7 +424,7 @@ class App extends DisplayObjectContainer
 		return true;
 	}
 
-public function getUrlParams()
+public function getUrlParams(setName:String="")
 	{
 		#if html5
 		var url = js.Browser.document.URL;
@@ -421,13 +433,17 @@ public function getUrlParams()
 		 var pos = url.indexOf("?", 0);
 		 var pos2 = url.indexOf("/", pos);
 		 var name = url.substring(pos + 1, pos2);
-		 UrlState.data = url.substring(pos2, url.length);
+		 UrlState.data = url.substring(pos2 + 1, url.length);
 		 trace("URL name " + name + " data " + UrlState.data);  
-		 
+		 #else
+		 UrlState.data = "0";
+		 var name = setName;
+		 #end
 	for (urlObj in urlArray)
 	{
 			if (urlObj.name == name)
 			{
+				//timer to be able to remove state
 				var k = new Timer(5);
 				k.run = function()
 				{
@@ -438,15 +454,9 @@ public function getUrlParams()
 				}
 			}
 	}
-
+	#if html5
 	}
-		#end	
-	}
-	
-	public function initalLoaded()
-	{
-		getUrlParams();
-		inital = false;
+	#end
 	}
 
 public static function toggleFullscreen() {

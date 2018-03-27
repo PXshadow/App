@@ -60,9 +60,6 @@ class InputText extends DisplayObjectContainer
 	#if mobile
 	public var nativeText:NativeTextField;
 	#end
-	#if html5
-	//public var htmlText:js.html.Element;
-	#end
 	public var textfield:TextField;
 	@:isVar public var text(get, set):String;
 	@:isVar public var focus(get, set):Bool;
@@ -80,10 +77,6 @@ class InputText extends DisplayObjectContainer
 	{
 		#if mobile
 		if(value == false)nativeText.Configure({enabled:value, visible:value});
-		#end
-		#if html5
-		//if (value) htmlText.style.display = "";
-		//if (!value) htmlText.style.display = "none";
 		#end
 		textfield.visible = value;
 		return value;
@@ -110,9 +103,9 @@ class InputText extends DisplayObjectContainer
 		#else
 		if (value)
 		{
-		stage.focus = textfield;	
+		App.state.stage.focus = textfield;	
 		}else{
-		stage.focus = null;
+		App.state.stage.focus = null;
 		}
 		return value;
 		#end
@@ -203,6 +196,7 @@ class InputText extends DisplayObjectContainer
 		nativeText.Configure({visible:false, enabled:false});	
 		});
 		#end
+		
 		textfield = new TextField();
 		textfield.multiline = _multiline;
 		textfield.wordWrap = !_multiline;
@@ -218,7 +212,7 @@ class InputText extends DisplayObjectContainer
 		textfield.type = TextFieldType.INPUT;
 		#end
 		textfield.defaultTextFormat = new TextFormat(Assets.getFont(App.font.regular).fontName, Math.floor(fsize), pcolor, false, false, false, "", "", align);
-		textfield.restrict = "\u0020-\u007E";
+		//textfield.restrict = "\u0020-\u007E";
 		textfield.multiline = _multiline;
 		if (_multiline) textfield.wordWrap = true;
 		if (fieldWidth > 0)
@@ -229,27 +223,6 @@ class InputText extends DisplayObjectContainer
 		}
 		textfield.text = placeholderString;
 	addChild(textfield);
-	#if html5
-	/*if (_multiline)
-	{
-	htmlText = cast js.Browser.document.createElement("textArea");
-	}else{
-	htmlText = cast js.Browser.document.createElement("input");
-	}
-	htmlText.setAttribute("placeholder", placeholderString);
-	htmlText.setAttribute("spellcheck", "false");
-	//htmlText.setAttribute("size", Std.string(Math.round(fieldWidth * App.scale)));
-	htmlText.style.setProperty("border","none");
-    htmlText.style.setProperty("background","none");
-    htmlText.style.setProperty("outline","none");
-    htmlText.style.setProperty("resize", "none");
-	htmlText.style.position = "absolute";
-	htmlText.setAttribute("user-scable", "no");
-	htmlText.style.zIndex = "1000";
-	if(password)htmlText.style.setProperty("type","password");
-	htmlText.style.display = "none";
-	js.Browser.document.body.insertBefore(htmlText,js.Browser.document.getElementById("openfl-content"));*/
-	#end
 	this.x = sx;
 	this.y = sy;
 	//events
@@ -277,41 +250,12 @@ class InputText extends DisplayObjectContainer
 		tim = null;
 		}
 		#else
-		#if html5
-		/*if (App.mobile)
-		{
-		App.resizeBool = false;
-		keyboardDis = Math.floor(y/2);
-		App.state.y = -keyboardDis;
-		}*/
-		/*htmlText.style.display = "";
-		textfield.visible = false;
-		//postion
-		var setWidth = js.Browser.window.innerWidth / Math.round(App.setWidth * App.scale);
-		var setHeight = js.Browser.window.innerHeight / Math.round(App.setHeight * App.scale);
-		trace(setWidth + " , " + setHeight);
-		htmlText.style.left = Std.string(Math.round(x * App.scale + App.state.x)) + "px";
-	    htmlText.style.top =  Std.string(Math.round(y * App.scale + App.state.y)) + "px";
-		cast(htmlText, js.html.InputElement).focus();
-		var tim = new Timer(50);
-		tim.run = function()
-		{
-		js.Browser.window.scrollTo(0, 0);
-		isDrag = App.dragBool;
-		App.dragBool = false;
-		App.disableCameraMovment();
-		tim.stop();
-		tim = null;
-		}*/
-		#else
-		trace("text " + textfield.text + " place " + placeholderString);
 		if (textfield.text == placeholderString)
 		{
 			textfield.displayAsPassword = passwordBool;
 			textfield.text = "";
 			textfield.defaultTextFormat = new TextFormat(null, null, newColor);
 		}
-		#end
 		#end
 	}
 	
@@ -350,10 +294,6 @@ class InputText extends DisplayObjectContainer
 	removeEventListener(Event.REMOVED_FROM_STAGE, removed);
 	#if mobile
 	nativeText.Destroy();
-	#else
-	#if html5
-	//js.Browser.document.body.removeChild(htmlText);
-	#end
 	#end
 	}
 }

@@ -246,7 +246,6 @@ class ScrollBar extends Button
 
 class ProfileIcon extends Button
 {
-    public var maskShape:Shape;
     public var outline:Shape;
 	public var id:Int;
 	private var _lineSize:Int;
@@ -255,13 +254,11 @@ class ProfileIcon extends Button
 
     public function new(?x:Int=0,?y:Int=0,path:String="",size:Int=90,outlineColor:Int=0,lineSize:Int=4,setId:Int=0)
     {
-        super(x, y, path, size, size);
+        super(x, y, path, size, size,true);
 		id = setId;
 		_size = size;
 		_outlineColor = outlineColor;
 		_lineSize = lineSize;
-		maskShape = new Shape();
-		addChild(maskShape);
 		outline = new Shape();
 		addChild(outline);
 		if (path != "") update(false);
@@ -269,15 +266,7 @@ class ProfileIcon extends Button
 	
 	public function update(clear:Bool=true)
 	{
-		if (clear)
-		{
-			maskShape.graphics.clear();
-			outline.graphics.clear();
-		}
-        maskShape.graphics.beginFill();
-        maskShape.graphics.drawCircle(width/2,width/2,width/2);
-        maskShape.graphics.endFill();
-        mask = maskShape;
+		if (clear)outline.graphics.clear();
         //outline
         outline.graphics.lineStyle(_lineSize,_outlineColor);
         outline.graphics.drawCircle(width/2 ,width/2,width/2 - _lineSize/2);
@@ -409,14 +398,10 @@ class Shadow extends Shape
 	{
 		super();
 		if (setWidth == 0) setWidth = App.setWidth;
-		#if html5
-		graphics.beginFill(0);
-		#else
 		var mat = new Matrix();
 		mat.createGradientBox(400,8,Math.PI/2);
 		//16777215,9211020,10197915
-		graphics.beginGradientFill(openfl.display.GradientType.LINEAR, [0, 9211020, 16777215], [1, 1], [0, 40, 255]);//,mat);
-		#end
+		graphics.beginGradientFill(openfl.display.GradientType.LINEAR, [0,9211020, 16777215], [1,1,1], [0, 40, 255],mat);
 		graphics.drawRect(0,0,setWidth,8);
 		x = sx;
 		y = sy;
