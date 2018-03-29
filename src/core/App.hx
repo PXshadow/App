@@ -325,7 +325,7 @@ class App extends DisplayObjectContainer
 		public static function scrollCamera()
 		{
 			//1950 / (1000 / 60) = 117;
-			if (dragBool)
+			if (dragBool && !App.main.moveBool)
 			{
 			if (Math.abs(spY - App.state.mouseY) < 10) scrollPress = true;
 			mouseDown = false;

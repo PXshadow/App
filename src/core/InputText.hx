@@ -53,7 +53,7 @@ class InputText extends DisplayObjectContainer
 	public var pColor:Int = 0;
 	public var size:Int = 0;
 	public var passwordBool:Bool = false;
-	public var keyboardDis:Int = 0;
+	public var posY:Int = -1;
 	public var oldX:Float = 0;
 	public var oldY:Float = 0;
 	var isDrag:Bool = false;
@@ -236,13 +236,13 @@ class InputText extends DisplayObjectContainer
 	{
 		#if mobile
 		textfield.selectable = false;
-		nativeText.Configure({enabled:true, visible:true, x:Math.round(x * App.scale + App.state.x), y:Math.round(y * App.scale)});
+		nativeText.Configure({x:Math.round(x * App.scale + App.state.x), y:Math.round(y * App.scale),enabled:true, visible:true});
 		textfield.visible = false;
 		var tim = new Timer(50);
 		tim.run = function()
 		{
+		//focus
 		nativeText.SetFocus();
-		
 		isDrag = App.dragBool;
 		App.dragBool = false;
 		App.disableCameraMovment();
