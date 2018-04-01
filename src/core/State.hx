@@ -26,6 +26,8 @@ import openfl.text.TextField;
  */
 class State extends DisplayObjectContainer
 {
+	//old state bitmap
+	public static var pastStateBitmap:Bitmap;
 	/**
 	 * Used internally for Resize Inital
 	 */
@@ -59,7 +61,7 @@ class State extends DisplayObjectContainer
 	 */
 	public var background:DisplayObject;
 	
-	public function new(minY:Int=0,maxY:Int=0,minX:Int=0,maxX:Int=0) 
+	public function new(minY:Int=0,maxY:Int=0,minX:Int=0,maxX:Int=0,animation:Animation=0) 
 	{
 		super();
 		if (background != null)addChild(background);
@@ -186,7 +188,9 @@ class State extends DisplayObjectContainer
 	//protect against null
 	if (this != null)
 	{
-		Assets.cache.clear();
+		//take screenshot of last state for animations
+		pastStateBitmap = createScreenBitmap();
+		//Assets.cache.clear();
 		App.main.removeChild(this);
 		App.state = null;
 	}

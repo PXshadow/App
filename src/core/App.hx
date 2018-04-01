@@ -36,6 +36,7 @@ import openfl.events.KeyboardEvent;
  */
 class App extends DisplayObjectContainer
 {
+	//colors
 	public static var colorArray = [755381, 16761913, 11654726];
 	//main
 	public static var setWidth:Int = 0;
@@ -139,9 +140,12 @@ class App extends DisplayObjectContainer
 	 * @param	sx Width of App
 	 * @param	sy Height of App
 	 */
+	
 	/**
-	 * Back button , Android back button, Computer 
+	 * false = User not on application / minimized
 	 */
+	public var active:Bool = true;
+	
 	public function new(sx:Int=640,sy:Int=1136,_font:Font) 
 	{
 		super();
@@ -314,10 +318,12 @@ class App extends DisplayObjectContainer
 		
 		Lib.current.stage.addEventListener (openfl.events.Event.ACTIVATE, function (_) {
 		Lib.current.stage.frameRate = 60;
+		active = true;
 		});
 		
 		Lib.current.stage.addEventListener (openfl.events.Event.DEACTIVATE, function (_) {
 			scrollSpeedY = 0;
+			active = false;
 			Lib.current.stage.frameRate = 5;
 		});
 	}
@@ -524,7 +530,8 @@ Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
 		public static function createSprite(?x:Float = 0, ?y:Float = 0, path:String,w:Int=-1,h:Int=-1,oval:Bool=false):Shape
 	{
 		var shape = new Shape();
-		if (path.substring(path.length - 4, path.length) == ".png")
+		var sub = path.substring(path.length - 4, path.length);
+		if (sub == ".png" || sub == ".jpg")
 		{
 		var bmd = Assets.getBitmapData(path);
 	var mat = new Matrix();
