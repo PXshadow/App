@@ -12,6 +12,7 @@
 	<source path="src" />
 	<haxelib name="svg"/>
 	<haxelib name="openfl"/>
+	<haxelib name="actuate"/>
 	
 	<include path="src/ext/extensionkit" if="mobile" />
 	<include path="src/ext/nativetext" if="mobile" />

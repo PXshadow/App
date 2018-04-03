@@ -3,6 +3,7 @@ package core;
 //import motion.Actuate;
 //import motion.actuators.GenericActuator;
 import haxe.Timer;
+import motion.easing.Quad;
 import openfl.Assets;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
@@ -19,6 +20,7 @@ import openfl.system.System.gc;
 import openfl.Lib;
 import core.Item.ProfileIcon;
 import openfl.text.TextField;
+import motion.Actuate;
 
 /**
  * ...
@@ -60,13 +62,15 @@ class State extends DisplayObjectContainer
 	 *  Object that is below the entire state can be any display object
 	 */
 	public var background:DisplayObject;
+	//variable used to check for Animation of state between resize call
+	public var stateAnimation:Bool = false;
 	
 	public function new(minY:Int=0,maxY:Int=0,minX:Int=0,maxX:Int=0,animation:Animation=Animation.NONE) 
 	{
 		super();
 		if (background != null) addChild(background);
 		
-		visible = false;
+		//visible = false;
 		//set camera restrict
 		App.main.cameraMinY = -minY;
 		App.main.cameraMaxY = -maxY;
@@ -93,26 +97,46 @@ class State extends DisplayObjectContainer
 		App.scrollSpeedX = 0;
 		App.scrollBool = false;
 		mouseEnabled = false;
-		//animation
-		switch(animation)
-		{
-			case Animation.NONE:
-			//no animation
-			case Animation.SLIDEUP:
-			
-			case Animation.SLIDEDOWN:
-				
-			default:
-			//not implemented
-		}
 		//resize
 		var tim = new Timer(1);
 		tim.run = function()
 		{
+		//add past state for animated state tweens
+		if (pastStateBitmap != null && animation != Animation.NONE)
+		{
+		addChild(pastStateBitmap);
+		stateAnimation = true;
+		}
+		//resize
 		resize(px, py, sx, sy);
 		resizeBool = true;
 		tim.stop();
 		tim = null;
+		//set animation postions
+		if (stateAnimation)
+		{
+		//pastStateBitmap.scaleX = 1 / scaleX;
+		//pastStateBitmap.scaleY = 1 / scaleY;
+		pastStateBitmap.x = -x / App.scale;
+		//switch animation
+		switch(animation)
+		{
+			case Animation.SLIDEUP:
+			y = App.setHeight * App.scale;
+		    pastStateBitmap.y = -App.setHeight;
+			Actuate.tween(this, 0.3, {y:py}).onComplete(function(_)
+			{
+			//cacheAsBitmap = false;
+			removeChild(pastStateBitmap);
+			}).ease(Quad.easeOut);
+			//cacheAsBitmap = true;
+			case Animation.SLIDEDOWN:
+
+			default:
+		}
+		stateAnimation = false;
+		}
+		
 		}
 	}
 	/**
@@ -165,6 +189,7 @@ class State extends DisplayObjectContainer
 	 */
 	public function resize(prx:Int,pry:Int,ssx:Float, ssy:Float)
 	{
+		if (!stateAnimation && pastStateBitmap != null) removeChild(pastStateBitmap);
 		sx = ssx; sy = ssy;
 		px = prx; py = pry;
 		scaleX = sx;
@@ -227,11 +252,14 @@ class State extends DisplayObjectContainer
 	 */
 	public function createScreenBitmap():Bitmap
 	{
-		var screen = new BitmapData(Math.floor(App.setWidth), Math.floor(App.setHeight), false);
-		screen.draw(this);
+		var screen = new BitmapData(Math.floor(width), Math.floor(height), false);
+		var mat = new Matrix();
+		mat.scale(scaleX,scaleY);
+		mat.translate( -x, -y);
+		screen.draw(this, mat);
 		var data = new Bitmap(screen, null, true);
-		data.scaleX = 1/scaleX;
-		data.scaleY = 1/scaleY;
+		data.scaleX = 1 / scaleX;
+		data.scaleY = 1 / scaleY;
 		return data;
 	}
 }
