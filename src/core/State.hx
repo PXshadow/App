@@ -124,11 +124,11 @@ class State extends DisplayObjectContainer
 			case Animation.SLIDEUP:
 			y = App.setHeight * App.scale;
 		    pastStateBitmap.y = -App.setHeight;
-			Actuate.tween(this, 0.3, {y:py}).onComplete(function(_)
+			Actuate.tween(this, 0.4, {y:py}).onComplete(function(_)
 			{
 			//cacheAsBitmap = false;
 			removeChild(pastStateBitmap);
-			}).ease(Quad.easeOut);
+			}).ease(Quad.easeIn);
 			//cacheAsBitmap = true;
 			case Animation.SLIDEDOWN:
 
