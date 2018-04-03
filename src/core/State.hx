@@ -61,10 +61,10 @@ class State extends DisplayObjectContainer
 	 */
 	public var background:DisplayObject;
 	
-	public function new(minY:Int=0,maxY:Int=0,minX:Int=0,maxX:Int=0,animation:Animation=0) 
+	public function new(minY:Int=0,maxY:Int=0,minX:Int=0,maxX:Int=0,animation:Animation=Animation.NONE) 
 	{
 		super();
-		if (background != null)addChild(background);
+		if (background != null) addChild(background);
 		
 		visible = false;
 		//set camera restrict
@@ -93,6 +93,18 @@ class State extends DisplayObjectContainer
 		App.scrollSpeedX = 0;
 		App.scrollBool = false;
 		mouseEnabled = false;
+		//animation
+		switch(animation)
+		{
+			case Animation.NONE:
+			//no animation
+			case Animation.SLIDEUP:
+			
+			case Animation.SLIDEDOWN:
+				
+			default:
+			//not implemented
+		}
 		//resize
 		var tim = new Timer(1);
 		tim.run = function()

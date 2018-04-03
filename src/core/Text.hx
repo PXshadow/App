@@ -34,7 +34,9 @@ class Text extends TextField
 	width = fieldWidth;
 	}
 	text = textString;
-	defaultTextFormat = new TextFormat(Assets.getFont(App.font.format).fontName, size, color, false, false, false, "", "", align,null,null,null,ident);
+	var fn = null;
+	if (App.font != null) fn = Assets.getFont(App.font.format).fontName;
+	defaultTextFormat = new TextFormat(fn, size, color, false, false, false, "", "", align,null,null,null,ident);
 	}
 	@:noCompletion override private function __updateText(value:String):Void
 	{

@@ -151,6 +151,8 @@ class InputText extends DisplayObjectContainer
 	#end
 	{
 		super();
+		var fn = null;
+		if (App.font != null) fn = Assets.getFont(App.font.format).fontName;
 		#if mobile
 		if (_keyType == null)_keyType = NativeTextFieldKeyboardType.Default;
 		if (_returnType == null)_returnType = NativeTextFieldReturnKeyType.Default;
@@ -175,7 +177,7 @@ class InputText extends DisplayObjectContainer
 		visible:false,
 		enabled:false,
 		placeholder:placeString,
-		fontAsset:App.font.regular,
+		fontAsset:fn,
 		fontSize:Math.round(fsize * App.scale),
 		fontColor:color,
 		textAlignment:nativeTextAlign,
@@ -211,7 +213,7 @@ class InputText extends DisplayObjectContainer
 		textfield.selectable = true;
 		textfield.type = TextFieldType.INPUT;
 		#end
-		textfield.defaultTextFormat = new TextFormat(Assets.getFont(App.font.regular).fontName, Math.floor(fsize), pcolor, false, false, false, "", "", align);
+		textfield.defaultTextFormat = new TextFormat(fn, Math.floor(fsize), pcolor, false, false, false, "", "", align);
 		//textfield.restrict = "\u0020-\u007E";
 		textfield.multiline = _multiline;
 		if (_multiline) textfield.wordWrap = true;

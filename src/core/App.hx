@@ -146,10 +146,10 @@ class App extends DisplayObjectContainer
 	 */
 	public var active:Bool = true;
 	
-	public function new(sx:Int=640,sy:Int=1136,_font:Font) 
+	public function new(sx:Int=640,sy:Int=1136,_font:Font=null) 
 	{
 		super();
-		font = _font;
+		if (_font != null) font = _font;
 		Lib.current.mouseEnabled = false;
 		//set mobile 
 		#if mobile
