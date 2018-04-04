@@ -3,6 +3,7 @@ package core;
 //import motion.Actuate;
 //import motion.actuators.GenericActuator;
 import haxe.Timer;
+import motion.easing.Expo;
 import motion.easing.Quad;
 import openfl.Assets;
 import openfl.display.Bitmap;
@@ -70,7 +71,7 @@ class State extends DisplayObjectContainer
 		super();
 		if (background != null) addChild(background);
 		
-		//visible = false;
+		visible = false;
 		//set camera restrict
 		App.main.cameraMinY = -minY;
 		App.main.cameraMaxY = -maxY;
@@ -101,6 +102,7 @@ class State extends DisplayObjectContainer
 		var tim = new Timer(1);
 		tim.run = function()
 		{
+		visible = true;
 		//add past state for animated state tweens
 		if (pastStateBitmap != null && animation != Animation.NONE)
 		{
@@ -115,23 +117,40 @@ class State extends DisplayObjectContainer
 		//set animation postions
 		if (stateAnimation)
 		{
-		//pastStateBitmap.scaleX = 1 / scaleX;
-		//pastStateBitmap.scaleY = 1 / scaleY;
 		pastStateBitmap.x = -x / App.scale;
 		//switch animation
 		switch(animation)
 		{
-			case Animation.SLIDEUP:
+		case Animation.SLIDEUP:
 			y = App.setHeight * App.scale;
 		    pastStateBitmap.y = -App.setHeight;
 			Actuate.tween(this, 0.4, {y:py}).onComplete(function(_)
 			{
-			//cacheAsBitmap = false;
 			removeChild(pastStateBitmap);
-			}).ease(Quad.easeIn);
-			//cacheAsBitmap = true;
-			case Animation.SLIDEDOWN:
-
+			}).ease(Expo.easeIn).delay(0.1);
+			
+		case Animation.SLIDEDOWN:
+			y = -App.setHeight * App.scale;
+			pastStateBitmap.y = App.setHeight;
+			Actuate.tween(this, 0.4, {y:py}).onComplete(function(_)
+			{
+			removeChild(pastStateBitmap);
+			}).ease(Expo.easeIn).delay(0.1);
+			
+		case Animation.OVERLAYUP:
+			pastStateBitmap.y = 0;
+			Actuate.tween(pastStateBitmap, 0.4, {y:-App.setHeight}).onComplete(function(_)
+			{
+			removeChild(pastStateBitmap);
+			}).ease(Expo.easeIn).delay(0.1);
+			
+		case Animation.OVERLAYDOWN:
+			pastStateBitmap.y = 0;
+			Actuate.tween(pastStateBitmap, 0.4, {y:App.setHeight}).onComplete(function(_)
+			{
+			removeChild(pastStateBitmap);
+			}).ease(Expo.easeIn).delay(0.1);
+			
 			default:
 		}
 		stateAnimation = false;
@@ -252,10 +271,10 @@ class State extends DisplayObjectContainer
 	 */
 	public function createScreenBitmap():Bitmap
 	{
-		var screen = new BitmapData(Math.floor(width), Math.floor(height), false);
+		var screen = new BitmapData(Math.floor(App.setWidth), Math.floor(App.setHeight), false,0xFFFFFF);
 		var mat = new Matrix();
 		mat.scale(scaleX,scaleY);
-		mat.translate( -x, -y);
+		mat.translate(0, -y);
 		screen.draw(this, mat);
 		var data = new Bitmap(screen, null, true);
 		data.scaleX = 1 / scaleX;

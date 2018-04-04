@@ -1,12 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
-	<!-- NMML reference: https://gist.github.com/1763850 -->
-	
-	<!-- metadata, make sure 'package' is at least 3 segments (ie. com.mycompany.myproject) -->
-	<meta title="App" package="com.App" version="1.0.0" />
-	
-	<!-- output -->
-	<app main="Main" file="App" path="bin"/>
 	
 	<!-- classpath, haxe libs -->
 	<source path="src" />
@@ -18,10 +11,8 @@
 	<include path="src/ext/nativetext" if="mobile" />
 	<setenv name="ANDROID_GRADLE_TASK" value="assembleDebug --info" />
 	
-	<!-- assets -->
-	<assets path="assets"/>
-	
 	<!-- optimize output
 	<haxeflag name="-dce full" /> -->
+	<assets path="assets"/>
 	
 </project>
