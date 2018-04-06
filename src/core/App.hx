@@ -169,6 +169,15 @@ class App extends DisplayObjectContainer
 			)mobile = true;
 		    
 	}
+	//scroll into view
+	/*var timer = new Timer(200);
+	timer.run = function()
+	{
+	js.Browser.document.body.scrollIntoView();//force the view to move below the adress bar => fix issue 1
+	js.Browser.document.body.style.height = js.Browser.window.innerHeight + "px";
+	timer.stop();
+	timer = null;
+	}*/
 		#end
 		#if mobile
 		nativetext.NativeText.Initialize();
@@ -741,5 +750,15 @@ Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
 		obj.x = -State.px * 1/App.scale;
 		if(widthBool)obj.width = Lib.current.stage.stageWidth * 1/App.scale;
 	}
+	
+	
+	public function createScreenBitmap(background:UInt=0xFFFFFF):Bitmap
+	{
+		var screen = new BitmapData(Math.floor(Lib.application.window.width), Math.floor(Lib.application.window.height), false, background);
+		screen.draw(App.main);
+		var data = new Bitmap(screen, null, true);
+		return data;
+	}
+	
 
 }

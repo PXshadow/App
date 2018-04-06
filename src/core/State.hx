@@ -30,7 +30,7 @@ import motion.Actuate;
 class State extends DisplayObjectContainer
 {
 	//old state bitmap
-	public static var pastStateBitmap:Bitmap;
+	public static var pastBitmap:Bitmap;
 	/**
 	 * Used internally for Resize Inital
 	 */
@@ -104,9 +104,9 @@ class State extends DisplayObjectContainer
 		{
 		visible = true;
 		//add past state for animated state tweens
-		if (pastStateBitmap != null && animation != Animation.NONE)
+		if (pastBitmap != null && animation != Animation.NONE)
 		{
-		addChild(pastStateBitmap);
+		App.main.addChild(pastBitmap);
 		stateAnimation = true;
 		}
 		//resize
@@ -117,38 +117,38 @@ class State extends DisplayObjectContainer
 		//set animation postions
 		if (stateAnimation)
 		{
-		pastStateBitmap.x = -x / App.scale;
+		//pastStateBitmap.x = -x / App.scale;
 		//switch animation
 		switch(animation)
 		{
 		case Animation.SLIDEUP:
 			y = App.setHeight * App.scale;
-		    pastStateBitmap.y = -App.setHeight;
+		    pastBitmap.y = -App.setHeight;
 			Actuate.tween(this, 0.4, {y:py}).onComplete(function(_)
 			{
-			removeChild(pastStateBitmap);
+			App.main.removeChild(pastBitmap);
 			}).ease(Expo.easeIn).delay(0.1);
 			
 		case Animation.SLIDEDOWN:
 			y = -App.setHeight * App.scale;
-			pastStateBitmap.y = App.setHeight;
+			pastBitmap.y = App.setHeight;
 			Actuate.tween(this, 0.4, {y:py}).onComplete(function(_)
 			{
-			removeChild(pastStateBitmap);
+			removeChild(pastBitmap);
 			}).ease(Expo.easeIn).delay(0.1);
 			
 		case Animation.OVERLAYUP:
-			pastStateBitmap.y = 0;
-			Actuate.tween(pastStateBitmap, 0.4, {y:-App.setHeight}).onComplete(function(_)
+			pastBitmap.y = 0;
+			Actuate.tween(pastBitmap, 0.4, {y:-App.setHeight}).onComplete(function(_)
 			{
-			removeChild(pastStateBitmap);
+			App.main.removeChild(pastBitmap);
 			}).ease(Expo.easeIn).delay(0.1);
 			
 		case Animation.OVERLAYDOWN:
-			pastStateBitmap.y = 0;
-			Actuate.tween(pastStateBitmap, 0.4, {y:App.setHeight}).onComplete(function(_)
+			pastBitmap.y = 0;
+			Actuate.tween(pastBitmap, 0.4, {y:App.setHeight}).onComplete(function(_)
 			{
-			removeChild(pastStateBitmap);
+			App.main.removeChild(pastBitmap);
 			}).ease(Expo.easeIn).delay(0.1);
 			
 			default:
@@ -208,7 +208,7 @@ class State extends DisplayObjectContainer
 	 */
 	public function resize(prx:Int,pry:Int,ssx:Float, ssy:Float)
 	{
-		if (!stateAnimation && pastStateBitmap != null) removeChild(pastStateBitmap);
+		if (!stateAnimation && pastBitmap != null)App.main.removeChild(pastBitmap);
 		sx = ssx; sy = ssy;
 		px = prx; py = pry;
 		scaleX = sx;
@@ -245,7 +245,7 @@ class State extends DisplayObjectContainer
 	if (this != null)
 	{
 		//take screenshot of last state for animations
-		pastStateBitmap = createScreenBitmap();
+		pastBitmap = App.main.createScreenBitmap();
 		//Assets.cache.clear();
 		App.main.removeChild(this);
 		App.state = null;
@@ -269,11 +269,10 @@ class State extends DisplayObjectContainer
 	 * Snapshots the state and creates a bitmap from it
 	 * @return
 	 */
-	public function createScreenBitmap():Bitmap
+	public function createScreenBitmap(background:UInt=0xFFFFFF):Bitmap
 	{
-		var screen = new BitmapData(Math.floor(App.setWidth), Math.floor(App.setHeight), false,0xFFFFFF);
+		var screen = new BitmapData(Math.floor(App.setWidth), Math.floor(App.setHeight), false,background);
 		var mat = new Matrix();
-		mat.scale(scaleX,scaleY);
 		mat.translate(0, -y);
 		screen.draw(this, mat);
 		var data = new Bitmap(screen, null, true);

@@ -83,20 +83,21 @@ namespace nativetext
 
 //            printf("NativeText: creating ID (%d).\n", eventDispatcherId);
 
-            if (! multiline) {
-                NativeTextFieldView* textField = [[NativeTextFieldView alloc] initWithFrame:frame];
+            if (multiline) {
+               NativeTextView* textField = [[NativeTextView alloc] initWithFrame:frame];
                 textField.tag = eventDispatcherId;
                 textField.delegate = g_textFieldContainerView;
-                textField.clearButtonMode = UITextFieldViewModeWhileEditing;
 
                 frame.size = textField.intrinsicContentSize;
                 [textField setFrame:frame];
 
                 [g_textFieldContainerView addSubview:textField];
             } else {
-                NativeTextView* textField = [[NativeTextView alloc] initWithFrame:frame];
+				
+				 NativeTextFieldView* textField = [[NativeTextFieldView alloc] initWithFrame:frame];
                 textField.tag = eventDispatcherId;
                 textField.delegate = g_textFieldContainerView;
+                textField.clearButtonMode = UITextFieldViewModeWhileEditing;
 
                 frame.size = textField.intrinsicContentSize;
                 [textField setFrame:frame];

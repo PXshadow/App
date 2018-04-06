@@ -240,8 +240,10 @@ class InputText extends DisplayObjectContainer
 		textfield.selectable = false;
 		nativeText.Configure({x:Math.round(x * App.scale + App.state.x), y:Math.round(y * App.scale),enabled:true, visible:true});
 		textfield.visible = false;
-		var tim = new Timer(50);
+		var tim = new Timer(1);
 		tim.run = function()
+		{
+		if (!nativeText.IsFocused())
 		{
 		//focus
 		nativeText.SetFocus();
@@ -250,6 +252,7 @@ class InputText extends DisplayObjectContainer
 		App.disableCameraMovment();
 		tim.stop();
 		tim = null;
+		}
 		}
 		#else
 		if (textfield.text == placeholderString)
