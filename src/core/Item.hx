@@ -1,5 +1,6 @@
 package core;
 import core.Button;
+import haxe.io.Bytes;
 import openfl.display.GradientType;
 import openfl.geom.Matrix;
 import openfl.display.Shape;
@@ -263,6 +264,27 @@ class ProfileIcon extends Button
 		addChild(outline);
 		if (path != "") update(false);
     }
+	
+public function updateIcon(data:Bytes)
+{
+BitmapData.loadFromBytes(data).onComplete(function(bmd:BitmapData)
+{
+	updateBitmapData(bmd);
+});
+//updateBitmapData(BitmapData.fromBytes(data));
+}
+
+public function updateBitmapData(bmd:BitmapData)
+{
+	graphics.clear();
+	var mat = new Matrix();
+	var sx:Float = 1;
+	var sy:Float = 1;
+	sx = 1 / bmd.width * _size;
+	sy = 1 / bmd.height * _size;
+	mat.scale(sx, sy);
+	graphics.beginBitmapFill(bmd, mat, false, true);
+}
 	
 	public function update(clear:Bool=true)
 	{

@@ -1,10 +1,10 @@
 package extensionkit;
 
 import extensionkit.event.ExtensionKitTestEvent;
-import flash.events.Event;
-import flash.events.IEventDispatcher;
-import flash.display.Sprite;
-import flash.display.Stage;
+import openfl.events.Event;
+import openfl.events.IEventDispatcher;
+import openfl.display.Sprite;
+import openfl.display.Stage;
 import haxe.Json;
 import lime.system.System;
 import openfl.utils.Timer;
@@ -168,7 +168,7 @@ class ExtensionKit
     
     private static function VerifyDirectoryExists(path:String) : String
     {
-        #if !flash
+        #if (!flash && !html5)
         if (!sys.FileSystem.exists(path))
         {
             sys.FileSystem.createDirectory(path);
@@ -256,6 +256,6 @@ class ExtensionKit
 
     private static function get_stage() : Stage
     {
-        return flash.Lib.current.stage;
+        return openfl.Lib.current.stage;
     }
 }

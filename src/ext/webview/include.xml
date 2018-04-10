@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension>
+	<assets path="assets/" include="*" />
+	
+	<section if="android">
+		<dependency name="webview" path="dependencies/webview" />
+	</section>
+
+	<section if="ios">
+		<dependency name="UIKit.framework" />
+		<ndll name="webviewex" />
+	</section>
+
+</extension>

@@ -9,7 +9,9 @@
 	
 	<include path="src/ext/extensionkit" if="mobile" />
 	<include path="src/ext/nativetext" if="mobile" />
-	<setenv name="ANDROID_GRADLE_TASK" value="assembleDebug --info" />
+	<include path="src/ext/camera" if="mobile" />
+	<include path="src/ext/webview" if="mobile"/>
+	<include path="src/ext/firebase" if="mobile"/>
 	
 	<!-- optimize output
 	<haxeflag name="-dce full" /> -->

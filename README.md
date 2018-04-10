@@ -85,5 +85,5 @@ class Menu extends State
 
 ## TODO
 - Create more Widgets and get feedback.
-- Optomization 
+- optimization
 - Demo Projects

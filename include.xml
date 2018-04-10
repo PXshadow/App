@@ -4,6 +4,9 @@
 <section if="mobile">
 <include path="src/ext/NativeText"/>
 <include path="src/ext/Extensionkit"/>
+<include path="src/ext/Camera" />
+<include path="src/ext/webview" />
+<include path="src/ext/firebase" />
 </section>
 <assets path="assets"/>
 </project>

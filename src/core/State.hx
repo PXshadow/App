@@ -108,6 +108,7 @@ class State extends DisplayObjectContainer
 		{
 		App.main.addChild(pastBitmap);
 		stateAnimation = true;
+		App.main.animation = true;
 		}
 		//resize
 		resize(px, py, sx, sy);
@@ -117,8 +118,6 @@ class State extends DisplayObjectContainer
 		//set animation postions
 		if (stateAnimation)
 		{
-		//pastStateBitmap.x = -x / App.scale;
-		//switch animation
 		switch(animation)
 		{
 		case Animation.SLIDEUP:
@@ -127,6 +126,7 @@ class State extends DisplayObjectContainer
 			Actuate.tween(this, 0.4, {y:py}).onComplete(function(_)
 			{
 			App.main.removeChild(pastBitmap);
+			App.main.animation = false;
 			}).ease(Expo.easeIn).delay(0.1);
 			
 		case Animation.SLIDEDOWN:
@@ -135,13 +135,15 @@ class State extends DisplayObjectContainer
 			Actuate.tween(this, 0.4, {y:py}).onComplete(function(_)
 			{
 			removeChild(pastBitmap);
+			App.main.animation = false;
 			}).ease(Expo.easeIn).delay(0.1);
 			
 		case Animation.OVERLAYUP:
 			pastBitmap.y = 0;
-			Actuate.tween(pastBitmap, 0.4, {y:-App.setHeight}).onComplete(function(_)
+			Actuate.tween(pastBitmap, 0.4, {y:height}).onComplete(function(_)
 			{
 			App.main.removeChild(pastBitmap);
+			App.main.animation = false;
 			}).ease(Expo.easeIn).delay(0.1);
 			
 		case Animation.OVERLAYDOWN:
@@ -149,6 +151,7 @@ class State extends DisplayObjectContainer
 			Actuate.tween(pastBitmap, 0.4, {y:App.setHeight}).onComplete(function(_)
 			{
 			App.main.removeChild(pastBitmap);
+			App.main.animation = false;
 			}).ease(Expo.easeIn).delay(0.1);
 			
 			default:
@@ -218,8 +221,8 @@ class State extends DisplayObjectContainer
 		for (i in 0...numChildren)
 		{
 		if (!Std.is(getChildAt(i), openfl.display.Tilemap) 
-		&&!Std.is(getChildAt(i), openfl.display.Bitmap) 
-		//&& !Std.is(getChildAt(i), TextField)
+		&&!Std.is(getChildAt(i), openfl.display.Bitmap)
+		&& !Std.is(getChildAt(i), TextField)
 		)getChildAt(i).cacheAsBitmap = true;
 		}
 		//background sizing
@@ -241,14 +244,22 @@ class State extends DisplayObjectContainer
 	 */
 	public function remove()
 	{
+	//protect against non main state getting removed
+	if (this != App.state) throw("This state is not equal to App.state please set it to that in order to properly use the state");
 	//protect against null
 	if (this != null)
 	{
 		//take screenshot of last state for animations
 		pastBitmap = App.main.createScreenBitmap();
-		//Assets.cache.clear();
+		Assets.cache.clear();
 		App.main.removeChild(this);
 		App.state = null;
+		#if cpp
+		cpp.vm.Gc.run(true);
+		#end
+		#if neko
+		neko.vm.Gc.run(true);
+		#end
 	}
 	}
 	/**

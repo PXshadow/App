@@ -8,6 +8,7 @@ import openfl.display.DisplayObjectContainer;
 import openfl.events.Event;
 import openfl.events.FocusEvent;
 import openfl.events.MouseEvent;
+import openfl.events.TextEvent;
 import openfl.geom.Matrix;
 import openfl.text.TextField;
 import openfl.text.TextFormat;
@@ -61,6 +62,7 @@ class InputText extends DisplayObjectContainer
 	public var nativeText:NativeTextField;
 	#end
 	public var textfield:TextField;
+	public var button:Button;
 	@:isVar public var text(get, set):String;
 	@:isVar public var focus(get, set):Bool;
 	@:isVar public var show(get, set):Bool;
@@ -92,23 +94,13 @@ class InputText extends DisplayObjectContainer
 	}
 	function set_focus(value:Bool):Bool
 	{
-		#if mobile
 		if (value)
 		{
-		nativeText.SetFocus();
+		focusIn(null);
 		}else{
-		nativeText.ClearFocus();
+		focusOut(null);
 		}
 		return value;
-		#else
-		if (value)
-		{
-		App.state.stage.focus = textfield;	
-		}else{
-		App.state.stage.focus = null;
-		}
-		return value;
-		#end
 	}
 	function get_text():String
 	{
@@ -144,15 +136,17 @@ class InputText extends DisplayObjectContainer
 	 * @param	_keyType
 	 * @param	_returnType 
 	 */
-	#if mobile
 	public function new(?sx:Float = 0, ?sy:Float = 0, placeString:String, fsize:Int = 24, fieldWidth:Int = 0, pcolor:Int = 0, color:Int = 0, password:Bool = false, _multiline:Bool = false,textfieldHeight:Int=0, _keyType:NativeTextFieldKeyboardType = null, _returnType:NativeTextFieldReturnKeyType = null,align:String=null) 
-	#else
-	public function new(?sx:Float=0,?sy:Float=0,placeString:String,fsize:Int=24,fieldWidth:Int=0,pcolor:Int=0,color:Int=0,password:Bool=false,_multiline:Bool = false,textfieldHeight:Int=0,_keyType:Dynamic = null, _returnType:Dynamic = null,align:String=null) 
-	#end
 	{
 		super();
 		var fn = null;
 		if (App.font != null) fn = Assets.getFont(App.font.format).fontName;
+		
+		newColor = color;
+		pColor = pcolor;
+		passwordBool = password;
+		size = fsize;
+		
 		#if mobile
 		if (_keyType == null)_keyType = NativeTextFieldKeyboardType.Default;
 		if (_returnType == null)_returnType = NativeTextFieldReturnKeyType.Default;
@@ -160,8 +154,7 @@ class InputText extends DisplayObjectContainer
 		if (align == null) align = TextFormatAlign.LEFT;
 		if (align == TextFormatAlign.CENTER) nativeTextAlign = NativeTextFieldAlignment.Center;
 		if (align == TextFormatAlign.RIGHT) nativeTextAlign = NativeTextFieldAlignment.Right;
-		
-		if (password)_keyType = NativeTextFieldKeyboardType.Password;
+		if (passwordBool)_keyType = NativeTextFieldKeyboardType.Password;
 		var setHeight:Dynamic;
 		if (textfieldHeight > 0)
 		{
@@ -186,119 +179,93 @@ class InputText extends DisplayObjectContainer
 		multiline:_multiline,
 		placeholderColor:pcolor
 		});
-		nativeText.addEventListener(nativetext.event.NativeTextEvent.FOCUS_OUT, function(_)
-		{
-		//if state scrolls turn scroll back on
-		App.dragBool = isDrag;
-		App.scrollBool = false;
-		//change to placeholder text
-		textfield.visible = true;
-		if(Utf8.validate(nativeText.GetText()))textfield.text = Utf8.decode(nativeText.GetText());
-		textfield.defaultTextFormat = new TextFormat(null, null, newColor);
-		nativeText.Configure({visible:false, enabled:false});	
-		});
+		nativeText.addEventListener(nativetext.event.NativeTextEvent.FOCUS_OUT, focusOut);
 		#end
 		
-		textfield = new TextField();
-		textfield.multiline = _multiline;
-		textfield.wordWrap = !_multiline;
-		if(textfieldHeight > 0)textfield.height = textfieldHeight;
-		passwordBool = password;
-		newColor = color;
-		pColor = pcolor;
-		size = fsize;
-		placeholderString = placeString;
-		textfield.selectable = false;
-		#if !mobile
-		textfield.selectable = true;
-		textfield.type = TextFieldType.INPUT;
-		#end
-		textfield.defaultTextFormat = new TextFormat(fn, Math.floor(fsize), pcolor, false, false, false, "", "", align);
-		//textfield.restrict = "\u0020-\u007E";
-		textfield.multiline = _multiline;
-		if (_multiline) textfield.wordWrap = true;
-		if (fieldWidth > 0)
-		{
-			textfield.width = fieldWidth;
-		}else{
-		   width = App.main.stage.stageWidth;
-		}
-		textfield.text = placeholderString;
-	addChild(textfield);
-	this.x = sx;
-	this.y = sy;
-	//events
-	addEventListener(MouseEvent.MOUSE_DOWN, text_onMouseDown);
-	addEventListener(FocusEvent.FOCUS_OUT, text_onFocusOut);
-	addEventListener(Event.REMOVED_FROM_STAGE, removed);
-	
-	}
-	
-	public function text_onMouseDown(event:MouseEvent):Void 
+	textfield = new TextField();
+	//textfield.cacheAsBitmap = true;
+	textfield.multiline = _multiline;
+	textfield.wordWrap = !_multiline;
+	if(textfieldHeight > 0)textfield.height = textfieldHeight;
+	placeholderString = placeString;
+	textfield.mouseEnabled = false;
+	textfield.type = TextFieldType.DYNAMIC;
+	textfield.defaultTextFormat = new TextFormat(fn, Math.floor(fsize), pcolor, false, false, false, "", "", align);
+	textfield.multiline = _multiline;
+	#if !mobile
+	textfield.addEventListener(FocusEvent.FOCUS_OUT, focusOut);
+	#end
+	if (_multiline) textfield.wordWrap = true;
+	if (fieldWidth > 0)
 	{
-		#if mobile
-		textfield.selectable = false;
-		nativeText.Configure({x:Math.round(x * App.scale + App.state.x), y:Math.round(y * App.scale),enabled:true, visible:true});
+	textfield.width = fieldWidth;
+	}else{
+	width = App.main.stage.stageWidth;
+	}
+	//set textfield add to state and set posistion
+	textfield.text = placeholderString;
+	textfield.height = textfield.textHeight + 4;
+	addChild(textfield);
+	//button
+	button = App.createInvisButton(0, 0, Math.floor(textfield.width),Math.floor(textfield.height));
+	button.mouseOutBool = false;
+	button.Up = focusIn;
+	addChild(button);
+	x = sx;
+	y = sy;
+	//events
+	addEventListener(Event.REMOVED_FROM_STAGE, removed);
+	}
+	public function focusIn(_)
+	{
+		button.mouseEnabled = false;
+		isDrag = App.dragBool;
+		App.disableCameraMovment();
+		#if mobile 
 		textfield.visible = false;
-		var tim = new Timer(1);
+		nativeText.Configure({x:Math.round(x * App.scale + App.state.x), y:Math.round(y * App.scale), enabled:true, visible:true});
+		var tim = new Timer(10);
 		tim.run = function()
 		{
-		if (!nativeText.IsFocused())
-		{
-		//focus
 		nativeText.SetFocus();
-		isDrag = App.dragBool;
-		App.dragBool = false;
-		App.disableCameraMovment();
 		tim.stop();
 		tim = null;
 		}
-		}
 		#else
+		textfield.type = TextFieldType.INPUT;
+		textfield.mouseEnabled = true;
 		if (textfield.text == placeholderString)
 		{
 			textfield.displayAsPassword = passwordBool;
 			textfield.text = "";
 			textfield.defaultTextFormat = new TextFormat(null, null, newColor);
 		}
+		App.state.stage.focus = textfield;
 		#end
 	}
 	
-	public function text_onFocusOut(event:FocusEvent):Void 
+	public function focusOut(_)
 	{
+		button.mouseEnabled = true;
+		App.dragBool = isDrag;
 		#if mobile
-		if (nativeText.GetText() == "")
-		{
-			textfield.text = placeholderString;
-			textfield.displayAsPassword = false;
-			textfield.defaultTextFormat = new TextFormat(null, null, pColor);
-		}
 		textfield.visible = true;
-		textfield.selectable = true;
-		nativeText.Configure({enabled:false, visible:false});
-		trace("unfocus");
+		if(Utf8.validate(nativeText.GetText()))textfield.text = Utf8.decode(nativeText.GetText());
+		textfield.defaultTextFormat = new TextFormat(null, null, newColor);
+		nativeText.Configure({visible:false, enabled:false});	
 		#else
-		if (textfield.text == "")
-		{
-			textfield.text = placeholderString;
-			textfield.displayAsPassword = false;
-			textfield.defaultTextFormat = new TextFormat(null, null, pColor);
-		}
-		/*if (App.mobile)
-		{
-		App.resizeBool = true;
-		App.state.y = 0;
-		}*/
+		textfield.type = TextFieldType.DYNAMIC;
+		textfield.mouseEnabled = false;
 		#end
 	}
 	
 	public function removed(_)
 	{
-	removeEventListener(MouseEvent.MOUSE_DOWN, text_onMouseDown);
-	removeEventListener(FocusEvent.FOCUS_OUT, text_onFocusOut);
 	removeEventListener(Event.REMOVED_FROM_STAGE, removed);
 	#if mobile
 	nativeText.Destroy();
+	#else
+	
 	#end
 	}
 }

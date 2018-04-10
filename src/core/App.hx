@@ -145,6 +145,7 @@ class App extends DisplayObjectContainer
 	 * false = User not on application / minimized
 	 */
 	public var active:Bool = true;
+	public var animation:Bool = false;
 	
 	public function new(sx:Int=640,sy:Int=1136,_font:Font=null) 
 	{
@@ -200,7 +201,7 @@ class App extends DisplayObjectContainer
 		omY = spY;
 		scrollPress = false;
 		mouseDown = true;
-		state.mouseDown();
+		if(!animation)state.mouseDown();
 		}
 		});
 		Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, function(e:MouseEvent)
@@ -208,7 +209,7 @@ class App extends DisplayObjectContainer
 			mouseDown = false;
 			if (state != null)
 			{
-			state.mouseUp();
+			if(!animation)state.mouseUp();
 			}
 			if(onMouseUp != null)onMouseUp(e);
 		});
@@ -221,7 +222,7 @@ class App extends DisplayObjectContainer
 		});
 		Lib.current.addEventListener(KeyboardEvent.KEY_DOWN, function(e:KeyboardEvent)
 		{
-			state.keyDown(e);
+			if(!animation)state.keyDown(e);
 		});
 		}
 		#end
@@ -233,7 +234,7 @@ class App extends DisplayObjectContainer
 			if (!backExit && e.keyCode == KeyCode.APP_CONTROL_BACK)
 			{
 			e.preventDefault();
-			state.back(e);
+			if(!animation)state.back(e);
 			}
 		});
 		
@@ -317,7 +318,7 @@ class App extends DisplayObjectContainer
 	   
 			if (state != null)
 			{
-			state.update();
+			if(!animation)state.update();
 			omX = App.state.mouseX;
 			omY = App.state.mouseY;
 			}
@@ -374,7 +375,6 @@ class App extends DisplayObjectContainer
 			
 			public static function enableCameraMovement()
 			{
-				scrollBool = true;
 				dragBool = true;
 			}
 			public static function disableCameraMovment()
@@ -384,6 +384,9 @@ class App extends DisplayObjectContainer
 				scrollDuration = 0;
 				scrollSpeedX = 0;
 				scrollSpeedY = 0;
+				App.main.vectorX = null;
+				App.main.vectorY = null;
+				
 			}
 			
 			public static function moveCamera(dx:Float =0, dy:Float =0,frameX:Int=0,frameY:Int=0)

@@ -4,7 +4,7 @@
   "license": "MIT",
   "tags": ["ui", "openfl", "network", "networking", "client", "tcp","mobile","android","ios","html5"],
   "description": "openFl UI libary devolped for ThinQbator production Use",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "releasenote": "Incredible amount of changes, try to use github pulls if possible to stay up to latest",
   "contributors": ["PXshadow"],
   "dependencies": {

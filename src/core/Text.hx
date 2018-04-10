@@ -1,6 +1,11 @@
 package core;
 import haxe.Timer;
+import openfl.display.Bitmap;
+import openfl.display.PixelSnapping;
+import openfl.events.Event;
 import openfl.events.TextEvent;
+import openfl.text.AntiAliasType;
+import openfl.text.GridFitType;
 import openfl.text.TextField;
 import openfl.text.TextFieldType;
 import openfl.text.TextFormat;
@@ -13,7 +18,6 @@ import openfl.Assets;
  */
 class Text extends TextField
 {
-	public var initalTextRender:Bool = true;
 	/**
 	 * Static App text
 	 **/
@@ -36,22 +40,20 @@ class Text extends TextField
 	text = textString;
 	var fn = null;
 	if (App.font != null) fn = Assets.getFont(App.font.format).fontName;
-	defaultTextFormat = new TextFormat(fn, size, color, false, false, false, "", "", align,null,null,null,ident);
+	defaultTextFormat = new TextFormat(fn, size, color, false, false, false, "", "", align, null, null, null, ident);
 	}
+	
 	@:noCompletion override private function __updateText(value:String):Void
 	{
 		super.__updateText(value);
-		if (!initalTextRender)
-		{
-		var time = new Timer(1);
 		cacheAsBitmap = false;
-		time.run = function()
+		
+		var timer = new Timer(1);
+		timer.run = function()
 		{
 			cacheAsBitmap = true;
-			time.stop();
-			time = null;
+			timer.stop();
+			timer = null;
 		}
-		}
-		initalTextRender = false;
 	}
 }
