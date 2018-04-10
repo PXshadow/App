@@ -2,5 +2,3 @@ app.hxproj
 app.zip
 bin
 src/Main.hx
-src/ext/firebase/dependencies/android/google-services.json
-src/ext/firebase/project/GoogleService-Info.plist
