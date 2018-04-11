@@ -1,7 +1,7 @@
 package core;
 import core.OAuth.Application;
 #if mobile
-//import extension.webview.WebView;
+import extension.webview.WebView;
 #end
 import openfl.Lib;
 import openfl.net.URLRequest;

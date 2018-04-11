@@ -1,8 +1,8 @@
 package core;
-//import camera.Camera as NativeCamera;
+import camera.Camera as NativeCamera;
 #if mobile
-//import camera.Camera as NativeCamera;
-//import camera.event.CameraEvent;
+import camera.Camera as NativeCamera;
+import camera.event.CameraEvent;
 #end
 import openfl.Lib;
 import openfl.display.Bitmap;
