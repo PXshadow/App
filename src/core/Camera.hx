@@ -1,5 +1,4 @@
 package core;
-import camera.Camera as NativeCamera;
 #if mobile
 import camera.Camera as NativeCamera;
 import camera.event.CameraEvent;

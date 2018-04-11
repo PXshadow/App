@@ -758,7 +758,7 @@ Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
 	public function createScreenBitmap(background:UInt=0xFFFFFF):Bitmap
 	{
 		var screen = new BitmapData(Math.floor(Lib.application.window.width), Math.floor(Lib.application.window.height), false, background);
-		screen.draw(App.main);
+		screen.draw(Lib.current);
 		var data = new Bitmap(screen, null, true);
 		return data;
 	}
