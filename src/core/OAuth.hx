@@ -45,7 +45,7 @@ class OAuth
 		"&scope=" + scope;
 		
 		#if mobile
-		/*WebView.open(url,true,null,[redirect + "(.*)"]);
+		WebView.open(url,true,null,[redirect + "(.*)"]);
 		WebView.onURLChanging = function(newUrl:String)
 		{
 			if (newUrl.indexOf(state) > -1 && newUrl.substring(0, redirect.length) == redirect)
@@ -57,7 +57,7 @@ class OAuth
 				//callback
 				if (getAuth != null) getAuth(type, code);
 			}
-		};*/
+		};
 		#else 
 		#if debug
 		Lib.navigateToURL(new URLRequest(url));
@@ -66,8 +66,8 @@ class OAuth
 	}
 	
 	private function create(): String {
-    //return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
-	return s4() + s4() + s4() + s4() + s4() + s4() + s4() + s4();
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+	//return s4() + s4() + s4() + s4() + s4() + s4() + s4() + s4();
   }
 
     private function s4(): String {

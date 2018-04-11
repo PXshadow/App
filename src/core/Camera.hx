@@ -19,15 +19,15 @@ class Camera
 
 	public function new(size:Int=1080,quality:Float=0.9) 
 	{
-		/*#if mobile
+		#if mobile
 		NativeCamera.Initialize();
 		App.main.stage.addEventListener(CameraEvent.PHOTO_CAPTURED, cameraCaptured);
 		App.main.stage.addEventListener(CameraEvent.PHOTO_CANCELLED, cameraCanceled);
 		NativeCamera.CapturePhoto(size, quality);
-		#end*/
+		#end
 	}
 	#if mobile
-	/*public function cameraCaptured(e:CameraEvent)
+	public function cameraCaptured(e:CameraEvent)
 	{
         if (getData != null) getData(e.GetImageData());
 		remove();
@@ -42,7 +42,7 @@ class Camera
 		App.main.stage.removeEventListener(CameraEvent.PHOTO_CAPTURED, cameraCaptured);
 		App.main.stage.removeEventListener(CameraEvent.PHOTO_CANCELLED, cameraCanceled);
 		getData = null;
-	}*/
+	}
 	#end
 	
 }
