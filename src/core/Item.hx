@@ -147,17 +147,14 @@ class ScrollBar extends Button
     public var downBool:Bool = false;
     public var moveDistance:Float = 0;
     public var scrollView:Array<openfl.display.DisplayObject> = [];
-    public var vertical:Bool;
     private var sx:Int = 0;
     private var sy:Int = 0;
 
-     public function new(?x:Int=0,?y:Int=0,dem:Int = 40,setVertical:Bool=true)
+     public function new(?x:Int=0,?y:Int=0,dem:Int = 40)
  {
      sx = x;sy = y;
      super(sx,sy);
-     vertical = setVertical;
      create(Math.floor(dem/2));
-     if(!vertical)rotation = 90;
      addEventListener(Event.ENTER_FRAME,update);
      mouseOutBool = false;
      scaleX = 0.7;
@@ -197,35 +194,17 @@ class ScrollBar extends Button
   public function update(_)
   {
     //move all Objects in Scroll View
-    if(vertical)
-    {
-    if(Math.abs(App.scrollSpeedY) > 0)
+    if(Math.abs(App.scrollSpeed) > 0)
     {
     for(obj in scrollView)
     {
-        obj.y += App.scrollSpeedY;
+        obj.y += App.scrollSpeed;
     }
-    y += App.scrollSpeedY;
+    y += App.scrollSpeed;
     if(y < -height/2)y = App.setHeight - height/2;
     if(y > App.setHeight - height/2)y = -height/2;
     }else{
     if(!downBool)App.dragBool = false;
-    }
-    }else{
-    //horizontal
-    if(Math.abs(App.scrollSpeedX) > 0)
-    {
-    for(obj in scrollView)
-    {
-        obj.x += App.scrollSpeedX;
-    }
-    x += App.scrollSpeedX;
-    trace("x " + x);
-    if(x < width/2)x = App.setWidth + width/2;
-    if(x > App.setWidth + width/2)x = width/2;
-    }else{
-    if(!downBool)App.dragBool = false;
-    }
     }
   }
   override public function remove(_)
@@ -235,13 +214,8 @@ class ScrollBar extends Button
  }
  public function resize(_)
  {
-     if(vertical)
-     {
      this.x = (-State.px + openfl.Lib.current.stage.stageWidth) * 1/App.scale - width;
-     }else{
-    this.x = sx + this.width;
-    this.y = sy - this.height;
-     }
+     
  }
 }
 

@@ -90,12 +90,11 @@ class State extends DisplayObjectContainer
 		if(App.network != null)App.network.onMessage = null;
 		//add
 		App.main.addChild(this);
-		App.omX = mouseX;
-		App.omY = mouseY;
+		App.omX = Math.floor(mouseX);
+		App.omY = Math.floor(mouseY);
 		App.camY = 0;
-		App.camX = 0;
-		App.scrollSpeedY = 0;
-		App.scrollSpeedX = 0;
+		App.scrollSpeed = 0;
+		App.moveBool = false;
 		App.scrollBool = false;
 		mouseEnabled = false;
 		//resize

@@ -45,8 +45,8 @@ class App extends DisplayObjectContainer
 	
 	public static var state:State;
 	//old mouse postions
-	public static var omX:Float = 0;
-	public static var omY:Float = 0;
+	public static var omX:Int = 0;
+	public static var omY:Int = 0;
 	//CameraScroll
 	public var cameraMinY:Int = 0;
 	public var cameraMaxY:Int = 0;
@@ -61,20 +61,21 @@ class App extends DisplayObjectContainer
 	//if camera is scrolling used to have buttons not go off during
 	public static var scrollPress:Bool = false;
 	//start postion of scroll
+	public static var scrollBool:Bool = false;
 	public static var dragBool:Bool = false;
+	public static var moveBool:Bool = false;
 	public static var dragRect:Rectangle;
-	public static var spX:Float = 0;
-	public static var spY:Float = 0;
+	public static var spX:Int = 0;
+	public static var spY:Int = 0;
 	public static var mouseDown:Bool = false;
-	public static var camY:Float = 0;
-	public static var camX:Float = 0;
-	public static var scrollSpeedY:Float = 0;
-	public static var scrollSpeedX:Float = 0;
+	public static var camY:Int = 0;
+	//y
+	public static var scrollSpeed:Int = 0;
+	//x
+	//public static var slideSpeed:Int = 0;
 	var oldSSX:Float = 0;
 	var oldSSY:Float = 0;
 	public static var scrollDuration:Int = 0;
-	public static var scrollBool:Bool = false;
-	public var moveBool:Bool = false;
 	public var scrollInt:Int = 0;
 	public var vectorY:Vector<Int> = new Vector<Int>(0);
 	public var vectorX:Vector<Int> = new Vector<Int>(0);
@@ -195,8 +196,8 @@ class App extends DisplayObjectContainer
 		{
 		if (state != null && pointRect(App.state.mouseX, App.state.mouseY, dragRect))
 		{
-		spX = App.state.mouseX;
-		spY = App.state.mouseY;
+		spX = Math.round(App.state.mouseX);
+		spY = Math.round(App.state.mouseY);
 		omX = spX;
 		omY = spY;
 		scrollPress = false;
@@ -240,28 +241,29 @@ class App extends DisplayObjectContainer
 		
 		Lib.current.stage.addEventListener(Event.ENTER_FRAME, function(e:Event)
 		{
-		//set old
-		oldSSX= App.scrollSpeedX;
-		oldSSY = App.scrollSpeedY;
-		
-	if (App.dragBool && App.mouseDown)
+			
+	oldSSY = App.scrollSpeed;
+	//if move turn off mouseDown
+	if (moveBool) mouseDown = false;
+	//drag and scroll
+	if (mouseDown)
 	{
-	App.scrollSpeedY = Math.round(App.state.mouseY - App.omY);
-	App.scrollSpeedX = Math.round(App.state.mouseX - App.omX);
+	if (App.dragBool)scrollSpeed = Math.round(state.mouseY - omY);
+	}else{
+	if (scrollBool)
+	{
+	scrollSpeed = vectorY[scrollInt];
+	if (scrollInt >= scrollDuration)
+	{
+	scrollBool = false;
+	scrollSpeed = 0;
+	moveBool = false;
+	}else{
+	scrollInt++;
 	}
-		if (scrollBool && !App.mouseDown || moveBool)
-		{
-		App.scrollSpeedY = vectorY[scrollInt];
-		App.scrollSpeedX = vectorX[scrollInt];
-		if (scrollInt >= scrollDuration)
-		{
-		scrollBool = false;
-		moveBool = false;
-		scrollSpeedY = 0;
-		scrollSpeedX = 0;
-		}
-		scrollInt ++;
-		}
+	}
+	}
+		
 		//SEND OUT restrict events
 		if (restrictInt > 0)
 		{
@@ -271,56 +273,33 @@ class App extends DisplayObjectContainer
 				if(minEventY != null)minEventY();
 				case 2:
 				if(maxEventY != null)maxEventY();
-				case 3:
-				if(minEventX != null)minEventX();
-				case 4:
-				if(maxEventX != null)maxEventX();
 			}
 			restrictInt = 0;
 		}
 		//RESTRICT Y
 	   if (App.main.cameraMinY != App.main.cameraMaxY)
 	   {
-		if (App.camY + App.scrollSpeedY > App.main.cameraMinY && App.scrollSpeedY >= 0)
+		if (App.camY + App.scrollSpeed > App.main.cameraMinY && App.scrollSpeed >= 0)
 		{
-		App.scrollSpeedY = -App.camY + App.main.cameraMinY;
+		App.scrollSpeed = -App.camY + App.main.cameraMinY;
 		scrollInt = scrollDuration + 1;
 		if (minEventY != null) restrictInt = 1;
 		}
-		if (App.camY + App.scrollSpeedY < App.main.cameraMaxY && App.scrollSpeedY <= 0)
+		if (App.camY + App.scrollSpeed < App.main.cameraMaxY && App.scrollSpeed <= 0)
 		{
-		App.scrollSpeedY = -App.camY + App.main.cameraMaxY;
+		App.scrollSpeed = -App.camY + App.main.cameraMaxY;
 		scrollInt = scrollDuration + 1;
 		if (maxEventY != null) restrictInt = 2;
 		}
 		//Speed
-		App.camY += App.scrollSpeedY;
-	   }
-		//X
-	   if (App.main.cameraMinX != App.main.cameraMaxX)
-	   {
-		if (App.camX + App.scrollSpeedX > App.main.cameraMinX && App.scrollSpeedX >= 0)
-		{
-		App.scrollSpeedX = -App.camX + App.main.cameraMinX;
-		scrollInt = scrollDuration + 1;
-		if (minEventX != null) restrictInt = 3;
-		}
-		if (App.camX + App.scrollSpeedX < App.main.cameraMaxX && App.scrollSpeedX <= 0)
-		{
-		App.scrollSpeedX = -App.camX + App.main.cameraMaxX;
-		scrollInt = scrollDuration + 1;
-		if (maxEventX != null) restrictInt = 4;
-		}
-		//speed 
-		App.camX += App.scrollSpeedX;
-		//infinite scroll
+		App.camY += App.scrollSpeed;
 	   }
 	   
 			if (state != null)
 			{
 			if(!animation)state.update();
-			omX = App.state.mouseX;
-			omY = App.state.mouseY;
+			omX = Math.round(App.state.mouseX);
+			omY = Math.round(App.state.mouseY);
 			}
 		//update networkings
 		if (network != null) network.update();
@@ -332,7 +311,7 @@ class App extends DisplayObjectContainer
 		});
 		
 		Lib.current.stage.addEventListener (openfl.events.Event.DEACTIVATE, function (_) {
-			scrollSpeedY = 0;
+			scrollSpeed = 0;
 			active = false;
 			Lib.current.stage.frameRate = 5;
 		});
@@ -341,35 +320,29 @@ class App extends DisplayObjectContainer
 		public static function scrollCamera()
 		{
 			//1950 / (1000 / 60) = 117;
-			if (dragBool && !App.main.moveBool)
+			if (dragBool && !moveBool)
 			{
 			if (Math.abs(spY - App.state.mouseY) < 10) scrollPress = true;
 			mouseDown = false;
 			scrollDuration = 117;
-			if (Math.abs(scrollSpeedY) > 0 && Math.abs(scrollSpeedY) < 70 || Math.abs(scrollSpeedX) > 0 && Math.abs(scrollSpeedX) < 70) scrollDuration = 80;
+			if (Math.abs(scrollSpeed) > 0 && Math.abs(scrollSpeed) < 70) scrollDuration = 80;
 			//speed limiter
 			var limit = 140;
-			if (scrollSpeedY > limit) scrollSpeedY = limit;
-			if (scrollSpeedY < -limit) scrollSpeedY = -limit;
-			if (scrollSpeedX > limit) scrollSpeedX = limit;
-			if (scrollSpeedX < limit) scrollSpeedX = -limit;
+			if (scrollSpeed > limit) scrollSpeed = limit;
+			if (scrollSpeed < -limit) scrollSpeed = -limit;
 			
 			App.main.vectorY = new Vector<Int>(scrollDuration);
-			App.main.vectorX = new Vector<Int>(scrollDuration);
+			var spY:Float = scrollSpeed;
 			
 			for (i in 0...scrollDuration)
 			{
-				scrollSpeedY *= 0.95;
-			   App.main.vectorY[i] = Math.round(scrollSpeedY);
+				spY *= 0.95;
+			   App.main.vectorY[i] = Math.round(spY);
 			}
-				for (i in 0...scrollDuration)
-			{
-				scrollSpeedX *= 0.95;
-			   App.main.vectorX[i] = Math.round(scrollSpeedX);
-			}
+			scrollSpeed = 0;
+			scrollBool = true;
 			App.main.scrollInt = 0;
 			scrollDuration += -1;
-			scrollBool = true;
 			}
 		}
 			
@@ -379,24 +352,33 @@ class App extends DisplayObjectContainer
 			}
 			public static function disableCameraMovment()
 			{
-				scrollBool = false;
 				dragBool = false;
+				scrollBool = false;
 				scrollDuration = 0;
-				scrollSpeedX = 0;
-				scrollSpeedY = 0;
+				scrollSpeed = 0;
 				App.main.vectorX = null;
 				App.main.vectorY = null;
+			}
+			
+			public static function toTop(frame:Int=0)
+			{
+				var dis:Int = camY - main.cameraMinY;
+				trace("dis " + dis);
+			}
+			public static function toBottom(frame:Int=0)
+			{
 				
 			}
 			
 			public static function moveCamera(dx:Float =0, dy:Float =0,frameX:Int=0,frameY:Int=0)
 			{
+				moveBool = true;
+				scrollBool = true;
 				var disX:Float = 0;
 				var disY:Float = 0;
 				disX = dx;
 				disY = dy;
 				mouseDown = false;
-				App.main.moveBool = true;
 				scrollDuration = Math.floor(Math.max(frameX, frameY));
 				
 				App.main.vectorX = new Vector(frameX + 1);
@@ -416,7 +398,6 @@ class App extends DisplayObjectContainer
 				App.main.vectorY[frameY] = 0;
 				
 				App.main.scrollInt = 0;
-			    scrollBool = true;
 			}
 	
 	public static function cutShapeFromBitmapData( bitmapData : BitmapData, shape : Shape ):BitmapData 
@@ -756,12 +737,12 @@ Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
 	
 	
 	public function createScreenBitmap(background:UInt=0xFFFFFF):Bitmap
-	{
-		var screen = new BitmapData(Math.floor(Lib.application.window.width), Math.floor(Lib.application.window.height), false, background);
-		screen.draw(Lib.current);
-		var data = new Bitmap(screen, null, true);
-		return data;
-	}
+    {
+        var screen = new BitmapData(Math.floor(stage.stageWidth), Math.floor(stage.stageHeight), false, background);
+        screen.draw(App.main);
+        var data = new Bitmap(screen, null, true);
+        return data;
+    }
 	
 
 }

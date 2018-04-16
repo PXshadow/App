@@ -250,6 +250,7 @@ class InputText extends DisplayObjectContainer
 		App.dragBool = isDrag;
 		#if mobile
 		textfield.visible = true;
+		textfield.displayAsPassword = passwordBool;
 		if(Utf8.validate(nativeText.GetText()))textfield.text = Utf8.decode(nativeText.GetText());
 		textfield.defaultTextFormat = new TextFormat(null, null, newColor);
 		nativeText.Configure({visible:false, enabled:false});	
