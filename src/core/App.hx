@@ -258,6 +258,7 @@ class App extends DisplayObjectContainer
 	scrollBool = false;
 	scrollSpeed = 0;
 	moveBool = false;
+	vectorY = null;
 	}else{
 	scrollInt++;
 	}
@@ -330,8 +331,8 @@ class App extends DisplayObjectContainer
 			var limit = 140;
 			if (scrollSpeed > limit) scrollSpeed = limit;
 			if (scrollSpeed < -limit) scrollSpeed = -limit;
-			
-			App.main.vectorY = new Vector<Int>(scrollDuration);
+			main.vectorY = null;
+			main.vectorY = new Vector<Int>(scrollDuration);
 			var spY:Float = scrollSpeed;
 			
 			for (i in 0...scrollDuration)
@@ -372,8 +373,6 @@ class App extends DisplayObjectContainer
 			
 			public static function moveCamera(dx:Float =0, dy:Float =0,frameX:Int=0,frameY:Int=0)
 			{
-				moveBool = true;
-				scrollBool = true;
 				var disX:Float = 0;
 				var disY:Float = 0;
 				disX = dx;
@@ -398,6 +397,7 @@ class App extends DisplayObjectContainer
 				App.main.vectorY[frameY] = 0;
 				
 				App.main.scrollInt = 0;
+				scrollBool = true;
 			}
 	
 	public static function cutShapeFromBitmapData( bitmapData : BitmapData, shape : Shape ):BitmapData 
