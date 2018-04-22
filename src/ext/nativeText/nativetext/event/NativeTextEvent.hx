@@ -1,8 +1,7 @@
 package nativetext.event;
-import flash.events.Event;
 
 
-class NativeTextEvent extends Event
+class NativeTextEvent
 {
     public static inline var CHANGE = "nativetext_change";
 	public static inline var FOCUS_IN = "nativetext_focus_in";
@@ -12,10 +11,22 @@ class NativeTextEvent extends Event
 
     public function new(type:String)
     {
-        super(type, true, true);
+	
+	switch(type)
+	{
+	case CHANGE:
+	if (NativeTextField.change != null) NativeTextField.change();
+	case FOCUS_IN:
+	if (NativeTextField.focusIn != null) NativeTextField.focusIn();
+	case FOCUS_OUT:
+	if (NativeTextField.focusOut != null) NativeTextField.focusOut();
+	case RETURN_KEY_PRESSED:
+	if (NativeTextField.returnKey != null) NativeTextField.returnKey();
+	}
+	
     }
 
-    public override function clone() : Event
+    /*public override function clone() : Event
     {
         return new NativeTextEvent(type);
     }
@@ -23,5 +34,5 @@ class NativeTextEvent extends Event
     public override function toString() : String
     {
         return "[NativeTextEvent type=" + type + "]";
-    }
+    }*/
 }

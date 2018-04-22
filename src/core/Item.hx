@@ -237,6 +237,7 @@ class ProfileIcon extends Button
 		outline = new Shape();
 		addChild(outline);
 		if (path != "") update(false);
+		cacheAsBitmap = true;
     }
 	
 public function updateIcon(data:Bytes)

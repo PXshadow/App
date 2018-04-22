@@ -1,6 +1,8 @@
 package extensionkit;
 
 import extensionkit.event.ExtensionKitTestEvent;
+import nativetext.NativeTextField;
+import nativetext.event.NativeTextEvent;
 import openfl.events.Event;
 import openfl.events.IEventDispatcher;
 import openfl.display.Sprite;
@@ -192,31 +194,14 @@ class ExtensionKit
     {
         //TraceEvent(eventPackageAndClass, args);
 
-        var eventClass = Type.resolveClass(eventPackageAndClass);
-        if (eventClass == null)
-        {
-            trace("[ERROR] Unable to find event class '" + eventPackageAndClass + "'");
-            return;
-        }
-
-        var event = Type.createInstance(eventClass, args);
-        if (event == null)
-        {
-            trace("[ERROR] Unable to instantiate event class '" + eventPackageAndClass + "'");
-            return;
-        }
-
-		var target:IEventDispatcher = stage;
-		if (eventDispatcherId > 0)
-		{
-			var newtarget:IEventDispatcher = s_eventDispatcherMap.get(eventDispatcherId);
-			if (newtarget != null)
-			{
-				target = newtarget;
-			}
-		}
-
-		target.dispatchEvent(event);
+      var eventClass:Class<Dynamic> = null;
+	  var arg:String = cast(args[0],String);
+	  //native text
+	  if (arg.indexOf("nativetext") == 0)
+	  {
+		  new NativeTextEvent(arg);
+	  }
+	  
     }
 
     private static function CreateAndDispatchEventFromJNI(eventDispatcherId:Int, eventPackageAndClass:String, args:String) : Void

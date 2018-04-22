@@ -98,7 +98,7 @@ class InputText extends DisplayObjectContainer
 		{
 		focusIn(null);
 		}else{
-		focusOut(null);
+		focusOut();
 		}
 		return value;
 	}
@@ -179,7 +179,8 @@ class InputText extends DisplayObjectContainer
 		multiline:_multiline,
 		placeholderColor:pcolor
 		});
-		nativeText.addEventListener(nativetext.event.NativeTextEvent.FOCUS_OUT, focusOut);
+		//nativeText.addEventListener(FocusEvent.FOCUS_OUT, focusOut);
+		NativeTextField.focusOut = focusOut;
 		#end
 		
 	textfield = new TextField();
@@ -193,7 +194,7 @@ class InputText extends DisplayObjectContainer
 	textfield.defaultTextFormat = new TextFormat(fn, Math.floor(fsize), pcolor, false, false, false, "", "", align);
 	textfield.multiline = _multiline;
 	#if !mobile
-	textfield.addEventListener(FocusEvent.FOCUS_OUT, focusOut);
+	textfield.addEventListener(FocusEvent.FOCUS_OUT,focusOutFalseMobile);
 	#end
 	if (_multiline) textfield.wordWrap = true;
 	if (fieldWidth > 0)
@@ -243,8 +244,13 @@ class InputText extends DisplayObjectContainer
 		App.state.stage.focus = textfield;
 		#end
 	}
-	
-	public function focusOut(_)
+	#if !mobile
+	public function focusOutFalseMobile(_)
+	{
+		focusOut();
+	}
+	#end
+	public function focusOut()
 	{
 		button.mouseEnabled = true;
 		App.dragBool = isDrag;
@@ -266,7 +272,7 @@ class InputText extends DisplayObjectContainer
 	#if mobile
 	nativeText.Destroy();
 	#else
-	
+	textfield.removeEventListener(FocusEvent.FOCUS_OUT, focusOutFalseMobile);
 	#end
 	}
 }

@@ -29,6 +29,11 @@ class NativeTextField extends EventDispatcher
     public static inline var AUTOSIZE = -1.0;
     public var eventDispatcherId(default, null):Int = 0;
 	
+	public static var change:()->Void;
+	public static var focusIn:()->Void;
+	public static var focusOut:()->Void;
+	public static var returnKey:()->Void;
+	
     public function new(?config:NativeTextFieldConfig)
     {
         super();
@@ -51,7 +56,12 @@ class NativeTextField extends EventDispatcher
         #if (android || cpp)
         nativetext_destroy_text_field(this.eventDispatcherId);
         #end
-        
+		
+        change = null;
+		focusIn = null;
+		focusOut = null;
+		change = null;
+		
         ExtensionKit.UnregisterEventDispatcher(this.eventDispatcherId);
         this.eventDispatcherId = 0;
     }
@@ -192,7 +202,7 @@ class NativeTextField extends EventDispatcher
         nativetext_clear_focus = JNI.createStaticMethod("org/haxe/extension/nativetext/NativeText", "ClearFocus", "(I)V");
         nativetext_get_content_height = JNI.createStaticMethod("org/haxe/extension/nativetext/NativeText", "GetContentHeight", "(I)F");
 
-        flash.Lib.current.stage.addEventListener(Event.ENTER_FRAME, function(e) { processConfigurationBatch(); });
+        openfl.Lib.current.stage.addEventListener(Event.ENTER_FRAME, function(e) { processConfigurationBatch(); });
 
         #elseif cpp
         nativetext_create_text_field = Lib.load("nativetext", "nativetext_create_text_field", 2);

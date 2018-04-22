@@ -49,6 +49,7 @@ x = xpos;
 y = ypos;
 addEventListener(Event.REMOVED_FROM_STAGE, remove);
 addEventListener(Event.ADDED, add);
+cacheAsBitmap = true;
 }
 
 public function updateGraphic(path:String,sWidth:Int=-1,sHeight:Int=-1,clear:Bool=true,oval:Bool=false)

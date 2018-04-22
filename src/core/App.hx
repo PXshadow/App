@@ -250,7 +250,7 @@ class App extends DisplayObjectContainer
 	{
 	if (App.dragBool)scrollSpeed = Math.round(state.mouseY - omY);
 	}else{
-	if (scrollBool)
+	if (scrollBool || moveBool)
 	{
 	scrollSpeed = vectorY[scrollInt];
 	if (scrollInt >= scrollDuration)
@@ -273,8 +273,13 @@ class App extends DisplayObjectContainer
 				case 1:
 				if(minEventY != null)minEventY();
 				case 2:
-				if(maxEventY != null)maxEventY();
+				if (maxEventY != null) maxEventY();
 			}
+			//disable movement temp
+			scrollBool = false;
+			moveBool = false;
+			scrollSpeed = 0;
+			//reset restrict
 			restrictInt = 0;
 		}
 		//RESTRICT Y
@@ -283,13 +288,11 @@ class App extends DisplayObjectContainer
 		if (App.camY + App.scrollSpeed > App.main.cameraMinY && App.scrollSpeed >= 0)
 		{
 		App.scrollSpeed = -App.camY + App.main.cameraMinY;
-		scrollInt = scrollDuration + 1;
 		if (minEventY != null) restrictInt = 1;
 		}
 		if (App.camY + App.scrollSpeed < App.main.cameraMaxY && App.scrollSpeed <= 0)
 		{
 		App.scrollSpeed = -App.camY + App.main.cameraMaxY;
-		scrollInt = scrollDuration + 1;
 		if (maxEventY != null) restrictInt = 2;
 		}
 		//Speed
@@ -357,6 +360,7 @@ class App extends DisplayObjectContainer
 				scrollBool = false;
 				scrollDuration = 0;
 				scrollSpeed = 0;
+				moveBool = false;
 				App.main.vectorX = null;
 				App.main.vectorY = null;
 			}
@@ -380,14 +384,14 @@ class App extends DisplayObjectContainer
 				mouseDown = false;
 				scrollDuration = Math.floor(Math.max(frameX, frameY));
 				
-				App.main.vectorX = new Vector(frameX + 1);
+				/*App.main.vectorX = new Vector(frameX + 1);
 				var vX:Int = Math.round(disX / frameX);
 				for (i in 0...frameX)
 				{
 					App.main.vectorX[i] = vX;
 				}
 				App.main.vectorX[frameX] = 0;
-				
+				*/
 				App.main.vectorY = new Vector(frameY + 1);
 				var vY:Int = Math.round(disY / frameY);
 				for (i in 0...frameY)
@@ -395,8 +399,8 @@ class App extends DisplayObjectContainer
 					App.main.vectorY[i] = vY;
 				}
 				App.main.vectorY[frameY] = 0;
-				
 				App.main.scrollInt = 0;
+				moveBool = true;
 				scrollBool = true;
 			}
 	
@@ -546,6 +550,7 @@ Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
 		}
 		shape.x = x;
 		shape.y = y;
+		shape.cacheAsBitmap = true;
 		return shape;
 	}
 	/**
@@ -565,6 +570,7 @@ Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
 		sprite.graphics.endFill();
 		sprite.x = sx;
 		sprite.y = sy;
+		sprite.cacheAsBitmap = true;
 		return sprite;
 		
 	}
@@ -615,6 +621,7 @@ Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
 		txtBox.graphics.endFill();
 		txtBox.x = x;
 		txtBox.y = y;
+		txtBox.cacheAsBitmap = true;
 		return txtBox;
 	}
 	/**

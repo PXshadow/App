@@ -217,13 +217,13 @@ class State extends DisplayObjectContainer
 		scaleY = sy;
 		this.x = px;
 		this.y = py;
-		for (i in 0...numChildren)
+		/*for (i in 0...numChildren)
 		{
 		if (!Std.is(getChildAt(i), openfl.display.Tilemap) 
 		&&!Std.is(getChildAt(i), openfl.display.Bitmap)
 		&& !Std.is(getChildAt(i), TextField)
 		)getChildAt(i).cacheAsBitmap = true;
-		}
+		}*/
 		//background sizing
 		if (background != null)
 		{
