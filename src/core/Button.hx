@@ -48,7 +48,7 @@ this.graphics.drawRect(0, 0, sWidth, sHeight);
 x = xpos;
 y = ypos;
 addEventListener(Event.REMOVED_FROM_STAGE, remove);
-addEventListener(Event.ADDED, add);
+addEventListener(Event.ADDED_TO_STAGE, add);
 cacheAsBitmap = true;
 }
 
@@ -93,7 +93,10 @@ vector = true;
 		addEventListener(MouseEvent.MOUSE_OVER, mouseOver);
 		addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
 		}
-		if(mouseOutBool)addEventListener(MouseEvent.MOUSE_OUT, mouseUp);
+		if (mouseOutBool)
+		{
+		addEventListener(MouseEvent.MOUSE_OUT, mouseUp);
+		}
 		removeEventListener(Event.ADDED, add);
 	}
     public function remove(_)
@@ -132,7 +135,7 @@ vector = true;
 	public function drawRect(setWidth:Float=0,setHeight:Float=0,setX:Int=0,setY:Int=0)
 	{
 		graphics.endFill();
-		graphics.beginFill(0, 0);
+		graphics.beginFill(0,0);
 		if (setWidth <= 0) setWidth = width;
 		if (setHeight <= 0) setHeight = height;
 		graphics.drawRect(setX,setY, setWidth, setHeight);

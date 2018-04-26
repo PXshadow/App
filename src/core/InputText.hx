@@ -3,6 +3,7 @@ package core;
 import core.InputText.NativeTextFieldKeyboardType;
 import haxe.Timer;
 import haxe.Utf8;
+import haxe.io.Input;
 import openfl.display.DisplayObject;
 import openfl.display.DisplayObjectContainer;
 import openfl.events.Event;
@@ -49,6 +50,7 @@ enum NativeTextFieldReturnKeyType
 	
 class InputText extends DisplayObjectContainer
 {
+	private var switchBool:Bool = false;
 	public var placeholderString:String;
 	public var newColor:Int = 0;
 	public var pColor:Int = 0;
@@ -66,6 +68,10 @@ class InputText extends DisplayObjectContainer
 	@:isVar public var text(get, set):String;
 	@:isVar public var focus(get, set):Bool;
 	@:isVar public var show(get, set):Bool;
+	#if mobile
+	private static var focusNative:InputText;
+	public var out:()->Void;
+	#end
 	
 	function get_show():Bool
 	{
@@ -78,8 +84,11 @@ class InputText extends DisplayObjectContainer
 	function set_show(value:Bool):Bool
 	{
 		#if mobile
-		if(value == false)nativeText.Configure({enabled:value, visible:value});
+		if (value == false) nativeText.Configure({enabled:value, visible:value});
+		nativeText.ClearFocus();
 		#end
+		button.mouseEnabled = value;
+		button.mouseChildren = value;
 		textfield.visible = value;
 		return value;
 	}
@@ -208,7 +217,7 @@ class InputText extends DisplayObjectContainer
 	textfield.height = textfield.textHeight + 4;
 	addChild(textfield);
 	//button
-	button = App.createInvisButton(0, 0, Math.floor(textfield.width),Math.floor(textfield.height));
+	button = App.createInvisButton(0, 0, Math.floor(textfield.width), Math.floor(textfield.height));
 	button.mouseOutBool = false;
 	button.Up = focusIn;
 	addChild(button);
@@ -219,15 +228,19 @@ class InputText extends DisplayObjectContainer
 	}
 	public function focusIn(_)
 	{
+		trace("in");
 		button.mouseEnabled = false;
 		isDrag = App.dragBool;
 		App.disableCameraMovment();
 		#if mobile 
+		if (focusNative != null && focusNative != this) focusNative.focusOut();
 		textfield.visible = false;
 		nativeText.Configure({x:Math.round(x * App.scale + App.state.x), y:Math.round(y * App.scale), enabled:true, visible:true});
 		var tim = new Timer(10);
 		tim.run = function()
 		{
+		focusNative = this;
+		switchBool = false;
 		nativeText.SetFocus();
 		tim.stop();
 		tim = null;
@@ -255,11 +268,22 @@ class InputText extends DisplayObjectContainer
 		button.mouseEnabled = true;
 		App.dragBool = isDrag;
 		#if mobile
+		focusNative = null;
 		textfield.visible = true;
 		textfield.displayAsPassword = passwordBool;
-		if(Utf8.validate(nativeText.GetText()))textfield.text = Utf8.decode(nativeText.GetText());
+		if (Utf8.validate(nativeText.GetText()))
+		{
+			var string = Utf8.decode(nativeText.GetText());
+			if (string == "")
+			{
+			textfield.text = placeholderString;
+			}else{
+			textfield.text = string;
+			}
+		}
 		textfield.defaultTextFormat = new TextFormat(null, null, newColor);
-		nativeText.Configure({visible:false, enabled:false});	
+		nativeText.Configure({visible:false, enabled:false});
+		if(out != null)out();
 		#else
 		textfield.type = TextFieldType.DYNAMIC;
 		textfield.mouseEnabled = false;
@@ -270,6 +294,7 @@ class InputText extends DisplayObjectContainer
 	{
 	removeEventListener(Event.REMOVED_FROM_STAGE, removed);
 	#if mobile
+	if (focusNative == this) focusNative = null;
 	nativeText.Destroy();
 	#else
 	textfield.removeEventListener(FocusEvent.FOCUS_OUT, focusOutFalseMobile);

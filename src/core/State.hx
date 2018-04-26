@@ -70,16 +70,14 @@ class State extends DisplayObjectContainer
 	{
 		super();
 		if (background != null) addChild(background);
-		
 		visible = false;
-		//set camera restrict
+		//set camera restriction
 		App.main.cameraMinY = -minY;
 		App.main.cameraMaxY = -maxY;
 		App.main.cameraMinX = -minX;
 		App.main.cameraMaxX = -maxX;
 		App.dragBool = false;
 		App.main.backExit = false;
-		App.dragRect = new Rectangle(0, 0,App.setWidth,App.setHeight);
 		App.mouseDown = false;
 		App.main.onResize = null;
 		App.main.onMouseUp = null;
@@ -96,18 +94,24 @@ class State extends DisplayObjectContainer
 		App.scrollSpeed = 0;
 		App.moveBool = false;
 		App.scrollBool = false;
+		stateAnimation = true;
 		mouseEnabled = false;
+		//drag not possible
+		App.dragRect = new Rectangle(0, 0, App.setWidth, App.setHeight);
+		
 		//resize
 		var tim = new Timer(1);
 		tim.run = function()
 		{
-		visible = true;
 		//add past state for animated state tweens
+		visible = true;
 		if (pastBitmap != null && animation != Animation.NONE)
 		{
 		App.main.addChild(pastBitmap);
 		stateAnimation = true;
 		App.main.animation = true;
+		}else{
+		finishAnimation();
 		}
 		//resize
 		resize(px, py, sx, sy);
@@ -124,8 +128,7 @@ class State extends DisplayObjectContainer
 		    pastBitmap.y = -App.setHeight;
 			Actuate.tween(this, 0.4, {y:py}).onComplete(function(_)
 			{
-			App.main.removeChild(pastBitmap);
-			App.main.animation = false;
+			finishAnimation();
 			}).ease(Expo.easeIn).delay(0.1);
 			
 		case Animation.SLIDEDOWN:
@@ -133,24 +136,21 @@ class State extends DisplayObjectContainer
 			pastBitmap.y = App.setHeight;
 			Actuate.tween(this, 0.4, {y:py}).onComplete(function(_)
 			{
-			removeChild(pastBitmap);
-			App.main.animation = false;
+			finishAnimation();
 			}).ease(Expo.easeIn).delay(0.1);
 			
 		case Animation.OVERLAYUP:
 			pastBitmap.y = 0;
 			Actuate.tween(pastBitmap, 0.4, {y:height}).onComplete(function(_)
 			{
-			App.main.removeChild(pastBitmap);
-			App.main.animation = false;
+			finishAnimation();
 			}).ease(Expo.easeIn).delay(0.1);
 			
 		case Animation.OVERLAYDOWN:
 			pastBitmap.y = 0;
 			Actuate.tween(pastBitmap, 0.4, {y:App.setHeight}).onComplete(function(_)
 			{
-			App.main.removeChild(pastBitmap);
-			App.main.animation = false;
+			finishAnimation();
 			}).ease(Expo.easeIn).delay(0.1);
 			
 			default:
@@ -159,6 +159,12 @@ class State extends DisplayObjectContainer
 		}
 		
 		}
+	}
+	public function finishAnimation()
+	{
+		stateAnimation = false;
+		App.main.removeChild(pastBitmap);
+		App.main.animation = false;
 	}
 	/**
 	 * Update State

@@ -7,6 +7,8 @@ import core.Network;
 import haxe.crypto.Base64;
 import lime.ui.KeyCode;
 import openfl.display.DisplayObjectContainer;
+import openfl.display.Graphics;
+import openfl.display.IGraphicsData;
 import openfl.geom.Rectangle;
 import openfl.ui.Keyboard;
 
@@ -239,9 +241,11 @@ class App extends DisplayObjectContainer
 			}
 		});
 		
-		Lib.current.stage.addEventListener(Event.ENTER_FRAME, function(e:Event)
-		{
+	Lib.current.stage.addEventListener(Event.ENTER_FRAME, function(e:Event)
+	{
 			
+	if (animation) return;
+	
 	oldSSY = App.scrollSpeed;
 	//if move turn off mouseDown
 	if (moveBool) mouseDown = false;
@@ -301,7 +305,7 @@ class App extends DisplayObjectContainer
 	   
 			if (state != null)
 			{
-			if(!animation)state.update();
+			state.update();
 			omX = Math.round(App.state.mouseX);
 			omY = Math.round(App.state.mouseY);
 			}
@@ -324,7 +328,7 @@ class App extends DisplayObjectContainer
 		public static function scrollCamera()
 		{
 			//1950 / (1000 / 60) = 117;
-			if (dragBool && !moveBool)
+			if (dragBool && !moveBool && !App.state.stateAnimation)
 			{
 			if (Math.abs(spY - App.state.mouseY) < 10) scrollPress = true;
 			mouseDown = false;
@@ -613,16 +617,13 @@ Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
 	 * @param	curve
 	 * @return
 	 */
-	public static function createTextBubble(?x:Int, ?y:Int, width:Int, height:Int,curve:Int=50):Shape
+	public static function createTextBubble(width:Int, height:Int,curve:Int=50):openfl.Vector<IGraphicsData>
 	{
 		var txtBox = new Shape();
 		txtBox.graphics.beginGradientFill(GradientType.RADIAL, [11193343, 16777215], [0.2, 0.8], [0, 255]);
 		txtBox.graphics.drawRoundRect(0, 0, width, height, curve, curve);
 		txtBox.graphics.endFill();
-		txtBox.x = x;
-		txtBox.y = y;
-		txtBox.cacheAsBitmap = true;
-		return txtBox;
+		return txtBox.graphics.readGraphicsData();
 	}
 	/**
 	 * ThinQbator custom exit Button

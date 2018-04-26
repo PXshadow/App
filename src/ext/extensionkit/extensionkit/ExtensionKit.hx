@@ -193,14 +193,9 @@ class ExtensionKit
     private static function CreateAndDispatchEvent(eventDispatcherId:Int, eventPackageAndClass:String, args:Array<Dynamic>) : Void
     {
         //TraceEvent(eventPackageAndClass, args);
-
-      var eventClass:Class<Dynamic> = null;
 	  var arg:String = cast(args[0],String);
 	  //native text
-	  if (arg.indexOf("nativetext") == 0)
-	  {
-		  new NativeTextEvent(arg);
-	  }
+	  if (arg.indexOf("nativetext") == 0)new NativeTextEvent(arg);
 	  
     }
 

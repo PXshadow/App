@@ -236,8 +236,6 @@ class ProfileIcon extends Button
 		_lineSize = lineSize;
 		outline = new Shape();
 		addChild(outline);
-		if (path != "") update(false);
-		cacheAsBitmap = true;
     }
 	
 public function updateIcon(data:Bytes)
@@ -260,28 +258,7 @@ public function updateBitmapData(bmd:BitmapData)
 	mat.scale(sx, sy);
 	graphics.beginBitmapFill(bmd, mat, false, true);
 }
-	
-	public function update(clear:Bool=true)
-	{
-		if (clear)outline.graphics.clear();
-        //outline
-        outline.graphics.lineStyle(_lineSize,_outlineColor);
-        outline.graphics.drawCircle(width/2 ,width/2,width/2 - _lineSize/2);
-        outline.visible = false;
-	}
-	
-	override public function mouseDown(_) 
-	{
-		super.mouseDown(_);
-		if(outline != null)outline.visible = true;
-        alpha = 1;
-	}
-	
-    override public function mouseUp(_)
-    {
-		super.mouseUp(_);
-        if(outline != null)outline.visible = false;
-    }
+
 }
 
 class NavigationBar extends Button
