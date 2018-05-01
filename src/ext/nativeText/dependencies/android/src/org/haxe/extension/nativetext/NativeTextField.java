@@ -311,6 +311,7 @@ class NativeTextField extends EditText implements View.OnFocusChangeListener
         int defaultValue = InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL;
         if (m_multiline) {
             defaultValue |= InputType.TYPE_TEXT_FLAG_MULTI_LINE;
+			defaultValue |= InputType.TYPE_TEXT_FLAG_CAP_SENTENCES;
         }
 
         switch (keyboardType)
@@ -341,7 +342,7 @@ class NativeTextField extends EditText implements View.OnFocusChangeListener
                 
             case URL:
                 setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
-                break;                    
+                break; 
         }
     }
     

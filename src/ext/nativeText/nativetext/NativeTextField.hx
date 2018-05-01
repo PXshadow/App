@@ -57,11 +57,6 @@ class NativeTextField extends EventDispatcher
         nativetext_destroy_text_field(this.eventDispatcherId);
         #end
 		
-        change = null;
-		focusIn = null;
-		focusOut = null;
-		change = null;
-		
         ExtensionKit.UnregisterEventDispatcher(this.eventDispatcherId);
         this.eventDispatcherId = 0;
     }

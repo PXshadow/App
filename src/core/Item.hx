@@ -2,6 +2,7 @@ package core;
 import core.Button;
 import haxe.io.Bytes;
 import openfl.display.GradientType;
+import openfl.display.PixelSnapping;
 import openfl.geom.Matrix;
 import openfl.display.Shape;
 import openfl.events.Event;
@@ -70,7 +71,7 @@ class ToggleSlider extends Button
 	public var int:Int = 0;
 	public function new(?sx:Int=0,?sy:Int=1,?size:Int=80,def:Bool=true)
  {
-     super(sx,sy);
+     super(sx, sy);
      rad = Math.floor(size/2);
      circle = new Shape();
      //Circle shadow
@@ -97,6 +98,7 @@ class ToggleSlider extends Button
 	 circle.x = 0;
 	 }
 	 createTrack();
+	 Down = setDown;
  }
 
  public function createTrack()
@@ -122,9 +124,9 @@ class ToggleSlider extends Button
     graphics.moveTo(rad * 3,-1);graphics.lineTo(rad * 3,rad * 2 - 3);
  }
  
- override public function mouseDown(_)
+ public function setDown(_)
  {
-super.mouseDown(_);
+trace("down");
 if(bool)
 {
 circle.x = 0;
@@ -134,12 +136,7 @@ circle.x = trackDis;
 bool = !bool;
 createTrack();
 if(toggle != null)toggle(bool);
- }
- override public function mouseUp(_)
- {
-super.mouseUp(_);
-stopDrag();
- }
+}
 
 }
 class ScrollBar extends Button
@@ -156,7 +153,6 @@ class ScrollBar extends Button
      super(sx,sy);
      create(Math.floor(dem/2));
      addEventListener(Event.ENTER_FRAME,update);
-     mouseOutBool = false;
      scaleX = 0.7;
      scaleY = 0.9;
      App.main.onMouseUp = setRelease;
@@ -221,42 +217,56 @@ class ScrollBar extends Button
 
 class ProfileIcon extends Button
 {
-    public var outline:Shape;
 	public var id:Int;
-	private var _lineSize:Int;
-	private var _outlineColor:Int;
 	private var _size:Int;
+	public var icon:Bitmap;
 
-    public function new(?x:Int=0,?y:Int=0,path:String="",size:Int=90,outlineColor:Int=0,lineSize:Int=4,setId:Int=0)
+    public function new(?x:Int=0,?y:Int=0,path:String="",size:Int=90,setId:Int=0)
     {
-        super(x, y, path, size, size,true);
+        super(x, y,"",size, size,true);
 		id = setId;
 		_size = size;
-		_outlineColor = outlineColor;
-		_lineSize = lineSize;
-		outline = new Shape();
-		addChild(outline);
+		icon = new Bitmap();
+		addChild(icon);
+		loadIcon(path);
     }
 	
-public function updateIcon(data:Bytes)
+	public function updateBase(data:String)
+	{
+		BitmapData.loadFromBase64(data, "image/png").onComplete(function(bmd:BitmapData)
+		{
+			setBitmapData(bmd);
+		});
+	}
+public function updateBytes(data:Bytes)
 {
 BitmapData.loadFromBytes(data).onComplete(function(bmd:BitmapData)
 {
-	updateBitmapData(bmd);
+	setBitmapData(bmd);
 });
-//updateBitmapData(BitmapData.fromBytes(data));
 }
 
-public function updateBitmapData(bmd:BitmapData)
+public function setBitmapData(bmd:BitmapData)
 {
-	graphics.clear();
+	/*graphics.clear();
 	var mat = new Matrix();
 	var sx:Float = 1;
 	var sy:Float = 1;
 	sx = 1 / bmd.width * _size;
 	sy = 1 / bmd.height * _size;
 	mat.scale(sx, sy);
-	graphics.beginBitmapFill(bmd, mat, false, true);
+	graphics.beginBitmapFill(bmd, mat, false, true);*/
+}
+
+public function loadIcon(string:String)
+{
+	Assets.loadBitmapData(string, false).onComplete(function(bmd:BitmapData)
+	{
+		icon.bitmapData = bmd;
+		icon.smoothing = true;
+		icon.width = _size;
+		icon.height = _size;
+	});
 }
 
 }
@@ -368,17 +378,21 @@ class Option extends Button
 
 class Shadow extends Shape
 {
-	public function new(sx:Int,sy:Int,setWidth:Int=0)
+	public function new(sx:Int,sy:Int,setWidth:Int=0,alpha:Bool=true)
 	{
 		super();
 		if (setWidth == 0) setWidth = App.setWidth;
 		var mat = new Matrix();
 		mat.createGradientBox(400,8,Math.PI/2);
 		//16777215,9211020,10197915
-		graphics.beginGradientFill(openfl.display.GradientType.LINEAR, [0,9211020, 16777215], [1,1,1], [0, 40, 255],mat);
+		var alphaRatios:Array<Float> = [1, 1, 1];
+		if (alpha) alphaRatios = [1,0.4,0];
+		
+		graphics.beginGradientFill(openfl.display.GradientType.LINEAR, [6579300,9211020, 16777215],alphaRatios, [0, 40, 255],mat);
 		graphics.drawRect(0,0,setWidth,8);
 		x = sx;
 		y = sy;
+		cacheAsBitmap = true;
 	}
 }
 
@@ -405,7 +419,7 @@ class PageCounter extends Shape
     public var amount:Int=0;
     public var transparency:Float = 1;
 
-    public function new(?sx:Int=0,?sy:Int=0,pages:Int=3,setSie:Int=19,setSpacing:Int=17,setColor:Int=14607592,setAlpha=1,setActiveColor:Int=5921512,startPage:Int=0)
+    public function new(?sx:Int=0,?sy:Int=0,pages:Int=3,setSie:Int=19,setSpacing:Int=17,setColor:Int=14675188,setAlpha=1,setActiveColor:Int=4236519,startPage:Int=0)
     {
         super();
         x = sx + Math.floor(size/2);y = sy;

@@ -7,6 +7,7 @@ import openfl.events.TextEvent;
 import openfl.text.AntiAliasType;
 import openfl.text.GridFitType;
 import openfl.text.TextField;
+import openfl.text.TextFieldAutoSize;
 import openfl.text.TextFieldType;
 import openfl.text.TextFormat;
 import openfl.text.TextFormatAlign;
@@ -25,9 +26,12 @@ class Text extends TextField
 	{
 	super();
 	mouseEnabled = false;
+	gridFitType = GridFitType.PIXEL;
 	tabEnabled = false;
 	selectable = false;
 	wordWrap = true;
+	embedFonts = true;
+	autoSize = TextFieldAutoSize.NONE;
 	cacheAsBitmap = true;
 	x = xp;
 	y = yp;
@@ -46,8 +50,12 @@ class Text extends TextField
 	@:noCompletion override private function __updateText(value:String):Void
 	{
 		super.__updateText(value);
+		redraw();
+	}
+	
+	public function redraw()
+	{
 		cacheAsBitmap = false;
-		
 		var timer = new Timer(1);
 		timer.run = function()
 		{

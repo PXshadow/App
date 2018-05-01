@@ -13,8 +13,6 @@
 	<include path="src/ext/webview" if="mobile"/>
 	<include path="src/ext/firebase" if="mobile"/>
 	
-	<!-- optimize output-->
-	<haxeflag name="-dce full"/>
 	<assets path="assets"/>
 	
 </project>

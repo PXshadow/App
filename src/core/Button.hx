@@ -17,7 +17,6 @@ class Button extends Sprite
 	public var Over:Dynamic->Void;
 	public var Out:Dynamic->Void;
 	public var Click:Dynamic->Void;
-	public var mouseOutBool:Bool = true;
 	public var rectBool:Bool = false;
 	@:isVar public var bool(get,set):Bool = false;
 	public function get_bool():Bool
@@ -85,31 +84,28 @@ vector = true;
    * */
 	public function add(_)
 	{
-		addEventListener(MouseEvent.MOUSE_DOWN,mouseDown);
-		addEventListener(MouseEvent.MOUSE_UP, mouseUp);
-		addEventListener(MouseEvent.CLICK, mouseClick);
-	    if (mouseOver != null)
+		if(Down != null)addEventListener(MouseEvent.MOUSE_DOWN,mouseDown);
+		if(Up != null)addEventListener(MouseEvent.MOUSE_UP, mouseUp);
+		if(Click != null)addEventListener(MouseEvent.CLICK, mouseClick);
+		if(Over != null)addEventListener(MouseEvent.MOUSE_OVER, mouseOver);
+		if (Out != null)
 		{
-		addEventListener(MouseEvent.MOUSE_OVER, mouseOver);
-		addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
-		}
-		if (mouseOutBool)
-		{
-		addEventListener(MouseEvent.MOUSE_OUT, mouseUp);
+			addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
+			addEventListener(MouseEvent.MOUSE_UP, mouseOut);
 		}
 		removeEventListener(Event.ADDED, add);
 	}
     public function remove(_)
     {
-        removeEventListener(MouseEvent.MOUSE_DOWN,mouseDown);
-        removeEventListener(MouseEvent.MOUSE_UP, mouseUp);
-		if (mouseOver != null)
+        if(Down != null)removeEventListener(MouseEvent.MOUSE_DOWN,mouseDown);
+        if(Up != null)removeEventListener(MouseEvent.MOUSE_UP, mouseUp);
+		if(Over != null)removeEventListener(MouseEvent.MOUSE_OVER, mouseOver);
+		if (Out != null)
 		{
-		removeEventListener(MouseEvent.MOUSE_OVER, mouseOver);
-		removeEventListener(MouseEvent.MOUSE_OUT, mouseOut);
+			removeEventListener(MouseEvent.MOUSE_OUT, mouseOut);
+			removeEventListener(MouseEvent.MOUSE_UP, mouseUp);
 		}
-		if(mouseOutBool)removeEventListener(MouseEvent.MOUSE_OUT, mouseUp);
-		removeEventListener(MouseEvent.CLICK, mouseClick);
+		if(Click != null)removeEventListener(MouseEvent.CLICK, mouseClick);
 		removeEventListener(Event.REMOVED_FROM_STAGE, remove);
     }
 	public function mouseDown(e:MouseEvent)

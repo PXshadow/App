@@ -30,7 +30,6 @@ class NativeTextEvent
     {
         return new NativeTextEvent(type);
     }
-
     public override function toString() : String
     {
         return "[NativeTextEvent type=" + type + "]";

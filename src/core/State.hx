@@ -254,6 +254,11 @@ class State extends DisplayObjectContainer
 	//protect against null
 	if (this != null)
 	{
+		//input text focus out
+		#if mobile
+		if (InputText.focusInput != null) InputText.focusInput.focusOut();
+		InputText.focusInput = null;
+		#end
 		//take screenshot of last state for animations
 		pastBitmap = App.main.createScreenBitmap();
 		Assets.cache.clear();
