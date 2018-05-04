@@ -27,11 +27,11 @@ class Text extends TextField
 	super();
 	mouseEnabled = false;
 	gridFitType = GridFitType.PIXEL;
+	autoSize = TextFieldAutoSize.NONE;
 	tabEnabled = false;
 	selectable = false;
 	wordWrap = true;
 	embedFonts = true;
-	autoSize = TextFieldAutoSize.NONE;
 	cacheAsBitmap = true;
 	x = xp;
 	y = yp;

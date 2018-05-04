@@ -7,6 +7,7 @@ import js.html.WebSocket;
 import sys.net.Socket;
 import sys.net.Host;
 #end
+import haxe.Timer;
 import haxe.Unserializer;
 import haxe.io.Bytes;
 import haxe.io.Error;
@@ -30,10 +31,11 @@ class Network
 	public var connected:Bool = false;
 	public var oldMessage:String;
 	public var oldMessageBool:Bool;
+	public var reconnectBool:Bool = true;
 	/**
 	 * onClose function 
 	 */
-	public var onClose(default, default): Dynamic->Void;
+	public var onClose:()->Void;
 	/**
 	 * OnMessage function
 	 */
@@ -41,11 +43,9 @@ class Network
 	/**
 	 * main
 	 */
-	public var mainMessage(default, default):Dynamic->Void;
-	 /** Callback used called when a connection is established. This callback should not be handled manually. **/
-  public var onConnect(default, default): Dynamic->Void;
-   /** Callback used when a connection fails from the beginning. This callback should not be handled manually. **/
-  public var onFailure(default, default): Dynamic->Void;
+public var mainMessage(default, default):Dynamic->Void;
+/** Callback used called when a connection is established. This callback should not be handled manually. **/
+ public var onConnect:()->Void;
   
 /**
  * Setup networking
@@ -55,15 +55,19 @@ class Network
 		ip = ipString;
 		port = portInt;
 		oldMessageBool = blockSameMessage;
+		connect();
+	}
+	
+	public function connect()
+	{
+		#if html5
 		var param:String = "ws";
 		if (secure) param = "wss";
-		
-		#if html5
 		ws = new WebSocket(param + "://" + ip + ":" + Std.string(port));
 		ws.onopen = function()
 		{
 			connected = true;
-			if(onConnect != null)onConnect(null);
+			if(onConnect != null)onConnect();
 		}
 		ws.onmessage = function(line)
 		{
@@ -72,23 +76,26 @@ class Network
 		ws.onclose = function()
 		{
 			ws.close(0, "Lost Connection");
-			if(onClose != null)onClose(null);
+			if(onClose != null)onClose();
 		}
 		#else
     try {
-	  socket = new Socket();
+		socket = new Socket();
 		socket.connect(new Host(ip), port);
 		socket.setBlocking(false);
 		connected = true;
 		//establish to server that it's a tcp socket
 		socket.output.writeString("8");
+		if(onConnect != null)onConnect();
     }
     catch (e: Dynamic) {
       //onFailure(e);
       connected = false;
     }
 	#end
+	
 	}
+	
 	/**
 	 * write to server
 	 * @param	str String to send to server
@@ -117,7 +124,7 @@ class Network
 		}
 		return true;
 		}else{
-		trace("not connected to server");
+		disconnect();
 		return false;
 		}
 	}
@@ -162,6 +169,26 @@ class Network
 			{
 				trace("unser " + e);
 			}*/
+	}
+	public function close()
+	{
+		#if html5
+		ws.close(0, "Close");
+		#else
+		socket.close();
+		#end
+	}
+	public function disconnect()
+	{
+		close();
+		if (onClose != null) onClose();
+		var tim = new Timer(200);
+		tim.run = function()
+		{
+			connect();
+			tim.stop();
+			tim = null;
+		}
 	}
   
 	public function update()

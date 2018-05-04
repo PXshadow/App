@@ -155,7 +155,6 @@ class ScrollBar extends Button
      addEventListener(Event.ENTER_FRAME,update);
      scaleX = 0.7;
      scaleY = 0.9;
-     App.main.onMouseUp = setRelease;
  }
  private function create(rad:Int)
  {
@@ -260,6 +259,7 @@ public function setBitmapData(bmd:BitmapData)
 
 public function loadIcon(string:String)
 {
+	if(icon.bitmapData != null)icon.bitmapData.dispose();
 	Assets.loadBitmapData(string, false).onComplete(function(bmd:BitmapData)
 	{
 		icon.bitmapData = bmd;

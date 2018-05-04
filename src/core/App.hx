@@ -134,12 +134,7 @@ class App extends DisplayObjectContainer
 	 * When Exit or android Back button are pressed
 	 */
 	public var onBack:Dynamic->Void;
-	/**
-	* When Mouse is up
-	**/
-	public var onMouseUp:Dynamic->Void;
-	/**
-	 * 
+	 /*
 	 * @param	sx Width of App
 	 * @param	sy Height of App
 	 */
@@ -214,7 +209,6 @@ class App extends DisplayObjectContainer
 			{
 			if(!animation)state.mouseUp();
 			}
-			if(onMouseUp != null)onMouseUp(e);
 		});
 		#if ! mobile
 		if (!mobile)
@@ -257,6 +251,7 @@ class App extends DisplayObjectContainer
 	if (scrollBool || moveBool)
 	{
 	scrollSpeed = vectorY[scrollInt];
+	
 	if (scrollInt >= scrollDuration)
 	{
 	scrollBool = false;
@@ -289,15 +284,15 @@ class App extends DisplayObjectContainer
 		//RESTRICT Y
 	   if (App.main.cameraMinY != App.main.cameraMaxY)
 	   {
-		if (App.camY + App.scrollSpeed > App.main.cameraMinY && App.scrollSpeed >= 0)
+		if (App.camY + App.scrollSpeed > App.main.cameraMinY && App.scrollSpeed > 0)
 		{
 		App.scrollSpeed = -App.camY + App.main.cameraMinY;
-		if (minEventY != null) restrictInt = 1;
+		restrictInt = 1;
 		}
-		if (App.camY + App.scrollSpeed < App.main.cameraMaxY && App.scrollSpeed <= 0)
+		if (App.camY + App.scrollSpeed < App.main.cameraMaxY && App.scrollSpeed < 0)
 		{
 		App.scrollSpeed = -App.camY + App.main.cameraMaxY;
-		if (maxEventY != null) restrictInt = 2;
+		restrictInt = 2;
 		}
 		//Speed
 		App.camY += App.scrollSpeed;
@@ -309,6 +304,7 @@ class App extends DisplayObjectContainer
 			omX = Math.round(App.state.mouseX);
 			omY = Math.round(App.state.mouseY);
 			}
+			
 		//update networkings
 		if (network != null) network.update();
 		}); 

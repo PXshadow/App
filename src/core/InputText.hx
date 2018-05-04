@@ -58,7 +58,7 @@ class InputText extends DisplayObjectContainer
 	public var posY:Int = -1;
 	public var oldX:Float = 0;
 	public var oldY:Float = 0;
-	var isDrag:Bool = false;
+	var isDrag:Bool = true;
 	#if mobile
 	public var nativeText:NativeTextField;
 	public static var focusInput:InputText;
@@ -110,7 +110,8 @@ class InputText extends DisplayObjectContainer
 	function get_text():String
 	{
 		#if mobile
-		return Utf8.decode(nativeText.GetText());
+		if(Utf8.validate(nativeText.GetText())) return Utf8.decode(nativeText.GetText());
+		return "";
 		#else
 		return textfield.text;
 		#end
@@ -144,8 +145,6 @@ class InputText extends DisplayObjectContainer
 	public function new(?sx:Float = 0, ?sy:Float = 0, placeString:String, fsize:Int = 24, fieldWidth:Int = 0, pcolor:Int = 9805216, color:Int = 0, password:Bool = false, _multiline:Bool = false,textfieldHeight:Int=0, _keyType:NativeTextFieldKeyboardType = null, _returnType:NativeTextFieldReturnKeyType = null,align:String=null) 
 	{
 		super();
-		var fn = null;
-		if (App.font != null) fn = Assets.getFont(App.font.format).fontName;
 		
 		newColor = color;
 		pColor = pcolor;
@@ -175,7 +174,7 @@ class InputText extends DisplayObjectContainer
 		visible:false,
 		enabled:false,
 		placeholder:placeString,
-		fontAsset:fn,
+		fontAsset:App.font.format,
 		fontSize:Math.round(fsize * App.scale),
 		fontColor:color,
 		textAlignment:nativeTextAlign,
@@ -194,7 +193,7 @@ class InputText extends DisplayObjectContainer
 	placeholderString = placeString;
 	textfield.mouseEnabled = false;
 	textfield.type = TextFieldType.DYNAMIC;
-	textfield.defaultTextFormat = new TextFormat(fn, Math.floor(fsize), pcolor, false, false, false, "", "", align);
+	textfield.defaultTextFormat = new TextFormat(Assets.getFont(App.font.format).fontName, Math.floor(fsize), pcolor, false, false, false, "", "", align);
 	textfield.multiline = _multiline;
 	#if !mobile
 	textfield.addEventListener(FocusEvent.FOCUS_OUT, focusOutFalseMobile);
@@ -231,7 +230,6 @@ class InputText extends DisplayObjectContainer
 	}
 	public function focusIn(_)
 	{
-		trace("in");
 		#if mobile
 		if (focusInput != null) focusInput.focusOut();
 		focusInput = this;
@@ -241,7 +239,6 @@ class InputText extends DisplayObjectContainer
 		{
 		nativeText.SetFocus();
 		NativeTextField.focusOut = focusOut;
-		trace("set");
 		tim.stop();
 		tim = null;
 		}
@@ -267,7 +264,6 @@ class InputText extends DisplayObjectContainer
 	#end
 	public function focusOut()
 	{
-		//trace("out");
 		App.dragBool = isDrag;
 		#if mobile
 		textfield.visible = true;
@@ -283,7 +279,6 @@ class InputText extends DisplayObjectContainer
 			textfield.defaultTextFormat = new TextFormat(null, null,newColor);
 			}
 			
-		textfield.defaultTextFormat = new TextFormat(null, null, newColor);
 		nativeText.ClearFocus();
 		toggleNative(false);
 		NativeTextField.focusOut = null;

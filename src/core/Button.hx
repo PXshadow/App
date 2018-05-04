@@ -16,6 +16,7 @@ class Button extends Sprite
 	public var Up:Dynamic->Void;
 	public var Over:Dynamic->Void;
 	public var Out:Dynamic->Void;
+	public var outUp:Bool = true;
 	public var Click:Dynamic->Void;
 	public var rectBool:Bool = false;
 	@:isVar public var bool(get,set):Bool = false;
@@ -91,7 +92,7 @@ vector = true;
 		if (Out != null)
 		{
 			addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
-			addEventListener(MouseEvent.MOUSE_UP, mouseOut);
+			if(outUp)addEventListener(MouseEvent.MOUSE_UP, mouseOut);
 		}
 		removeEventListener(Event.ADDED, add);
 	}
@@ -103,7 +104,7 @@ vector = true;
 		if (Out != null)
 		{
 			removeEventListener(MouseEvent.MOUSE_OUT, mouseOut);
-			removeEventListener(MouseEvent.MOUSE_UP, mouseUp);
+			if(outUp)removeEventListener(MouseEvent.MOUSE_UP, mouseUp);
 		}
 		if(Click != null)removeEventListener(MouseEvent.CLICK, mouseClick);
 		removeEventListener(Event.REMOVED_FROM_STAGE, remove);
