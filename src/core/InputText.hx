@@ -82,7 +82,11 @@ class InputText extends DisplayObjectContainer
 	function set_show(value:Bool):Bool
 	{
 		#if mobile
-		if(value == false)nativeText.Configure({enabled:value, visible:value});
+		if (value == false)
+		{
+			if (nativeText.IsFocused()) nativeText.ClearFocus();
+			nativeText.Configure({enabled:value, visible:value});
+		}
 		#end
 		textfield.visible = value;
 		button.mouseEnabled = value;
