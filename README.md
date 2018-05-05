@@ -37,7 +37,7 @@ haxelib install app
 
 ## Inital Setup 
 Main.hx File 
-```
+```haxe
 package;
 import core.*;
 import openfl.display.Sprite;
@@ -78,7 +78,6 @@ class Menu extends State
     public function new()
     {
         super();
-        
     }
 }
 ```
