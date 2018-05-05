@@ -631,8 +631,8 @@ Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
 	public static function createExit(?x:Int = 0, ?y:Int = 0,color:Int=16777215):Button
 	{
 		var exit = new Button(x,y);
-		exit.graphics.beginFill(0, 0);
-		exit.graphics.drawRect(0, 0, 60, 80);
+		exit.graphics.beginFill(0,0);
+		exit.graphics.drawRect(-80, 0, 60 + 80 * 2, 80);
 		exit.graphics.lineStyle(4,color);
 		exit.graphics.moveTo(0, 25);
 		exit.graphics.lineTo(30, 25 + 30);
@@ -648,7 +648,7 @@ Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
 	 * @param	radius
 	 * @return
 	 */
-	public static function createNextCircle(?x:Int = 0, ?y:Int, color:Int = 16777215, radius:Int = 40):Button
+	public static function createNextCircle(?x:Int = 0, ?y:Int, color:Int = 0, radius:Int = 40):Button
 	{
 		var nextButton = new Button(x, y);
 		var thick:Int = 4;
@@ -673,11 +673,11 @@ Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
 	 * @param	color
 	 * @return
 	 */
-	public static function createNext(?x:Int = 0, ?y:Int = 0, color:Int = 16777215):Button
+	public static function createBack(color:Int = 0):Button
 	{
-		var nextButton = new Button(x + 28, y + 22);
+		var nextButton = new Button(50,40);
 		var thick:Int = 4;
-		var radius:Int = 40;
+		var radius:Int = 33;
 		nextButton.graphics.lineStyle(thick, color);
 		nextButton.graphics.moveTo( -radius / 2, thick / 2);
 		nextButton.graphics.lineTo(radius / 2, thick / 4);
@@ -689,7 +689,7 @@ Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
 		//rect
 		nextButton.graphics.endFill();
 		nextButton.graphics.beginFill(0, 0);
-		nextButton.graphics.drawRect( -40, -40, 80, 80);
+		nextButton.graphics.drawRect( -80, -60, 160, 80 + 60);
 		return nextButton;
 	}
 	/**

@@ -83,10 +83,11 @@ public var mainMessage(default, default):Dynamic->Void;
 		socket = new Socket();
 		socket.connect(new Host(ip), port);
 		socket.setBlocking(false);
+		socket.setFastSend(true);
 		connected = true;
 		//establish to server that it's a tcp socket
 		socket.output.writeString("8");
-		if(onConnect != null)onConnect();
+		if (onConnect != null) onConnect();
     }
     catch (e: Dynamic) {
       //onFailure(e);

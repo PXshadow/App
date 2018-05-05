@@ -257,6 +257,7 @@ class State extends DisplayObjectContainer
 		#if mobile
 		if (InputText.focusInput != null) InputText.focusInput.focusOut();
 		InputText.focusInput = null;
+		nativetext.NativeTextField.returnKey = null;
 		#end
 		//take screenshot of last state for animations
 		pastBitmap = App.main.createScreenBitmap();

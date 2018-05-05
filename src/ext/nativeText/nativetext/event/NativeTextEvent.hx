@@ -11,7 +11,6 @@ class NativeTextEvent
 
     public function new(type:String)
     {
-	
 	switch(type)
 	{
 	case CHANGE:

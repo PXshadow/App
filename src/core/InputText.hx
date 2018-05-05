@@ -287,7 +287,6 @@ class InputText extends DisplayObjectContainer
 		toggleNative(false);
 		NativeTextField.focusOut = null;
 		NativeTextField.change = null;
-		NativeTextField.returnKey = null;
 		#else
 		textfield.type = TextFieldType.DYNAMIC;
 		textfield.mouseEnabled = false;

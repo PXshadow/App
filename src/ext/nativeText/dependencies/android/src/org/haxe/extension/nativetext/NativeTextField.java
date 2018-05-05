@@ -308,7 +308,7 @@ class NativeTextField extends EditText implements View.OnFocusChangeListener
             return;
         }
 
-        int defaultValue = InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL;
+        int defaultValue = InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL | InputType.TYPE_TEXT_FLAG_CAP_WORDS;
         if (m_multiline) {
             defaultValue |= InputType.TYPE_TEXT_FLAG_MULTI_LINE;
 			defaultValue |= InputType.TYPE_TEXT_FLAG_CAP_SENTENCES;

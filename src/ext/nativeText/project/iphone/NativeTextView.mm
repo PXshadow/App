@@ -165,7 +165,7 @@
     }
 
     self.secureTextEntry = NO;
-    self.autocapitalizationType = UITextAutocapitalizationTypeNone;
+    self.autocapitalizationType = UITextAutocapitalizationTypeSentences;
     self.autocorrectionType = UITextAutocorrectionTypeNo;
     self.spellCheckingType = UITextSpellCheckingTypeNo;
 
