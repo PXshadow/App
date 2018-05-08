@@ -85,7 +85,7 @@ class InputText extends DisplayObjectContainer
 		if (value == false)
 		{
 			if (nativeText.IsFocused()) nativeText.ClearFocus();
-			nativeText.Configure({enabled:value, visible:value});
+			nativeText.Configure({enabled:false, visible:false});
 		}
 		#end
 		textfield.visible = value;
@@ -114,8 +114,8 @@ class InputText extends DisplayObjectContainer
 	function get_text():String
 	{
 		#if mobile
-		if(Utf8.validate(nativeText.GetText())) return Utf8.decode(nativeText.GetText());
-		return "";
+		//if(Utf8.validate(nativeText.GetText())) return nativeText.GetText();
+		return nativeText.GetText();
 		#else
 		return textfield.text;
 		#end
@@ -298,7 +298,11 @@ class InputText extends DisplayObjectContainer
 	{
 	removeEventListener(Event.REMOVED_FROM_STAGE, removed);
 	#if mobile
-	if (focusInput == this) focusInput = null;
+	if (focusInput == this)
+	{
+	focusOut();
+	focusInput = null;
+	}
 	nativeText.Destroy();
 	#else
 	textfield.removeEventListener(FocusEvent.FOCUS_OUT, focusOutFalseMobile);

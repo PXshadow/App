@@ -75,15 +75,15 @@ public var mainMessage(default, default):Dynamic->Void;
 		}
 		ws.onclose = function()
 		{
-			ws.close(0, "Lost Connection");
-			if(onClose != null)onClose();
+			disconnect();
 		}
 		#else
-    try {
 		socket = new Socket();
+    try {
 		socket.connect(new Host(ip), port);
 		socket.setBlocking(false);
 		socket.setFastSend(true);
+		socket.setTimeout(2);
 		connected = true;
 		//establish to server that it's a tcp socket
 		socket.output.writeString("8");
@@ -174,14 +174,13 @@ public var mainMessage(default, default):Dynamic->Void;
 	public function close()
 	{
 		#if html5
-		ws.close(0, "Close");
+		ws.close(1000, "in activity");
 		#else
 		socket.close();
 		#end
 	}
 	public function disconnect()
 	{
-		close();
 		if (onClose != null) onClose();
 		var tim = new Timer(200);
 		tim.run = function()

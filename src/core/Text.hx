@@ -26,8 +26,6 @@ class Text extends TextField
 	{
 	super();
 	mouseEnabled = false;
-	gridFitType = GridFitType.PIXEL;
-	autoSize = TextFieldAutoSize.NONE;
 	tabEnabled = false;
 	selectable = false;
 	wordWrap = true;
@@ -42,7 +40,7 @@ class Text extends TextField
 	width = fieldWidth;
 	}
 	text = textString;
-	var fn = null;
+	var fn = "_sans";
 	if (App.font != null) fn = Assets.getFont(App.font.format).fontName;
 	defaultTextFormat = new TextFormat(fn, size, color, false, false, false, "", "", align, null, null, null, ident);
 	}

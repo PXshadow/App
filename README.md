@@ -7,6 +7,7 @@
 [ThinQbator](https://www.thinqbator.net/)
 ## Features
 States
+- Android and Ios firebase push notifications
 - Mobile Native Scrolling mimiced to be IOS
 - Web Socket Client Networking
 - Url States
@@ -37,7 +38,7 @@ haxelib install app
 
 ## Inital Setup 
 Main.hx File 
-```
+``` haxe
 package;
 import core.*;
 import openfl.display.Sprite;
@@ -52,14 +53,6 @@ class Main extends Sprite
         App.state = new Menu();
         //Configure
         /*
-        //Boolean to enable InfoDebugText Only works in DebugMode, infoDebugText in Release is never rendered.
-        App.infoBool = true;
-        //InfoText color as an int 
-        App.infoColor = 16777215;
-        //InfoTextfield size
-        App.infoSize = 15;
-        //set bitmap background
-        App.background = new openfl.display.Bitmap(new openfl.display.BitmapData(App.setWidth,App.setHeight,false,0));
         //creates a tcp socket on Native/Neko and WebSocket on html5, boolean controls if the same message can be sent again. 
         App.network = new Network("127.0.0.1",200,false);
         //array of Integer colors to be used throughout the App, defualt is a blue, yellow and green for ThinQbator.

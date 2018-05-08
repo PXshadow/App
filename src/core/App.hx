@@ -228,11 +228,13 @@ class App extends DisplayObjectContainer
 			#if !mobile
 			if(!mobile)state.keyUp(e);
 			#end
+			#if android
 			if (!backExit && e.keyCode == KeyCode.APP_CONTROL_BACK)
 			{
 			e.preventDefault();
 			if(!animation)state.back(e);
 			}
+			#end
 		});
 		
 	Lib.current.stage.addEventListener(Event.ENTER_FRAME, function(e:Event)
@@ -745,6 +747,7 @@ Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
         var screen = new BitmapData(Math.floor(stage.stageWidth), Math.floor(stage.stageHeight), false, background);
         screen.draw(App.main);
         var data = new Bitmap(screen, null, true);
+		screen = null;
         return data;
     }
 	

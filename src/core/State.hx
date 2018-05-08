@@ -163,6 +163,7 @@ class State extends DisplayObjectContainer
 	{
 		stateAnimation = false;
 		App.main.removeChild(pastBitmap);
+		pastBitmap = null;
 		App.main.animation = false;
 	}
 	/**
@@ -253,15 +254,9 @@ class State extends DisplayObjectContainer
 	//protect against null
 	if (this != null)
 	{
-		//input text focus out
-		#if mobile
-		if (InputText.focusInput != null) InputText.focusInput.focusOut();
-		InputText.focusInput = null;
-		nativetext.NativeTextField.returnKey = null;
-		#end
 		//take screenshot of last state for animations
 		pastBitmap = App.main.createScreenBitmap();
-		Assets.cache.clear();
+		//Assets.cache.clear();
 		App.main.removeChild(this);
 		App.state = null;
 		#if cpp
@@ -269,6 +264,10 @@ class State extends DisplayObjectContainer
 		#end
 		#if neko
 		neko.vm.Gc.run(true);
+		#end
+		//input text focus out
+		#if mobile
+		nativetext.NativeTextField.returnKey = null;
 		#end
 	}
 	}
