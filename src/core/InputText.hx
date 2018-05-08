@@ -226,14 +226,8 @@ class InputText extends DisplayObjectContainer
 	public function toggleNative(bool:Bool)
 	{
 		#if mobile
-		var tim = new Timer(20);
-		tim.run = function()
-		{
 		if (bool) nativeText.Configure({x:Math.round(x * App.scale + App.state.x), y:Math.round(y * App.scale), enabled:true, visible:true});
-		if (!bool) nativeText.Configure({visible:false, enabled:false});
-		tim.stop();
-		tim = null;
-		}
+		if (!bool)nativeText.Configure({visible:false, enabled:false});
 		textfield.visible = !bool;
 		button.mouseEnabled = !bool;
 		#end
