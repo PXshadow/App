@@ -53,7 +53,8 @@
 
     if (config.fontSize.IsSet())
     {
-        self.font = [self.font fontWithSize:config.fontSize.Value() / scale];
+        self.font = [self.font fontWithSize:config.fontSize.Value()];
+        //self.font = [self.font fontWithSize:config.fontSize.Value() / scale];
         //self.font = [UIFont systemFontOfSize:config.fontSize.Value() / scale];
     }
 
