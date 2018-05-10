@@ -10,6 +10,7 @@ import sys.net.Host;
 import haxe.Timer;
 import haxe.Unserializer;
 import haxe.io.Bytes;
+import haxe.io.Eof;
 import haxe.io.Error;
 /**
  * ...
@@ -29,9 +30,8 @@ class Network
 	private var ip:String = "localhost";
 	private var port:Int = 9696;
 	public var connected:Bool = false;
-	public var oldMessage:String;
-	public var oldMessageBool:Bool;
-	public var reconnectBool:Bool = true;
+	public var wait:Int = -1;
+	
 	/**
 	 * onClose function 
 	 */
@@ -54,20 +54,16 @@ public var mainMessage(default, default):Dynamic->Void;
 	{
 		ip = ipString;
 		port = portInt;
-		oldMessageBool = blockSameMessage;
-		connect();
-	}
-	
-	public function connect()
-	{
+		
 		#if html5
 		var param:String = "ws";
 		if (secure) param = "wss";
 		ws = new WebSocket(param + "://" + ip + ":" + Std.string(port));
+		connected = true;
 		ws.onopen = function()
 		{
+			if(onConnect != null && !connected)onConnect();
 			connected = true;
-			if(onConnect != null)onConnect();
 		}
 		ws.onmessage = function(line)
 		{
@@ -75,23 +71,30 @@ public var mainMessage(default, default):Dynamic->Void;
 		}
 		ws.onclose = function()
 		{
-			disconnect();
+			close();
 		}
-		#else
+		#end
+		connect();
+	}
+	
+	public function connect()
+	{
+	#if !html5
 		socket = new Socket();
     try {
 		socket.connect(new Host(ip), port);
 		socket.setBlocking(false);
 		socket.setFastSend(true);
-		socket.setTimeout(2);
 		connected = true;
 		//establish to server that it's a tcp socket
 		socket.output.writeString("8");
+		connected = true;
+		trace("connected");
 		if (onConnect != null) onConnect();
     }
     catch (e: Dynamic) {
-      //onFailure(e);
-      connected = false;
+        connected = false;
+		wait = 0;
     }
 	#end
 	
@@ -102,49 +105,33 @@ public var mainMessage(default, default):Dynamic->Void;
 	 * @param	str String to send to server
 	 * @return Whether or not The message was sent
 	 */
-	public function write(str:String):Bool
+	public function write(str:String)
 	{
-		if (connected)
-		{
 		try
 		{
-	if (oldMessage != str)
-	{
 		#if html5
 		ws.send(str);
 		#else
 		socket.output.writeString(str + "\n");
 		#end
-	if(oldMessageBool)oldMessage = str;
-	}
 		}
 		catch (e:Dynamic)
 		{
-			trace("faild writing to socket " + e);
-			return false;
-		}
-		return true;
-		}else{
-		disconnect();
-		return false;
+			trace("write " + e);
+			close();
 		}
 	}
 	/**
 	 * Send Dynamic data 
 	 * @param	obj Data
 	 */
-	public function send(obj:Dynamic)
+	public function send(obj:Dynamic,setWait:Int=0)
 	{
-		try
-		{
+		if(!connected)return;
 		var ser = new Serializer();
 		ser.serialize(obj);
 		write(ser.toString());
-		}
-		catch (e:Dynamic)
-		{
-			trace("serialize send " + e);
-		}
+		wait = setWait;
 	}
 	public function read()
 	{
@@ -152,24 +139,36 @@ public var mainMessage(default, default):Dynamic->Void;
 		try
 		{
 		unSer(socket.input.readLine());
+		wait = -1;
 		}catch (e:Dynamic)
 		{
-		//trace(e);
+		//2 seconds
+		if (wait > 120)
+		{
+			if (onClose != null)
+			{
+				connected = false;
+				onClose();
+			}
+			wait = -1;
+			connect();
+		}
+		if (wait >= 0) wait ++;
 		}
 		#end
 	}
 	public function unSer(str:String)
 	{
-		    //try
-			//{
+		    try
+			{
 			var data = new Unserializer(str).unserialize();
 			if(onMessage != null)onMessage(data);
 			if(mainMessage != null)mainMessage(data);
-			/*}
+			}
 			catch (e:Dynamic)
 			{
-				trace("unser " + e);
-			}*/
+				trace("ser " + e);
+			}
 	}
 	public function close()
 	{
@@ -178,17 +177,7 @@ public var mainMessage(default, default):Dynamic->Void;
 		#else
 		socket.close();
 		#end
-	}
-	public function disconnect()
-	{
-		if (onClose != null) onClose();
-		var tim = new Timer(200);
-		tim.run = function()
-		{
-			connect();
-			tim.stop();
-			tim = null;
-		}
+		connected = false;
 	}
   
 	public function update()

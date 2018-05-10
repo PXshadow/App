@@ -131,6 +131,7 @@ class App extends DisplayObjectContainer
 	**/
 	public var onResize:Dynamic->Void;
 	/**
+	 * 
 	 * When Exit or android Back button are pressed
 	 */
 	public var onBack:Dynamic->Void;
@@ -284,8 +285,6 @@ class App extends DisplayObjectContainer
 			restrictInt = 0;
 		}
 		//RESTRICT Y
-	   if (App.main.cameraMinY != App.main.cameraMaxY)
-	   {
 		if (App.camY + App.scrollSpeed > App.main.cameraMinY && App.scrollSpeed > 0)
 		{
 		App.scrollSpeed = -App.camY + App.main.cameraMinY;
@@ -298,7 +297,7 @@ class App extends DisplayObjectContainer
 		}
 		//Speed
 		App.camY += App.scrollSpeed;
-	   }
+	   
 	   
 			if (state != null)
 			{
@@ -314,6 +313,10 @@ class App extends DisplayObjectContainer
 		Lib.current.stage.addEventListener (openfl.events.Event.ACTIVATE, function (_) {
 		Lib.current.stage.frameRate = 60;
 		active = true;
+		//re connect
+		#if mobile
+		if (App.network != null) App.network.send({v:20});
+		#end
 		});
 		
 		Lib.current.stage.addEventListener (openfl.events.Event.DEACTIVATE, function (_) {
@@ -363,8 +366,6 @@ class App extends DisplayObjectContainer
 				scrollDuration = 0;
 				scrollSpeed = 0;
 				moveBool = false;
-				App.main.vectorX = null;
-				App.main.vectorY = null;
 			}
 			
 			public static function toTop(frame:Int=0)
@@ -728,7 +729,7 @@ Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
 		}
 		}
 		//call on resize
-		if(onResize != null)onResize(e);
+		if (onResize != null) onResize(e);
 	}
 /**
  * A way to set a bottom bar a header etc. Make's it so it can strech to the edges of the screen or be at absoulte postion x r

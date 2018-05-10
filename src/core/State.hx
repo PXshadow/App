@@ -79,7 +79,6 @@ class State extends DisplayObjectContainer
 		App.dragBool = false;
 		App.main.backExit = false;
 		App.mouseDown = false;
-		App.main.onResize = null;
 		App.main.maxEventX = null;
 		App.main.maxEventY = null;
 		App.main.minEventX = null;
