@@ -9,28 +9,20 @@ import sys.net.Host;
 #end
 import haxe.Timer;
 import haxe.Unserializer;
-import haxe.io.Bytes;
-import haxe.io.Eof;
-import haxe.io.Error;
 /**
  * ...
  * @author 
  */
 class Network 
 {
-	#if html5
-	/**
-	 * web socket
-	 */
-	public var ws:WebSocket;
-	#else
-	public var socket:Socket;
-	#end
+	
 	public var secure:Bool = false;
-	private var ip:String = "localhost";
+	private var host:Host;
 	private var port:Int = 9696;
 	public var connected:Bool = false;
-	public var wait:Int = -1;
+	public var connecting:Bool = false;
+	
+	var socket:Socket;
 	
 	/**
 	 * onClose function 
@@ -43,120 +35,108 @@ class Network
 	/**
 	 * main
 	 */
-public var mainMessage(default, default):Dynamic->Void;
+	public var mainMessage(default, default):Dynamic->Void;
 /** Callback used called when a connection is established. This callback should not be handled manually. **/
  public var onConnect:()->Void;
   
 /**
  * Setup networking
  */
-	public function new(ipString:String,portInt:Int,blockSameMessage:Bool=true) 
+	public function new(ipString:String,portInt:Int) 
 	{
-		ip = ipString;
+		host = new Host(ipString);
 		port = portInt;
-		
-		#if html5
-		var param:String = "ws";
-		if (secure) param = "wss";
-		ws = new WebSocket(param + "://" + ip + ":" + Std.string(port));
-		connected = true;
-		ws.onopen = function()
-		{
-			if(onConnect != null && !connected)onConnect();
-			connected = true;
-		}
-		ws.onmessage = function(line)
-		{
-			unSer(line.data);
-		}
-		ws.onclose = function()
-		{
-			close();
-		}
-		#end
 		connect();
 	}
 	
 	public function connect()
 	{
-	#if !html5
+		if (connecting) return;
+		connecting = true;
 		socket = new Socket();
-    try {
-		socket.connect(new Host(ip), port);
+		try
+		{
+		socket.connect(host, port);
 		socket.setBlocking(false);
-		socket.setFastSend(true);
+		//socket.setFastSend(true);
 		connected = true;
-		//establish to server that it's a tcp socket
+		//tcp relay
 		socket.output.writeString("8");
-		connected = true;
-		trace("connected");
-		if (onConnect != null) onConnect();
-    }
-    catch (e: Dynamic) {
-        connected = false;
-		wait = 0;
-    }
-	#end
+		connectEvent();
+		}catch (e:Dynamic)
+		{
+			trace("fail");
+			close();
+		}
+		connecting = false;
+	}
 	
+	private function connectEvent()
+	{
+		var tim = new Timer(20);
+		tim.run = function()
+		{
+		if (onConnect != null) onConnect();
+		tim.stop();
+		tim = null;
+		}
+		connected = true;
+	}
+	private function close()
+	{
+		var tim = new Timer(20);
+		tim.run = function()
+		{
+		if (onClose != null) onClose();
+		tim.stop();
+		tim = null;
+		}
+		connected = false;
+	}
+	
+	public function update()
+	{
+		#if (cpp || neko)
+		read();
+		#end
+	}
+	
+	public function read()
+	{
+		if (!connected) return;
+		try
+		{
+		unSer(socket.input.readLine());
+		}catch (e:Dynamic)
+		{
+		
+		}
 	}
 	
 	/**
-	 * write to server
-	 * @param	str String to send to server
-	 * @return Whether or not The message was sent
+	 * Send Dynamic data 
+	 * @param	obj Data
 	 */
-	public function write(str:String)
+	public function send(obj:Dynamic)
 	{
+		if(!connected)return;
+		var ser = new Serializer();
+		ser.serialize(obj);
 		try
 		{
 		#if html5
 		ws.send(str);
 		#else
-		socket.output.writeString(str + "\n");
+		socket.output.writeString(ser.toString() + "\n");
 		#end
 		}
 		catch (e:Dynamic)
 		{
 			trace("write " + e);
-			close();
+			if (onClose != null) onClose();
 		}
 	}
-	/**
-	 * Send Dynamic data 
-	 * @param	obj Data
-	 */
-	public function send(obj:Dynamic,setWait:Int=0)
-	{
-		if(!connected)return;
-		var ser = new Serializer();
-		ser.serialize(obj);
-		write(ser.toString());
-		wait = setWait;
-	}
-	public function read()
-	{
-		#if (cpp || neko)
-		try
-		{
-		unSer(socket.input.readLine());
-		wait = -1;
-		}catch (e:Dynamic)
-		{
-		//2 seconds
-		if (wait > 120)
-		{
-			if (onClose != null)
-			{
-				connected = false;
-				onClose();
-			}
-			wait = -1;
-			connect();
-		}
-		if (wait >= 0) wait ++;
-		}
-		#end
-	}
+	
 	public function unSer(str:String)
 	{
 		    try
@@ -169,21 +149,5 @@ public var mainMessage(default, default):Dynamic->Void;
 			{
 				trace("ser " + e);
 			}
-	}
-	public function close()
-	{
-		#if html5
-		ws.close(1000, "in activity");
-		#else
-		socket.close();
-		#end
-		connected = false;
-	}
-  
-	public function update()
-	{
-		#if (cpp || neko)
-		read();
-		#end
 	}
 }

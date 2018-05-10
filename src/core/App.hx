@@ -266,6 +266,8 @@ class App extends DisplayObjectContainer
 	}
 	}
 	}
+	
+			if (App.network != null) App.network.update();
 		
 		//SEND OUT restrict events
 		if (restrictInt > 0)
@@ -306,8 +308,6 @@ class App extends DisplayObjectContainer
 			omY = Math.round(App.state.mouseY);
 			}
 			
-		//update networkings
-		if (network != null) network.update();
 		}); 
 		
 		Lib.current.stage.addEventListener (openfl.events.Event.ACTIVATE, function (_) {
@@ -315,7 +315,7 @@ class App extends DisplayObjectContainer
 		active = true;
 		//re connect
 		#if mobile
-		if (App.network != null) App.network.send({v:20});
+		if (App.network != null) App.network.connect();
 		#end
 		});
 		
