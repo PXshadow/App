@@ -727,16 +727,16 @@ Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
 		if (state != null)
 		{
 		//test
-		//statusBarBool = true;
+		statusBarBool = true;
 		var offsetHeight:Int = 0;
-		if (statusBarBool) offsetHeight = 20;
+		if (statusBarBool) offsetHeight = 40;
 		
 		var tempX:Float = (stage.stageWidth - offsetHeight) / setWidth;
 		var tempY:Float = (stage.stageHeight - offsetHeight) / setHeight;
 		scale = Math.min(tempX, tempY);
 		if (resizeBool)
 		{
-		App.state.resize(Math.floor((stage.stageWidth - setWidth * App.scale) / 2), offsetHeight, scale, scale);
+		App.state.resize(Math.floor((stage.stageWidth - setWidth * App.scale) / 2), offsetHeight, scale,scale);
 		}
 		//set status bar
 		if (statusBarBool)
@@ -746,8 +746,9 @@ Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
 		statusBar = null;
 		statusBar = new Shape();
 		statusBar.graphics.beginFill(0);
-		statusBar.graphics.drawRect(0, 0, Lib.current.stage.stageWidth, 20);
+		statusBar.graphics.drawRect(0, 0, Lib.current.stage.stageWidth, offsetHeight);
 		statusBar.graphics.endFill();
+		statusBar.cacheAsBitmap = true;
 		Lib.current.addChild(statusBar);
 		
 		}

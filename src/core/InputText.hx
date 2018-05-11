@@ -170,6 +170,11 @@ class InputText extends DisplayObjectContainer
 		}else{
 		setHeight = NativeTextField.AUTOSIZE;
 		}
+		
+		var tempX:Float = (stage.stageWidth - offsetHeight) / App.setWidth;
+		var tempY:Float = (stage.stageHeight - offsetHeight) / App.setHeight;
+		var scale scale = Math.min(tempX, tempY);
+		
 		nativeText = new NativeTextField({
 		x:0, 
 		y:0,
@@ -179,7 +184,7 @@ class InputText extends DisplayObjectContainer
 		enabled:false,
 		placeholder:placeString,
 		fontAsset:App.font.format,
-		fontSize:Math.round(fsize * App.scale),
+		fontSize:Math.round(fsize * scale),
 		fontColor:color,
 		textAlignment:nativeTextAlign,
 		keyboardType:_keyType,

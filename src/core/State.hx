@@ -220,6 +220,8 @@ class State extends DisplayObjectContainer
 		px = prx; py = pry;
 		scaleX = sx;
 		scaleY = sy;
+		trace("sX " + scaleX);
+		trace("sY " + scaleY);
 		this.x = px;
 		this.y = py;
 		/*for (i in 0...numChildren)
@@ -232,9 +234,9 @@ class State extends DisplayObjectContainer
 		//background sizing
 		if (background != null)
 		{
-		background.x = -State.px * 1 / App.scale;
-		background.width = Lib.current.stage.stageWidth * 1 / App.scale;
-		background.height = Lib.current.stage.stageHeight * 1 / App.scale;
+		background.x = -px * 1 / sx;
+		background.width = Lib.current.stage.stageWidth * 1 / sx;
+		background.height = Lib.current.stage.stageHeight * 1 / sy;
 		}
 		visible = true;
 		
