@@ -145,7 +145,7 @@ class App extends DisplayObjectContainer
 	 */
 	public var active:Bool = true;
 	public var animation:Bool = false;
-	public static var statusBarBool:Bool = true;
+	public static var statusBarBool:Bool = false;
 	public static var statusBar:Shape;
 	
 	public function new(sx:Int=640,sy:Int=1136,_font:Font=null) 
@@ -726,10 +726,12 @@ Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
 		//safe NEP
 		if (state != null)
 		{
-		var tempX:Float = stage.stageWidth / setWidth;
+		//test
+		//statusBarBool = true;
 		var offsetHeight:Int = 0;
 		if (statusBarBool) offsetHeight = 20;
 		
+		var tempX:Float = (stage.stageWidth - offsetHeight) / setWidth;
 		var tempY:Float = (stage.stageHeight - offsetHeight) / setHeight;
 		scale = Math.min(tempX, tempY);
 		if (resizeBool)
@@ -743,10 +745,10 @@ Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
 		if (contains(statusBar)) removeChild(statusBar);
 		statusBar = null;
 		statusBar = new Shape();
-		statusBar.graphics.beginFill(0xFFFFFF);
-		statusBar.graphics.drawRect(0, 0, setWidth * App.scale, 20 * App.scale);
+		statusBar.graphics.beginFill(0);
+		statusBar.graphics.drawRect(0, 0, Lib.current.stage.stageWidth, 20);
 		statusBar.graphics.endFill();
-		App.main.addChild(statusBar);
+		Lib.current.addChild(statusBar);
 		
 		}
 		
