@@ -44,7 +44,13 @@ class Network
  */
 	public function new(ipString:String,portInt:Int) 
 	{
+		try
+		{
 		host = new Host(ipString);
+		}catch (e:Dynamic)
+		{
+			
+		}
 		port = portInt;
 		connect();
 	}

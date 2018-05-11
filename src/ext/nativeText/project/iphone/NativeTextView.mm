@@ -44,7 +44,7 @@
 //            NSLog(@"%@", item);
 //        }
 
-        self.font = [UIFont fontWithName:font size:config.fontSize.Value() / scale];
+        self.font = [UIFont fontWithName:font size:config.fontSize.Value() * scale];
 
         //NSLog(self.font.fontName);
 
@@ -53,7 +53,7 @@
 
     if (config.fontSize.IsSet())
     {
-        self.font = [self.font fontWithSize:config.fontSize.Value() / scale];
+        self.font = [self.font fontWithSize:config.fontSize.Value() * scale];
         //self.font = [UIFont systemFontOfSize:config.fontSize.Value() / scale];
     }
 
