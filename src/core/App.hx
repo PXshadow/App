@@ -145,6 +145,8 @@ class App extends DisplayObjectContainer
 	 */
 	public var active:Bool = true;
 	public var animation:Bool = false;
+	public static var statusBarBool:Bool = true;
+	public static var statusBar:Shape;
 	
 	public function new(sx:Int=640,sy:Int=1136,_font:Font=null) 
 	{
@@ -154,6 +156,10 @@ class App extends DisplayObjectContainer
 		//set mobile 
 		#if mobile
 		mobile = true;
+		#if !android 
+		//set for ios
+		statusBarBool = true;
+		#end
 		#end
 		#if html5
 	var browserAgent : String = js.Browser.navigator.userAgent;
@@ -721,12 +727,29 @@ Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
 		if (state != null)
 		{
 		var tempX:Float = stage.stageWidth / setWidth;
-		var tempY:Float = stage.stageHeight / setHeight;
+		var offsetHeight:Int = 0;
+		if (statusBarBool) offsetHeight = 20;
+		
+		var tempY:Float = (stage.stageHeight - offsetHeight) / setHeight;
 		scale = Math.min(tempX, tempY);
 		if (resizeBool)
 		{
-		App.state.resize(Math.floor((stage.stageWidth - setWidth * App.scale) / 2), 0, scale, scale);
+		App.state.resize(Math.floor((stage.stageWidth - setWidth * App.scale) / 2), offsetHeight, scale, scale);
 		}
+		//set status bar
+		if (statusBarBool)
+		{
+		//create status bar
+		if (contains(statusBar)) removeChild(statusBar);
+		statusBar = null;
+		statusBar = new Shape();
+		statusBar.graphics.beginFill(0xFFFFFF);
+		statusBar.graphics.drawRect(0, 0, setWidth * App.scale, 20 * App.scale);
+		statusBar.graphics.endFill();
+		App.main.addChild(statusBar);
+		
+		}
+		
 		}
 		//call on resize
 		if (onResize != null) onResize(e);
