@@ -745,7 +745,7 @@ Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
 		if (contains(statusBar)) removeChild(statusBar);
 		statusBar = null;
 		statusBar = new Shape();
-		statusBar.graphics.beginFill(0);
+		statusBar.graphics.beginFill(0xFFFFFF);
 		statusBar.graphics.drawRect(0, 0, Lib.current.stage.stageWidth, offsetHeight);
 		statusBar.graphics.endFill();
 		statusBar.cacheAsBitmap = true;

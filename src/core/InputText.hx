@@ -171,10 +171,6 @@ class InputText extends DisplayObjectContainer
 		setHeight = NativeTextField.AUTOSIZE;
 		}
 		
-		var tempX:Float = (stage.stageWidth - offsetHeight) / App.setWidth;
-		var tempY:Float = (stage.stageHeight - offsetHeight) / App.setHeight;
-		var scale scale = Math.min(tempX, tempY);
-		
 		nativeText = new NativeTextField({
 		x:0, 
 		y:0,
@@ -184,7 +180,7 @@ class InputText extends DisplayObjectContainer
 		enabled:false,
 		placeholder:placeString,
 		fontAsset:App.font.format,
-		fontSize:Math.round(fsize * scale),
+		fontSize:Math.round(fsize * App.scale),
 		fontColor:color,
 		textAlignment:nativeTextAlign,
 		keyboardType:_keyType,
@@ -231,7 +227,7 @@ class InputText extends DisplayObjectContainer
 	public function toggleNative(bool:Bool)
 	{
 		#if mobile
-		if (bool) nativeText.Configure({x:Math.round(x * App.scale + App.state.x), y:Math.round(y * App.scale), enabled:true, visible:true});
+		if (bool) nativeText.Configure({x:Math.round(x * App.scale + App.state.x), y:Math.round(y * App.scale + App.state.y), enabled:true, visible:true});
 		if (!bool)nativeText.Configure({visible:false, enabled:false});
 		textfield.visible = !bool;
 		button.mouseEnabled = !bool;

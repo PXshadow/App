@@ -44,7 +44,7 @@
 //            NSLog(@"%@", item);
 //        }
 
-        self.font = [UIFont fontWithName:font size:100];
+        self.font = [UIFont fontWithName:font size:50 / scale];
 
         //NSLog(self.font.fontName);
 
