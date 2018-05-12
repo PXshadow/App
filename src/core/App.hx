@@ -145,8 +145,6 @@ class App extends DisplayObjectContainer
 	 */
 	public var active:Bool = true;
 	public var animation:Bool = false;
-	public static var statusBarBool:Bool = false;
-	public static var statusBar:Shape;
 	
 	public function new(sx:Int=640,sy:Int=1136,_font:Font=null) 
 	{
@@ -726,32 +724,10 @@ Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
 		//safe NEP
 		if (state != null)
 		{
-		//test
-		statusBarBool = true;
-		var offsetHeight:Int = 0;
-		if (statusBarBool) offsetHeight = 40;
-		
-		var tempX:Float = (stage.stageWidth - offsetHeight) / setWidth;
-		var tempY:Float = (stage.stageHeight - offsetHeight) / setHeight;
+		var tempX:Float = stage.stageWidth/ setWidth;
+		var tempY:Float = stage.stageHeight/ setHeight;
 		scale = Math.min(tempX, tempY);
-		if (resizeBool)
-		{
-		App.state.resize(Math.floor((stage.stageWidth - setWidth * App.scale) / 2), offsetHeight, scale,scale);
-		}
-		//set status bar
-		if (statusBarBool)
-		{
-		//create status bar
-		if (contains(statusBar)) removeChild(statusBar);
-		statusBar = null;
-		statusBar = new Shape();
-		statusBar.graphics.beginFill(0xFFFFFF);
-		statusBar.graphics.drawRect(0, 0, Lib.current.stage.stageWidth, offsetHeight);
-		statusBar.graphics.endFill();
-		statusBar.cacheAsBitmap = true;
-		Lib.current.addChild(statusBar);
-		
-		}
+		if (resizeBool)App.state.resize(Math.floor((stage.stageWidth - setWidth * App.scale) / 2),0,scale,scale);
 		
 		}
 		//call on resize
