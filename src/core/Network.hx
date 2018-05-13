@@ -64,7 +64,7 @@ class Network
 		{
 		socket.connect(host, port);
 		socket.setBlocking(false);
-		//socket.setFastSend(true);
+		socket.setFastSend(true);
 		connected = true;
 		//tcp relay
 		socket.output.writeString("8");

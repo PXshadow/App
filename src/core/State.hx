@@ -220,8 +220,6 @@ class State extends DisplayObjectContainer
 		px = prx; py = pry;
 		scaleX = sx;
 		scaleY = sy;
-		trace("sX " + scaleX);
-		trace("sY " + scaleY);
 		this.x = px;
 		this.y = py;
 		/*for (i in 0...numChildren)

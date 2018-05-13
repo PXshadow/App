@@ -318,9 +318,9 @@ class App extends DisplayObjectContainer
 		Lib.current.stage.frameRate = 60;
 		active = true;
 		//re connect
-		#if mobile
+		//#if mobile
 		if (App.network != null) App.network.connect();
-		#end
+		//#end
 		});
 		
 		Lib.current.stage.addEventListener (openfl.events.Event.DEACTIVATE, function (_) {
