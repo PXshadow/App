@@ -151,14 +151,6 @@ class App extends DisplayObjectContainer
 		super();
 		if (_font != null) font = _font;
 		Lib.current.mouseEnabled = false;
-		//set mobile 
-		#if mobile
-		mobile = true;
-		#if !android 
-		//set for ios
-		statusBarBool = true;
-		#end
-		#end
 		#if html5
 	var browserAgent : String = js.Browser.navigator.userAgent;
 	if (browserAgent != null) 
