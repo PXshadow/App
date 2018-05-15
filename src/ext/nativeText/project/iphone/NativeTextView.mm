@@ -44,18 +44,18 @@
 //            NSLog(@"%@", item);
 //        }
 
-        self.font = [UIFont fontWithName:font size:50];
+        self.font = [UIFont fontWithName:@"ArialMT" size:config.fontSize.Value()/scale];
 
         //NSLog(self.font.fontName);
 
         //self.font = [UIFont fontWithName:font size:config.fontSize.Value() / scale];
     }
 
-    if (config.fontSize.IsSet())
+    /*if (config.fontSize.IsSet())
     {
         self.font = [self.font fontWithSize:config.fontSize.Value() / scale];
         //self.font = [UIFont systemFontOfSize:config.fontSize.Value() / scale];
-    }
+    }*/
 
     [self setPositionAndSizeFromConfig:config withScale:scale];
 
