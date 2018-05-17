@@ -188,6 +188,7 @@ class App extends DisplayObjectContainer
 		Lib.current.addChild(this);
 		Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, function(e:MouseEvent)
 		{
+			
 		if (state != null && pointRect(App.state.mouseX, App.state.mouseY, dragRect))
 		{
 		spX = Math.round(App.state.mouseX);
@@ -196,8 +197,10 @@ class App extends DisplayObjectContainer
 		omY = spY;
 		scrollPress = false;
 		mouseDown = true;
-		if(!animation)state.mouseDown();
 		}
+		
+		if(!animation)state.mouseDown();
+		
 		});
 		Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, function(e:MouseEvent)
 		{
@@ -529,7 +532,7 @@ Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
 		var sub = path.substring(path.length - 4, path.length);
 		if (sub == ".png" || sub == ".jpg")
 		{
-		var bmd = Assets.getBitmapData(path);
+	var bmd = Assets.getBitmapData(path);
 	var mat = new Matrix();
 	var sx:Float = 1;
 	var sy:Float = 1;

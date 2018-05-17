@@ -17,12 +17,13 @@ class Network
 {
 	
 	public var secure:Bool = false;
-	private var host:Host;
 	private var port:Int = 9696;
 	public var connected:Bool = false;
 	public var connecting:Bool = false;
-	
-	var socket:Socket;
+	#if !html5
+	private var host:Host;
+	public var socket:Socket;
+	#end
 	
 	/**
 	 * onClose function 
@@ -44,6 +45,9 @@ class Network
  */
 	public function new(ipString:String,portInt:Int) 
 	{
+		#if html5
+		
+		#else
 		try
 		{
 		host = new Host(ipString);
@@ -52,12 +56,16 @@ class Network
 			
 		}
 		port = portInt;
+		#end
 		connect();
 	}
 	
 	public function connect()
 	{
 		if (connecting) return;
+		#if html5
+		
+		#else
 		connecting = true;
 		socket = new Socket();
 		try
@@ -74,6 +82,7 @@ class Network
 			trace("fail");
 			close();
 		}
+		#end
 		connecting = false;
 	}
 	
@@ -109,6 +118,7 @@ class Network
 	
 	public function read()
 	{
+		#if !html5
 		if (!connected) return;
 		try
 		{
@@ -117,6 +127,7 @@ class Network
 		{
 		
 		}
+		#end
 	}
 	
 	/**
@@ -131,7 +142,7 @@ class Network
 		try
 		{
 		#if html5
-		ws.send(str);
+		//ws.send(str);
 		#else
 		socket.output.writeString(ser.toString() + "\n");
 		#end
