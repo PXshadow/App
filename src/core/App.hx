@@ -405,7 +405,7 @@ class App extends DisplayObjectContainer
 				moveBool = true;
 				scrollBool = true;
 			}
-	
+	//http://pixelthis.games/blog/?p=131
 	public static function cutShapeFromBitmapData( bitmapData : BitmapData, shape : Shape ):BitmapData 
 	{
     // Copy the shape to a bitmap
@@ -504,6 +504,7 @@ Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
 	 * @param	axis x or y
 	 * @return
 	 */
+	//https://stackoverflow.com/questions/7773488/flipping-a-bitmap-horizontally#7773649
 	public static function flipBitmapData(original:BitmapData, axis:String = "x"):BitmapData
 	{
 	 var flipped:BitmapData = new BitmapData(original.width, original.height, true, 0);
