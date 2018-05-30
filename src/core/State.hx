@@ -65,12 +65,20 @@ class State extends DisplayObjectContainer
 	public var background:DisplayObject;
 	//variable used to check for Animation of state between resize call
 	public var stateAnimation:Bool = false;
+	private var tempDrag:Bool = false;
 	
 	public function new(minY:Int=0,maxY:Int=0,minX:Int=0,maxX:Int=0,animation:Animation=Animation.NONE) 
 	{
 		super();
 		if (background != null) addChild(background);
 		visible = false;
+		//gc
+		#if cpp
+		cpp.vm.Gc.enterGCFreeZone();
+		#end
+		#if neko
+		//neko.vm.Gc
+		#end
 		//set camera restriction
 		App.main.cameraMinY = -minY;
 		App.main.cameraMaxY = -maxY;
@@ -88,6 +96,8 @@ class State extends DisplayObjectContainer
 		App.main.addChild(this);
 		App.omX = Math.floor(mouseX);
 		App.omY = Math.floor(mouseY);
+		App.main.vectorY = null;
+		App.main.vectorX = null;
 		App.camY = 0;
 		App.scrollSpeed = 0;
 		App.moveBool = false;
@@ -96,18 +106,19 @@ class State extends DisplayObjectContainer
 		mouseEnabled = false;
 		//drag not possible
 		App.dragRect = new Rectangle(0, 0, App.setWidth, App.setHeight);
-		
+		App.main.animation = true;
 		//resize
 		var tim = new Timer(1);
 		tim.run = function()
 		{
+		tempDrag = App.dragBool;
+		App.dragBool = false;
 		//add past state for animated state tweens
 		visible = true;
 		if (pastBitmap != null && animation != Animation.NONE)
 		{
 		App.main.addChild(pastBitmap);
 		stateAnimation = true;
-		App.main.animation = true;
 		}else{
 		finishAnimation();
 		}
@@ -160,10 +171,12 @@ class State extends DisplayObjectContainer
 	}
 	public function finishAnimation()
 	{
+		App.dragBool = tempDrag;
 		stateAnimation = false;
 		App.main.removeChild(pastBitmap);
 		pastBitmap = null;
 		App.main.animation = false;
+		
 	}
 	/**
 	 * Update State

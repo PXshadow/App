@@ -9,7 +9,8 @@
 	
 	<include path="src/ext/extensionkit" if="mobile" />
 	<include path="src/ext/nativetext" if="mobile" />
-	<include path="src/ext/camera" if="mobile" />
+	<!--Remove camera acsess for the time being-->
+	<!--<include path="src/ext/camera" if="mobile" />-->
 	<include path="src/ext/webview" if="mobile"/>
 	<include path="src/ext/firebase" if="mobile"/>
 	
