@@ -258,8 +258,8 @@ class InputText extends DisplayObjectContainer
 		}
 		App.state.stage.focus = textfield;
 		#end
-		isDrag = App.dragBool;
-		App.disableCameraMovment();
+		isDrag = App.state.dragBool;
+		App.state.disableCameraMovment();
 	}
 	#if !mobile
 	public function focusOutFalseMobile(_)
@@ -269,7 +269,7 @@ class InputText extends DisplayObjectContainer
 	#end
 	public function focusOut()
 	{
-		App.dragBool = isDrag;
+		App.state.dragBool = isDrag;
 		#if mobile
 		textfield.visible = true;
 		textfield.displayAsPassword = passwordBool;

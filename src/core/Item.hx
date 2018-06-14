@@ -179,27 +179,27 @@ class ScrollBar extends Button
      super.mouseDown(_);
      trace("mouseOut " + mouseOut);
      downBool = true;
-     App.dragBool = true;
+     App.state.dragBool = true;
  }
  public function setRelease(_)
  {
      downBool = false;
-     App.scrollCamera();
+     App.state.scrollCamera();
  }
   public function update(_)
   {
     //move all Objects in Scroll View
-    if(Math.abs(App.scrollSpeed) > 0)
+    if(Math.abs(App.state.scrollSpeed) > 0)
     {
     for(obj in scrollView)
     {
-        obj.y += App.scrollSpeed;
+        obj.y += App.state.scrollSpeed;
     }
-    y += App.scrollSpeed;
+    y += App.state.scrollSpeed;
     if(y < -height/2)y = App.setHeight - height/2;
     if(y > App.setHeight - height/2)y = -height/2;
     }else{
-    if(!downBool)App.dragBool = false;
+    if(!downBool)App.state.dragBool = false;
     }
   }
   override public function remove(_)

@@ -31,54 +31,53 @@ class Button extends Sprite
 	public var vector:Bool = true;
                                                                              //invis button
 	public function new(?xpos:Int=0,?ypos:Int=0,path:String="",sWidth:Int=-1,sHeight:Int=-1,oval:Bool=false) 
-{	
+	{	
     super();
-buttonMode = true;
-if(path.length > 0)
-{
-updateGraphic(path,sWidth,sHeight,false,oval);
-}else{
-if(sWidth > 0)
-{
-//invis button
-this.graphics.beginFill(0, 0);
-this.graphics.drawRect(0, 0, sWidth, sHeight);
-}
-}
-x = xpos;
-y = ypos;
-addEventListener(Event.REMOVED_FROM_STAGE, remove);
-addEventListener(Event.ADDED_TO_STAGE, add);
-cacheAsBitmap = true;
-}
+	buttonMode = true;
+	if(path.length > 0)
+	{
+	updateGraphic(path,sWidth,sHeight,false,oval);
+	}else{
+	if(sWidth > 0)
+	{
+	//invis button
+	this.graphics.beginFill(0, 0);
+	this.graphics.drawRect(0, 0, sWidth, sHeight);
+	}
+	}
+	x = xpos;
+	y = ypos;
+	addEventListener(Event.REMOVED_FROM_STAGE, remove);
+	addEventListener(Event.ADDED_TO_STAGE, add);
+	cacheAsBitmap = true;
+	}
 
-public function updateGraphic(path:String,sWidth:Int=-1,sHeight:Int=-1,clear:Bool=true,oval:Bool=false)
-{
+	public function updateGraphic(path:String,sWidth:Int=-1,sHeight:Int=-1,clear:Bool=true,oval:Bool=false)
+	{
 	if(clear)graphics.clear();
 	
-if(path.substring(path.length - 4, path.length) == ".png")
-{
-var bmd = Assets.getBitmapData(path);
-var mat = new Matrix();
-var sx:Float = 1;
-var sy:Float = 1;
-if(sWidth > 0) sx = 1 / bmd.width * sWidth;
-if(sHeight > 0) sy = 1 / bmd.height * sHeight;
-mat.scale(sx, sy);
-graphics.beginBitmapFill(bmd, mat, false, true);
-if(oval)
-{
-graphics.drawEllipse(0,0,sx * bmd.width,sy * bmd.height);
-}else{
-graphics.drawRect(0, 0, sx * bmd.width, sy * bmd.height);
-}
-vector = false;
-}else{
-//svg
-new SVG(Assets.getText(path)).render(graphics, 0, 0, sWidth, sHeight);
-vector = true;
-}
-	
+	if(path.substring(path.length - 4, path.length) == ".png")
+	{
+	var bmd = Assets.getBitmapData(path);
+	var mat = new Matrix();
+	var sx:Float = 1;
+	var sy:Float = 1;
+	if(sWidth > 0) sx = 1 / bmd.width * sWidth;
+	if(sHeight > 0) sy = 1 / bmd.height * sHeight;
+	mat.scale(sx, sy);
+	graphics.beginBitmapFill(bmd, mat, false, true);
+	if(oval)
+	{
+	graphics.drawEllipse(0,0,sx * bmd.width,sy * bmd.height);
+	}else{
+	graphics.drawRect(0, 0, sx * bmd.width, sy * bmd.height);
+	}
+	vector = false;
+	}else{
+	//svg
+	new SVG(Assets.getText(path)).render(graphics, 0, 0, sWidth, sHeight);
+	vector = true;
+	}
 }
   /*
    * Mouse out is true

@@ -3,6 +3,7 @@ package core;
 //import motion.Actuate;
 //import motion.actuators.GenericActuator;
 import haxe.Timer;
+import haxe.ds.Vector;
 import motion.easing.Expo;
 import motion.easing.Quad;
 import openfl.Assets;
@@ -67,52 +68,74 @@ class State extends DisplayObjectContainer
 	public var stateAnimation:Bool = false;
 	private var tempDrag:Bool = false;
 	
+	//old mouse postions
+	public var omY:Float = 0;
+	//CameraScroll
+	public var cameraMinY:Int = 0;
+	public var cameraMaxY:Int = 0;
+	//inital scroll
+	public static var initalScrollY:Int = 0;
+	
+	public var maxEventY:Void->Void;
+	public var minEventY:Void->Void;
+	
+	//if camera is scrolling used to have buttons not go off during
+	public var scrollPress:Bool = false;
+	//start postion of scroll
+	public var scrollBool:Bool = false;
+	public var dragBool:Bool = false;
+	public var moveBool:Bool = false;
+	public var dragRect:Rectangle;
+	public var mouseDownBool:Bool = false;
+	public var camY:Int = 0;
+	//y
+	public var scrollSpeed:Int = 0;
+	//x
+	public var scrollDuration:Int = 0;
+	
+	private var restrictInt:Int = 0;
+	public var scrollInt:Int = 0;
+	
+	public var vectorY:Vector<Int> = new Vector<Int>(0);
+	public var vectorX:Vector<Int> = new Vector<Int>(0);
+	
+	
 	public function new(minY:Int=0,maxY:Int=0,minX:Int=0,maxX:Int=0,animation:Animation=Animation.NONE) 
 	{
 		super();
 		if (background != null) addChild(background);
 		visible = false;
-		//gc
-		#if cpp
-		cpp.vm.Gc.enterGCFreeZone();
-		#end
-		#if neko
-		//neko.vm.Gc
-		#end
+		
 		//set camera restriction
-		App.main.cameraMinY = -minY;
-		App.main.cameraMaxY = -maxY;
-		App.main.cameraMinX = -minX;
-		App.main.cameraMaxX = -maxX;
-		App.dragBool = false;
+		cameraMinY = -minY;
+		cameraMaxY = -maxY;
+		
+		dragBool = false;
 		App.main.backExit = false;
-		App.mouseDown = false;
-		App.main.maxEventX = null;
-		App.main.maxEventY = null;
-		App.main.minEventX = null;
-		App.main.minEventY = null;
+		mouseDownBool = false;
+		maxEventY = null;
+		minEventY = null;
 		if(App.network != null)App.network.onMessage = null;
 		//add
 		App.main.addChild(this);
-		App.omX = Math.floor(mouseX);
-		App.omY = Math.floor(mouseY);
-		App.main.vectorY = null;
-		App.main.vectorX = null;
-		App.camY = 0;
-		App.scrollSpeed = 0;
-		App.moveBool = false;
-		App.scrollBool = false;
+		omY = Math.floor(mouseY);
+		vectorY = null;
+		vectorX = null;
+		camY = 0;
+		scrollSpeed = 0;
+		moveBool = false;
+		scrollBool = false;
 		stateAnimation = true;
 		mouseEnabled = false;
 		//drag not possible
-		App.dragRect = new Rectangle(0, 0, App.setWidth, App.setHeight);
+		dragRect = new Rectangle(0, 0, App.setWidth, App.setHeight);
 		App.main.animation = true;
 		//resize
 		var tim = new Timer(1);
 		tim.run = function()
 		{
-		tempDrag = App.dragBool;
-		App.dragBool = false;
+		tempDrag = dragBool;
+		dragBool = false;
 		//add past state for animated state tweens
 		visible = true;
 		if (pastBitmap != null && animation != Animation.NONE)
@@ -171,33 +194,172 @@ class State extends DisplayObjectContainer
 	}
 	public function finishAnimation()
 	{
-		App.dragBool = tempDrag;
+		dragBool = tempDrag;
 		stateAnimation = false;
 		App.main.removeChild(pastBitmap);
 		pastBitmap = null;
 		App.main.animation = false;
 		
 	}
+	
+	public function scrollCamera()
+	{
+	//1950 / (1000 / 60) = 117;
+	if (dragBool && !moveBool && !App.state.stateAnimation)
+	{
+	initalScrollY = Math.round(App.state.mouseY);
+	if (Math.abs(omY - App.state.mouseY) < 10) scrollPress = true;
+	mouseDownBool = false;
+	scrollDuration = 117;
+	if (Math.abs(scrollSpeed) > 0 && Math.abs(scrollSpeed) < 70) scrollDuration = 80;
+	//speed limiter
+	var limit = 140;
+	if (scrollSpeed > limit) scrollSpeed = limit;
+	if (scrollSpeed < -limit) scrollSpeed = -limit;
+	vectorY = new Vector<Int>(scrollDuration);
+	var spY:Float = scrollSpeed;
+			
+	for (i in 0...scrollDuration)
+	{
+	spY *= 0.95;
+	vectorY[i] = Math.round(spY);
+	}
+	scrollSpeed = 0;
+	scrollBool = true;
+	scrollInt = 0;
+	scrollDuration += -1;
+	}
+	}
+	
+	public function moveCamera(dx:Float =0, dy:Float =0,frameX:Int=0,frameY:Int=0)
+	{
+		var disX:Float = 0;
+		var disY:Float = 0;
+		disX = dx;
+		disY = dy;
+		mouseDownBool = false;
+		scrollDuration = Math.floor(Math.max(frameX, frameY));
+				
+		vectorY = new Vector(frameY + 1);
+		var vY:Int = Math.round(disY / frameY);
+		for (i in 0...frameY)
+		{
+			vectorY[i] = vY;
+		}
+		vectorY[frameY] = 0;
+		scrollInt = 0;
+		moveBool = true;
+		scrollBool = true;
+	}
+		
 	/**
 	 * Update State
 	 */
+	public function loop()
+	{
+		//scroll();
+		update();
+		scroll();
+		omY = Math.round(App.state.mouseY);
+	}
 	public function update()
 	{
 		
+	}
+	
+	public function enableCameraMovement()
+	{
+		dragBool = true;
+	}
+	public function disableCameraMovment()
+	{
+		dragBool = false;
+		scrollBool = false;
+		scrollDuration = 0;
+		scrollSpeed = 0;
+		moveBool = false;
+	}
+	
+	private function restrict()
+	{
+		
+	}
+	
+	private function scroll()
+	{
+	
+		//SEND OUT restrict events
+		if (restrictInt > 0)
+		{
+			switch(restrictInt)
+			{
+				case 1:
+				if(minEventY != null)minEventY();
+				case 2:
+				if (maxEventY != null) maxEventY();
+			}
+			//disable movement temp
+			scrollBool = false;
+			moveBool = false;
+			scrollSpeed = 0;
+			//reset restrict
+			restrictInt = 0;
+		}
+	//RESTRICT Y
+	if (camY + scrollSpeed > cameraMinY && scrollSpeed > 0)
+	{
+	scrollSpeed = -camY + cameraMinY;
+	restrictInt = 1;
+	}
+	if (camY + scrollSpeed < cameraMaxY && scrollSpeed < 0)
+	{
+	scrollSpeed = -camY + cameraMaxY;
+	restrictInt = 2;
+	}
+	//Speed
+	camY += scrollSpeed;
+	//if move turn off mouseDown
+	if (moveBool) mouseDownBool = false;
+	//drag and scroll
+	if (mouseDownBool)
+	{
+	if (dragBool)scrollSpeed = Math.round(mouseY - omY);
+	}else{
+	if (scrollBool || moveBool)
+	{
+	scrollSpeed = vectorY[scrollInt];
+	
+	if (scrollInt >= scrollDuration)
+	{
+	scrollBool = false;
+	scrollSpeed = 0;
+	moveBool = false;
+	vectorY = null;
+	}else{
+	scrollInt++;
+	}
+	}
+	}
+	
 	}
 	/**
 	 * State mouse/touch is Down
 	 */
 	public function mouseDown()
 	{
-		
+		if (App.pointRect(App.state.mouseX, App.state.mouseY, dragRect))
+		{
+		scrollPress = false;
+		mouseDownBool = true;
+		}
 	}
 	/**
 	 * State mouse/touch is UP
 	 */
 	public function mouseUp()
 	{
-		
+		trace("mouse up");
+		mouseDownBool = false;
 	}
 	/**
 	 *  State Keyboard is Up
@@ -212,6 +374,14 @@ class State extends DisplayObjectContainer
 	 * @param	e KeyboardEvent
 	 */
 	public function keyDown(e:openfl.events.KeyboardEvent)
+	{
+		
+	}
+	/**
+	 *  State mouse wheel
+	 * @param	e
+	 */
+	public function mouseWheel(e:openfl.events.MouseEvent)
 	{
 		
 	}
@@ -271,12 +441,6 @@ class State extends DisplayObjectContainer
 		//Assets.cache.clear();
 		App.main.removeChild(this);
 		App.state = null;
-		#if cpp
-		cpp.vm.Gc.run(true);
-		#end
-		#if neko
-		neko.vm.Gc.run(true);
-		#end
 		//input text focus out
 		#if mobile
 		nativetext.NativeTextField.returnKey = null;
