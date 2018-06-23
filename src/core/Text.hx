@@ -30,7 +30,7 @@ class Text extends TextField
 	selectable = false;
 	wordWrap = true;
 	embedFonts = true;
-	cacheAsBitmap = true;
+	//cacheAsBitmap = true;
 	x = xp;
 	y = yp;
 	if (fieldWidth == 0)
@@ -48,10 +48,10 @@ class Text extends TextField
 	@:noCompletion override private function __updateText(value:String):Void
 	{
 		super.__updateText(value);
-		redraw();
+		//redraw();
 	}
 	
-	public function redraw()
+	/*public function redraw()
 	{
 		cacheAsBitmap = false;
 		var timer = new Timer(1);
@@ -61,5 +61,5 @@ class Text extends TextField
 			timer.stop();
 			timer = null;
 		}
-	}
+	}*/
 }

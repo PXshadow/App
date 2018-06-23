@@ -73,8 +73,6 @@ class State extends DisplayObjectContainer
 	//CameraScroll
 	public var cameraMinY:Int = 0;
 	public var cameraMaxY:Int = 0;
-	//inital scroll
-	public static var initalScrollY:Int = 0;
 	
 	public var maxEventY:Void->Void;
 	public var minEventY:Void->Void;
@@ -88,6 +86,8 @@ class State extends DisplayObjectContainer
 	public var dragRect:Rectangle;
 	public var mouseDownBool:Bool = false;
 	public var camY:Int = 0;
+	//start posistion
+	public var spY:Int = 0;
 	//y
 	public var scrollSpeed:Int = 0;
 	//x
@@ -99,13 +99,11 @@ class State extends DisplayObjectContainer
 	public var vectorY:Vector<Int> = new Vector<Int>(0);
 	public var vectorX:Vector<Int> = new Vector<Int>(0);
 	
-	
 	public function new(minY:Int=0,maxY:Int=0,minX:Int=0,maxX:Int=0,animation:Animation=Animation.NONE) 
 	{
 		super();
 		if (background != null) addChild(background);
 		visible = false;
-		
 		//set camera restriction
 		cameraMinY = -minY;
 		cameraMaxY = -maxY;
@@ -185,11 +183,25 @@ class State extends DisplayObjectContainer
 			finishAnimation();
 			}).ease(Expo.easeIn).delay(0.1);
 			
+		case Animation.SLIDEINRIGHT:
+			pastBitmap.visible = false;
+			this.x = Lib.current.stage.stageWidth;
+			Actuate.tween(this, 0.6, {x:px}).onComplete(function(_)
+			{
+			finishAnimation();
+			}).ease(Expo.easeIn).delay(0);
+		case Animation.SLIDEINLEFT:
+			pastBitmap.visible = false;
+			this.x = -Lib.current.stage.stageWidth;
+			Actuate.tween(this, 0.6, {x:px}).onComplete(function(_)
+			{
+			finishAnimation();
+			}).ease(Expo.easeIn).delay(0);
+			
 			default:
 		}
 		stateAnimation = false;
 		}
-		
 		}
 	}
 	public function finishAnimation()
@@ -202,13 +214,26 @@ class State extends DisplayObjectContainer
 		
 	}
 	
+	public function moveCamera(dx:Float =0, dy:Float =0,frameX:Int=0,frameY:Int=0)
+	{
+				var disX:Float = 0;
+				var disY:Float = 0;
+				disX = dx;
+				disY = dy;
+				mouseDownBool = false;
+				scrollDuration = Math.floor(Math.max(frameX, frameY));
+				scrollSpeed = Math.round(disY / frameY);
+				scrollInt = 0;
+				moveBool = true;
+				scrollBool = false;
+	}
+	
 	public function scrollCamera()
 	{
 	//1950 / (1000 / 60) = 117;
 	if (dragBool && !moveBool && !App.state.stateAnimation)
 	{
-	initalScrollY = Math.round(App.state.mouseY);
-	if (Math.abs(omY - App.state.mouseY) < 10) scrollPress = true;
+	if (Math.abs(spY - App.state.mouseY) < 5) scrollPress = true;
 	mouseDownBool = false;
 	scrollDuration = 117;
 	if (Math.abs(scrollSpeed) > 0 && Math.abs(scrollSpeed) < 70) scrollDuration = 80;
@@ -216,51 +241,100 @@ class State extends DisplayObjectContainer
 	var limit = 140;
 	if (scrollSpeed > limit) scrollSpeed = limit;
 	if (scrollSpeed < -limit) scrollSpeed = -limit;
-	vectorY = new Vector<Int>(scrollDuration);
-	var spY:Float = scrollSpeed;
-			
-	for (i in 0...scrollDuration)
-	{
-	spY *= 0.95;
-	vectorY[i] = Math.round(spY);
-	}
+	vectorY = velocityVector(scrollDuration, scrollSpeed);
 	scrollSpeed = 0;
 	scrollBool = true;
 	scrollInt = 0;
 	scrollDuration += -1;
 	}
+	
 	}
 	
-	public function moveCamera(dx:Float =0, dy:Float =0,frameX:Int=0,frameY:Int=0)
+	public function velocityVector(length:Int, velocity:Float):Vector<Int>
 	{
-		var disX:Float = 0;
-		var disY:Float = 0;
-		disX = dx;
-		disY = dy;
-		mouseDownBool = false;
-		scrollDuration = Math.floor(Math.max(frameX, frameY));
-				
-		vectorY = new Vector(frameY + 1);
-		var vY:Int = Math.round(disY / frameY);
-		for (i in 0...frameY)
+		var vector = new Vector<Int>(length);
+		for (i in 0...length)
 		{
-			vectorY[i] = vY;
+			velocity *= 0.95;
+			vector[i] = Math.round(velocity);
 		}
-		vectorY[frameY] = 0;
-		scrollInt = 0;
-		moveBool = true;
-		scrollBool = true;
+		return vector;
 	}
+	public function easeVector(distance:Float):Vector<Int>
+	{
+	var ease:Array<Float> = [0.1,0.3,0.2, 0.2, 0.1, 0.07,0.03];
+	var vector = new Vector<Int>(ease.length);
+	for (i in 0... ease.length)
+	{
+	vector[i] =  Math.floor(ease.pop() * distance);
+	}
+	return vector;
+	
+	}
+	
 		
 	/**
 	 * Update State
 	 */
 	public function loop()
 	{
-		//scroll();
+		
+		//if move turn off mouseDown
+	if (moveBool) mouseDownBool = false;
+	//drag and scroll
+	if (mouseDownBool)
+	{
+	if (dragBool)scrollSpeed = Math.round(mouseY - omY);
+	}else{
+	if (scrollBool || moveBool)
+	{
+	if(scrollBool)scrollSpeed = vectorY[scrollInt];
+	if (scrollInt >= scrollDuration)
+	{
+	scrollBool = false;
+	scrollSpeed = 0;
+	moveBool = false;
+	vectorY = null;
+	}else{
+	scrollInt++;
+	}
+	}
+	}
+	
+			if (App.network != null) App.network.update();
+		
+		//SEND OUT restrict events
+		if (restrictInt > 0)
+		{
+			switch(restrictInt)
+			{
+				case 1:
+				if(minEventY != null)minEventY();
+				case 2:
+				if (maxEventY != null) maxEventY();
+			}
+			//disable movement temp
+			scrollBool = false;
+			moveBool = false;
+			scrollSpeed = 0;
+			//reset restrict
+			restrictInt = 0;
+		}
+		//RESTRICT Y
+		if (camY + scrollSpeed > cameraMinY && scrollSpeed > 0)
+		{
+		scrollSpeed = -camY + cameraMinY;
+		restrictInt = 1;
+		}
+		if (camY + scrollSpeed < cameraMaxY && scrollSpeed < 0)
+		{
+		scrollSpeed = -camY + cameraMaxY;
+		restrictInt = 2;
+		}
+		//Speed
+		camY += scrollSpeed;
 		update();
-		scroll();
-		omY = Math.round(App.state.mouseY);
+		omY = Math.round(mouseY);
 	}
 	public function update()
 	{
@@ -280,68 +354,6 @@ class State extends DisplayObjectContainer
 		moveBool = false;
 	}
 	
-	private function restrict()
-	{
-		
-	}
-	
-	private function scroll()
-	{
-	
-		//SEND OUT restrict events
-		if (restrictInt > 0)
-		{
-			switch(restrictInt)
-			{
-				case 1:
-				if(minEventY != null)minEventY();
-				case 2:
-				if (maxEventY != null) maxEventY();
-			}
-			//disable movement temp
-			scrollBool = false;
-			moveBool = false;
-			scrollSpeed = 0;
-			//reset restrict
-			restrictInt = 0;
-		}
-	//RESTRICT Y
-	if (camY + scrollSpeed > cameraMinY && scrollSpeed > 0)
-	{
-	scrollSpeed = -camY + cameraMinY;
-	restrictInt = 1;
-	}
-	if (camY + scrollSpeed < cameraMaxY && scrollSpeed < 0)
-	{
-	scrollSpeed = -camY + cameraMaxY;
-	restrictInt = 2;
-	}
-	//Speed
-	camY += scrollSpeed;
-	//if move turn off mouseDown
-	if (moveBool) mouseDownBool = false;
-	//drag and scroll
-	if (mouseDownBool)
-	{
-	if (dragBool)scrollSpeed = Math.round(mouseY - omY);
-	}else{
-	if (scrollBool || moveBool)
-	{
-	scrollSpeed = vectorY[scrollInt];
-	
-	if (scrollInt >= scrollDuration)
-	{
-	scrollBool = false;
-	scrollSpeed = 0;
-	moveBool = false;
-	vectorY = null;
-	}else{
-	scrollInt++;
-	}
-	}
-	}
-	
-	}
 	/**
 	 * State mouse/touch is Down
 	 */
@@ -351,6 +363,8 @@ class State extends DisplayObjectContainer
 		{
 		scrollPress = false;
 		mouseDownBool = true;
+		spY = Math.round(App.state.mouseY);
+		omY = spY;
 		}
 	}
 	/**
@@ -358,7 +372,6 @@ class State extends DisplayObjectContainer
 	 */
 	public function mouseUp()
 	{
-		trace("mouse up");
 		mouseDownBool = false;
 	}
 	/**
@@ -421,7 +434,6 @@ class State extends DisplayObjectContainer
 		}
 		visible = true;
 		
-		
 		#if html5
 		//trace("640 by 1136 | " + Std.string(App.setWidth * App.scale) + " by " + Std.string(App.setHeight * App.scale) + " -> " + js.Browser.window.innerWidth + " by " + js.Browser.window.innerHeight);
 		#end
@@ -447,6 +459,7 @@ class State extends DisplayObjectContainer
 		#end
 	}
 	}
+	
 	/**
 	 * Reset the State scaling
 	 */

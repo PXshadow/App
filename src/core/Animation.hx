@@ -8,11 +8,13 @@ package core;
 	public var SLIDEDOWN:Int = 2;
 	public var SLIDERIGHT:Int = 3;
 	public var SLIDELEFT:Int = 4;
-	public var FADEIN:Int = 5;
-	public var FADEOUT:Int = 6;
-	public var OVERLAYUP:Int = 7;
-	public var OVERLAYDOWN:Int = 8;
-	public var OVERLAYLEFT:Int = 9;
-	public var OVERLAYRIGHT:Int = 10;
+	public var SLIDEINLEFT:Int = 5;
+	public var SLIDEINRIGHT:Int = 6;
+	public var FADEIN:Int = 7;
+	public var FADEOUT:Int = 8;
+	public var OVERLAYUP:Int = 9;
+	public var OVERLAYDOWN:Int = 10;
+	public var OVERLAYLEFT:Int = 11;
+	public var OVERLAYRIGHT:Int = 12;
 	
 }
