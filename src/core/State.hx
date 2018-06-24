@@ -14,6 +14,7 @@ import openfl.display.DisplayObjectContainer;
 import openfl.display.Shape;
 import openfl.display.Sprite;
 import openfl.events.Event;
+import openfl.events.KeyboardEvent;
 import openfl.events.MouseEvent;
 import openfl.geom.Matrix;
 import openfl.geom.Rectangle;
@@ -378,7 +379,7 @@ class State extends DisplayObjectContainer
 	 *  State Keyboard is Up
 	 * @param	e KeyboardEvent
 	 */
-	public function keyUp(e:openfl.events.KeyboardEvent)
+	public function keyUp(e:KeyboardEvent)
 	{
 		
 	}
@@ -386,7 +387,7 @@ class State extends DisplayObjectContainer
 	 *  State Keyboard is Down
 	 * @param	e KeyboardEvent
 	 */
-	public function keyDown(e:openfl.events.KeyboardEvent)
+	public function keyDown(e:KeyboardEvent)
 	{
 		
 	}
@@ -394,7 +395,23 @@ class State extends DisplayObjectContainer
 	 *  State mouse wheel
 	 * @param	e
 	 */
-	public function mouseWheel(e:openfl.events.MouseEvent)
+	public function mouseWheel(e:MouseEvent)
+	{
+		
+	}
+	public function mouseWheelDown(e:MouseEvent)
+	{
+		
+	}
+	public function mouseWheelUp(e:MouseEvent)
+	{
+		
+	}
+	public function mouseRightDown(e:MouseEvent)
+	{
+		
+	}
+	public function mouseRightUp(e:MouseEvent)
 	{
 		
 	}
