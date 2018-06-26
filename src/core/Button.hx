@@ -47,8 +47,8 @@ class Button extends Sprite
 	}
 	x = xpos;
 	y = ypos;
-	addEventListener(Event.REMOVED_FROM_STAGE, remove);
-	addEventListener(Event.ADDED_TO_STAGE, add);
+	addEventListener(Event.REMOVED_FROM_STAGE, removeFromStage);
+	addEventListener(Event.ADDED_TO_STAGE, addToStage);
 	cacheAsBitmap = true;
 	}
 
@@ -82,7 +82,7 @@ class Button extends Sprite
   /*
    * Mouse out is true
    * */
-	public function add(_)
+	public function addToStage(_)
 	{
 		if(Down != null)addEventListener(MouseEvent.MOUSE_DOWN,mouseDown);
 		if(Up != null)addEventListener(MouseEvent.MOUSE_UP, mouseUp);
@@ -93,9 +93,9 @@ class Button extends Sprite
 			addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
 			if(outUp)addEventListener(MouseEvent.MOUSE_UP, mouseOut);
 		}
-		removeEventListener(Event.ADDED, add);
+		removeEventListener(Event.ADDED, addToStage);
 	}
-    public function remove(_)
+    public function removeFromStage(_)
     {
         if(Down != null)removeEventListener(MouseEvent.MOUSE_DOWN,mouseDown);
         if(Up != null)removeEventListener(MouseEvent.MOUSE_UP, mouseUp);
@@ -106,7 +106,7 @@ class Button extends Sprite
 			if(outUp)removeEventListener(MouseEvent.MOUSE_UP, mouseUp);
 		}
 		if(Click != null)removeEventListener(MouseEvent.CLICK, mouseClick);
-		removeEventListener(Event.REMOVED_FROM_STAGE, remove);
+		removeEventListener(Event.REMOVED_FROM_STAGE, removeFromStage);
     }
 	public function mouseDown(e:MouseEvent)
 	{

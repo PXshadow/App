@@ -202,9 +202,9 @@ class ScrollBar extends Button
     if(!downBool)App.state.dragBool = false;
     }
   }
-  override public function remove(_)
+  override public function removeFromStage(_)
  {
-     super.remove(_);
+     super.removeFromStage(_);
      removeEventListener(Event.ENTER_FRAME,update);
  }
  public function resize(_)
