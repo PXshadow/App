@@ -28,17 +28,17 @@ class Network
 	/**
 	 * onClose function 
 	 */
-	public var onClose:()->Void;
+	public var onClose:Void->Void;
 	/**
 	 * OnMessage function
 	 */
-	public var onMessage(default, default):Dynamic->Void;
+	public var onMessage:Dynamic->Void;
 	/**
 	 * main
 	 */
-	public var mainMessage(default, default):Dynamic->Void;
+	public var mainMessage:Dynamic->Void;
 /** Callback used called when a connection is established. This callback should not be handled manually. **/
- public var onConnect:()->Void;
+ public var onConnect:Void->Void;
   
 /**
  * Setup networking

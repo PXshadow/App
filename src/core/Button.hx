@@ -18,6 +18,7 @@ class Button extends Sprite
 	public var Out:Dynamic->Void;
 	public var outUp:Bool = true;
 	public var Click:Dynamic->Void;
+	
 	public var rectBool:Bool = false;
 	@:isVar public var bool(get,set):Bool = false;
 	public function get_bool():Bool
@@ -29,7 +30,6 @@ class Button extends Sprite
 		return bool = value;
 	}
 	public var vector:Bool = true;
-                                                                             //invis button
 	public function new(?xpos:Int=0,?ypos:Int=0,path:String="",sWidth:Int=-1,sHeight:Int=-1,oval:Bool=false) 
 	{	
     super();
