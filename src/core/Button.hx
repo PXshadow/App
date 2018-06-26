@@ -30,7 +30,7 @@ class Button extends Sprite
 		return bool = value;
 	}
 	public var vector:Bool = true;
-	public function new(?xpos:Int=0,?ypos:Int=0,path:String="",sWidth:Int=-1,sHeight:Int=-1,oval:Bool=false) 
+	public function new(?xpos:Float=0,?ypos:Float=0,path:String="",sWidth:Int=-1,sHeight:Int=-1,oval:Bool=false) 
 	{	
     super();
 	buttonMode = true;
