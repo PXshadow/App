@@ -1,5 +1,7 @@
 package core;
+#if haxe_ver <= "4.0.0"
 import haxe.ds.Map;
+#end
 
 /**
  * ...
