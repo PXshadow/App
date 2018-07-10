@@ -1,4 +1,5 @@
 package core;
+import core.App;
 import core.Button;
 import core.State;
 import core.Text;
@@ -9,6 +10,7 @@ import lime.ui.KeyCode;
 import openfl.display.DisplayObjectContainer;
 import openfl.display.Graphics;
 import openfl.display.IGraphicsData;
+import openfl.display.StageScaleMode;
 import openfl.geom.Rectangle;
 import openfl.ui.Keyboard;
 
@@ -228,6 +230,7 @@ class App extends DisplayObjectContainer
 			state.scrollSpeed = 0;
 			active = false;
 			Lib.current.stage.frameRate = 5;
+			App.network.close();
 		});
 	}
 			
@@ -423,11 +426,6 @@ Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
 	public static function createButton(?x:Int, ?y:Int, ?path:String,?sWidth:Int=-1,?sHeight:Int=-1):Button
 	{
 		return new Button(x,y,path,sWidth,sHeight);
-	}
-
-	public static function createToggleSlider(?x:Int, ?y:Int, size:Int = 80):core.Item.ToggleSlider
-	{
-		return new core.Item.ToggleSlider(x,y,size);
 	}
 	/**
 	 * A custom ThinQbator round rectangle that's meant for our TextBubble Ui in code alternative.

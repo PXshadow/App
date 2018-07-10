@@ -217,7 +217,7 @@ class InputText extends DisplayObjectContainer
 	addChild(textfield);
 	//button
 	button = App.createInvisButton(0, 0, Math.floor(textfield.width), Math.floor(textfield.height));
-	button.Up = focusIn;
+	button.Click = focusIn;
 	addChild(button);
 	x = sx;
 	y = sy;
@@ -227,8 +227,12 @@ class InputText extends DisplayObjectContainer
 	public function toggleNative(bool:Bool)
 	{
 		#if mobile
-		if (bool) nativeText.Configure({x:Math.round(x * App.scale + App.state.x), y:Math.round(y * App.scale + App.state.y), enabled:true, visible:true});
-		if (!bool)nativeText.Configure({visible:false, enabled:false});
+		if (bool) 
+		{
+		nativeText.Configure({x:Math.round(x * App.scale + App.state.x), y:Math.round(y * App.scale + App.state.y), enabled:true, visible:true});
+		}else{
+		nativeText.Configure({visible:false, enabled:false});
+		}
 		textfield.visible = !bool;
 		button.mouseEnabled = !bool;
 		#end

@@ -26,11 +26,15 @@ class Text extends TextField
 	{
 	super();
 	mouseEnabled = false;
+	mouseWheelEnabled = false;
+	#if mobile
 	tabEnabled = false;
+	#else
+	tabEnabled = true;
+	#end
 	selectable = false;
 	wordWrap = true;
-	embedFonts = true;
-	//cacheAsBitmap = true;
+	//embedFonts = true;
 	x = xp;
 	y = yp;
 	if (fieldWidth == 0)
@@ -43,15 +47,16 @@ class Text extends TextField
 	var fn = "_sans";
 	if (App.font != null) fn = Assets.getFont(App.font.format).fontName;
 	defaultTextFormat = new TextFormat(fn, size, color, false, false, false, "", "", align, null, null, null, ident);
+	cacheAsBitmap = true;
 	}
 	
-	@:noCompletion override private function __updateText(value:String):Void
+	/*@:noCompletion override private function __updateText(value:String):Void
 	{
 		super.__updateText(value);
 		//redraw();
 	}
 	
-	/*public function redraw()
+	public function redraw()
 	{
 		cacheAsBitmap = false;
 		var timer = new Timer(1);

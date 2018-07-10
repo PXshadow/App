@@ -21,7 +21,6 @@ import openfl.geom.Rectangle;
 import openfl.system.System;
 import openfl.system.System.gc;
 import openfl.Lib;
-import core.Item.ProfileIcon;
 import openfl.text.TextField;
 import motion.Actuate;
 
@@ -97,8 +96,8 @@ class State extends DisplayObjectContainer
 	private var restrictInt:Int = 0;
 	public var scrollInt:Int = 0;
 	
-	public var vectorY:Vector<Int> = new Vector<Int>(0);
-	public var vectorX:Vector<Int> = new Vector<Int>(0);
+	public var vectorY:Vector<Int>;
+	public var vectorX:Vector<Int>;
 	
 	public function new(minY:Int=0,maxY:Int=0,minX:Int=0,maxX:Int=0,animation:Animation=Animation.NONE) 
 	{
@@ -117,7 +116,7 @@ class State extends DisplayObjectContainer
 		if(App.network != null)App.network.onMessage = null;
 		//add
 		App.main.addChild(this);
-		omY = Math.floor(mouseY);
+		omY = mouseY;
 		vectorY = null;
 		vectorX = null;
 		camY = 0;
@@ -223,7 +222,7 @@ class State extends DisplayObjectContainer
 				disY = dy;
 				mouseDownBool = false;
 				scrollDuration = Math.floor(Math.max(frameX, frameY));
-				scrollSpeed = Math.round(disY / frameY);
+				scrollSpeed = Math.floor(disY / frameY);
 				scrollInt = 0;
 				moveBool = true;
 				scrollBool = false;
@@ -285,7 +284,7 @@ class State extends DisplayObjectContainer
 	//drag and scroll
 	if (mouseDownBool)
 	{
-	if (dragBool)scrollSpeed = Math.round(mouseY - omY);
+	if (dragBool) scrollSpeed = Math.round(mouseY - omY);
 	}else{
 	if (scrollBool || moveBool)
 	{
@@ -335,7 +334,7 @@ class State extends DisplayObjectContainer
 		//Speed
 		camY += scrollSpeed;
 		update();
-		omY = Math.round(mouseY);
+		omY = mouseY;
 	}
 	public function update()
 	{

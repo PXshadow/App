@@ -62,6 +62,7 @@ class Network
 	
 	public function connect()
 	{
+		connecting = false;
 		if (connecting) return;
 		#if html5
 		
@@ -97,8 +98,20 @@ class Network
 		}
 		connected = true;
 	}
-	private function close()
+	
+	public function update()
 	{
+		#if (cpp || neko)
+		read();
+		#end
+	}
+	
+	public function close()
+	{
+		#if (cpp || neko)
+		socket.close();
+		#end
+		connected = false;
 		var tim = new Timer(20);
 		tim.run = function()
 		{
@@ -106,14 +119,6 @@ class Network
 		tim.stop();
 		tim = null;
 		}
-		connected = false;
-	}
-	
-	public function update()
-	{
-		#if (cpp || neko)
-		read();
-		#end
 	}
 	
 	public function read()
@@ -150,7 +155,7 @@ class Network
 		catch (e:Dynamic)
 		{
 			trace("write " + e);
-			if (onClose != null) onClose();
+			close();
 		}
 	}
 	
@@ -164,7 +169,7 @@ class Network
 			}
 			catch (e:Dynamic)
 			{
-				trace("ser " + e);
+				trace("ser " + e + " data " + str);
 			}
 	}
 }
