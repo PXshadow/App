@@ -154,11 +154,11 @@ class App extends DisplayObjectContainer
 		Lib.current.addChild(this);
 		Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, function(e:MouseEvent)
 		{
-		if(!animation)state.mouseDown();
+		state.mouseDown();
 		});
 		Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, function(e:MouseEvent)
 		{
-		if (!animation) state.mouseUp();
+		state.mouseUp();
 		});
 		
 		#if !mobile
@@ -202,19 +202,10 @@ class App extends DisplayObjectContainer
 			#end
 		});
 		
-	Lib.current.stage.addEventListener(Event.ENTER_FRAME, function(e:Event)
-	{
-			
-	//if (animation) return;
-	
-	
+		Lib.current.stage.addEventListener(Event.ENTER_FRAME, function(e:Event)
+		{
 		if (App.network != null) App.network.update();
-	   
-			if (state != null)
-			{
-			state.loop();
-			}
-			
+		if (state != null)state.loop();
 		}); 
 		
 		Lib.current.stage.addEventListener (openfl.events.Event.ACTIVATE, function (_) {
@@ -543,8 +534,14 @@ Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
 		var tempX:Float = stage.stageWidth/ setWidth;
 		var tempY:Float = stage.stageHeight/ setHeight;
 		scale = Math.min(tempX, tempY);
-		if (resizeBool)App.state.resize(Math.floor((stage.stageWidth - setWidth * App.scale) / 2),0,scale,scale);
-		
+		State.px = Math.floor((stage.stageWidth - setWidth * App.scale) / 2);
+		State.py = 0;
+		State.sx = scale;
+		State.sy = scale;
+		//set resize
+		state.x = State.px; state.y = State.py;
+		state.scaleX = State.sx; state.scaleY = State.sy;
+		state.resize();
 		}
 		//call on resize
 		if (onResize != null) onResize(e);
@@ -554,11 +551,6 @@ Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
  * @param	obj
  * @param	widthBool
  */
-		public static function setHeader(obj:DisplayObject,widthBool:Bool=true)
-	{
-		obj.x = -State.px * 1/App.scale;
-		if(widthBool)obj.width = Lib.current.stage.stageWidth * 1/App.scale;
-	}
 	
 	
 	public function createScreenBitmap(background:UInt=0xFFFFFF):Bitmap

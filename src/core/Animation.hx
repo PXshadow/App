@@ -10,11 +10,12 @@ package core;
 	public var SLIDELEFT:Int = 4;
 	public var SLIDEINLEFT:Int = 5;
 	public var SLIDEINRIGHT:Int = 6;
-	public var FADEIN:Int = 7;
-	public var FADEOUT:Int = 8;
-	public var OVERLAYUP:Int = 9;
-	public var OVERLAYDOWN:Int = 10;
-	public var OVERLAYLEFT:Int = 11;
-	public var OVERLAYRIGHT:Int = 12;
+	public var SLIDEINUP:Int = 7;
+	public var SLIDEINDOWN:Int = 8;
+	public var FADEIN:Int = 9;
+	public var OVERLAYUP:Int = 10;
+	public var OVERLAYDOWN:Int = 11;
+	public var OVERLAYLEFT:Int = 12;
+	public var OVERLAYRIGHT:Int = 13;
 	
 }

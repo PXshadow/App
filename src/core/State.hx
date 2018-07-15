@@ -66,7 +66,6 @@ class State extends DisplayObjectContainer
 	public var background:DisplayObject;
 	//variable used to check for Animation of state between resize call
 	public var stateAnimation:Bool = false;
-	private var tempDrag:Bool = false;
 	
 	//old mouse postions
 	public var omY:Float = 0;
@@ -81,7 +80,7 @@ class State extends DisplayObjectContainer
 	public var scrollPress:Bool = false;
 	//start postion of scroll
 	public var scrollBool:Bool = false;
-	public var dragBool:Bool = false;
+	public var dragBool:Bool = true;
 	public var moveBool:Bool = false;
 	public var dragRect:Rectangle;
 	public var mouseDownBool:Bool = false;
@@ -103,12 +102,11 @@ class State extends DisplayObjectContainer
 	{
 		super();
 		if (background != null) addChild(background);
-		visible = false;
 		//set camera restriction
 		cameraMinY = -minY;
 		cameraMaxY = -maxY;
 		
-		dragBool = false;
+	//	dragBool = false;
 		App.main.backExit = false;
 		mouseDownBool = false;
 		maxEventY = null;
@@ -128,14 +126,17 @@ class State extends DisplayObjectContainer
 		//drag not possible
 		dragRect = new Rectangle(0, 0, App.setWidth, App.setHeight);
 		App.main.animation = true;
-		//resize
+		//set resize
+		x = State.px; y = State.py;
+		scaleX = State.sx; scaleY = State.sy;
 		var tim = new Timer(1);
 		tim.run = function()
 		{
-		tempDrag = dragBool;
-		dragBool = false;
+		resize();
+		tim.stop();
+		tim = null;
+		}
 		//add past state for animated state tweens
-		visible = true;
 		if (pastBitmap != null && animation != Animation.NONE)
 		{
 		App.main.addChild(pastBitmap);
@@ -143,31 +144,30 @@ class State extends DisplayObjectContainer
 		}else{
 		finishAnimation();
 		}
-		//resize
-		resize(px, py, sx, sy);
 		resizeBool = true;
-		tim.stop();
-		tim = null;
 		//set animation postions
 		if (stateAnimation)
 		{
 		switch(animation)
 		{
+		case Animation.FADEIN:
+			pastBitmap.y = 0;
+			pastBitmap.alpha = 1;
+			Actuate.tween(pastBitmap, 0.8, {alpha:0}).onComplete(function(_)
+			{
+			finishAnimation();
+			}).ease(Expo.easeOut);
 		case Animation.SLIDEUP:
-			y = App.setHeight * App.scale;
-		    pastBitmap.y = -App.setHeight;
+			
+			pastBitmap.y = 0;
+			y = 0;
 			Actuate.tween(this, 0.4, {y:py}).onComplete(function(_)
 			{
 			finishAnimation();
 			}).ease(Expo.easeIn).delay(0.1);
 			
 		case Animation.SLIDEDOWN:
-			y = -App.setHeight * App.scale;
-			pastBitmap.y = App.setHeight;
-			Actuate.tween(this, 0.4, {y:py}).onComplete(function(_)
-			{
-			finishAnimation();
-			}).ease(Expo.easeIn).delay(0.1);
+			throw("not setup yet");
 			
 		case Animation.OVERLAYUP:
 			pastBitmap.y = 0;
@@ -183,35 +183,53 @@ class State extends DisplayObjectContainer
 			finishAnimation();
 			}).ease(Expo.easeIn).delay(0.1);
 			
-		case Animation.SLIDEINRIGHT:
-			pastBitmap.visible = false;
-			this.x = Lib.current.stage.stageWidth;
+		case Animation.SLIDELEFT:
+			pastBitmap.y = 0;
+			pastBitmap.x = 0;
+			//pastBitmap.visible = false;
+			x = Lib.current.stage.stageWidth;
+			Actuate.tween(pastBitmap, 0.6, {x:-Lib.current.stage.stageWidth}).ease(Quad.easeInOut);
 			Actuate.tween(this, 0.6, {x:px}).onComplete(function(_)
 			{
 			finishAnimation();
-			}).ease(Expo.easeIn).delay(0);
-		case Animation.SLIDEINLEFT:
-			pastBitmap.visible = false;
-			this.x = -Lib.current.stage.stageWidth;
+			}).delay(0).ease(Quad.easeInOut);
+		case Animation.SLIDERIGHT:
+			pastBitmap.y = 0;
+			pastBitmap.x = 0;
+			x = -Lib.current.stage.stageWidth;
+			Actuate.tween(pastBitmap, 0.6, {x: Lib.current.stage.stageWidth}).ease(Quad.easeInOut);
 			Actuate.tween(this, 0.6, {x:px}).onComplete(function(_)
 			{
 			finishAnimation();
-			}).ease(Expo.easeIn).delay(0);
-			
-			default:
+			}).delay(0).ease(Quad.easeInOut);
+		case Animation.SLIDEINUP:
+			App.main.swapChildren(this, pastBitmap);
+			y = Lib.current.stage.stageHeight;
+			//Actuate.tween(pastBitmap, 0.6, {y:-Lib.current.stage.stageHeight}).ease(Quad.easeInOut).delay(0);
+			Actuate.tween(this, 0.6, {y:py}).onComplete(function(_)
+			{
+			finishAnimation();
+			}).ease(Quad.easeInOut).delay(0);
+		case Animation.SLIDEINDOWN:
+			App.main.swapChildren(this, pastBitmap);
+			y = -Lib.current.stage.stageHeight;
+			//Actuate.tween(pastBitmap, 0.6, {y:Lib.current.stage.stageHeight}).ease(Quad.easeInOut).delay(0);
+			Actuate.tween(this, 0.6, {y:py}).onComplete(function(_)
+			{
+			finishAnimation();
+			}).ease(Quad.easeInOut).delay(0);
+		default:
+		trace("not a supported Animation currently");
 		}
 		stateAnimation = false;
-		}
 		}
 	}
 	public function finishAnimation()
 	{
-		dragBool = tempDrag;
 		stateAnimation = false;
 		App.main.removeChild(pastBitmap);
 		pastBitmap = null;
 		App.main.animation = false;
-		
 	}
 	
 	public function moveCamera(dx:Float =0, dy:Float =0,frameX:Int=0,frameY:Int=0)
@@ -262,13 +280,14 @@ class State extends DisplayObjectContainer
 	}
 	public function easeVector(distance:Float):Vector<Int>
 	{
-	var ease:Array<Float> = [0.1,0.3,0.2, 0.2, 0.1, 0.07,0.03];
+	var ease:Array<Float> = [0.05,0.05,0.15,0.15,0.1,0.1, 0.1,0.1, 0.05,0.05, 0.035,0.035,0.015,0.015];
 	var vector = new Vector<Int>(ease.length);
 	for (i in 0... ease.length)
 	{
 	vector[i] =  Math.floor(ease.pop() * distance);
 	}
 	return vector;
+	
 	
 	}
 	
@@ -359,11 +378,11 @@ class State extends DisplayObjectContainer
 	 */
 	public function mouseDown()
 	{
-		if (App.pointRect(App.state.mouseX, App.state.mouseY, dragRect))
+		if (App.pointRect(mouseX, mouseY, dragRect))
 		{
 		scrollPress = false;
 		mouseDownBool = true;
-		spY = Math.round(App.state.mouseY);
+		spY = Math.round(mouseY);
 		omY = spY;
 		}
 	}
@@ -425,34 +444,20 @@ class State extends DisplayObjectContainer
 	/**
 	 * Resize State used Internally 
 	 */
-	public function resize(prx:Int,pry:Int,ssx:Float, ssy:Float)
+	public function resize()
 	{
-		if (!stateAnimation && pastBitmap != null)App.main.removeChild(pastBitmap);
-		sx = ssx; sy = ssy;
-		px = prx; py = pry;
-		scaleX = sx;
-		scaleY = sy;
-		this.x = px;
-		this.y = py;
-		/*for (i in 0...numChildren)
-		{
-		if (!Std.is(getChildAt(i), openfl.display.Tilemap) 
-		&&!Std.is(getChildAt(i), openfl.display.Bitmap)
-		&& !Std.is(getChildAt(i), TextField)
-		)getChildAt(i).cacheAsBitmap = true;
-		}*/
-		//background sizing
+		if (App.state != this) return;
+		backgroundResize();
+	}
+	
+	public function backgroundResize()
+	{
 		if (background != null)
 		{
 		background.x = -px * 1 / sx;
 		background.width = Lib.current.stage.stageWidth * 1 / sx;
 		background.height = Lib.current.stage.stageHeight * 1 / sy;
 		}
-		visible = true;
-		
-		#if html5
-		//trace("640 by 1136 | " + Std.string(App.setWidth * App.scale) + " by " + Std.string(App.setHeight * App.scale) + " -> " + js.Browser.window.innerWidth + " by " + js.Browser.window.innerHeight);
-		#end
 	}
 	/**
 	 * Remove State
@@ -490,6 +495,13 @@ class State extends DisplayObjectContainer
 			child.y /= App.scale;
 		}
 	}
+	
+	public function setHeader(obj:DisplayObject,widthBool:Bool=true)
+	{
+		obj.x = -px * 1/App.scale;
+		if(widthBool)obj.width = Lib.current.stage.stageWidth * 1/App.scale;
+	}
+	
 	/**
 	 * Snapshots the state and creates a bitmap from it
 	 * @return
