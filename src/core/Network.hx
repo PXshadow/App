@@ -9,6 +9,7 @@ import sys.net.Host;
 #end
 import haxe.Timer;
 import haxe.Unserializer;
+import haxe.io.Error;
 /**
  * ...
  * @author 
@@ -127,10 +128,11 @@ class Network
 		if (!connected) return;
 		try
 		{
-		unSer(socket.input.readLine());
+		var buff = socket.input.readUntil(0x0A);
+		unSer(buff);
 		}catch (e:Dynamic)
 		{
-		
+		if (e != Error.Blocked) trace("issue " + e);
 		}
 		#end
 	}
@@ -161,15 +163,15 @@ class Network
 	
 	public function unSer(str:String)
 	{
-		    try
-			{
+		   // try
+			//{
 			var data = new Unserializer(str).unserialize();
 			if(onMessage != null)onMessage(data);
 			if(mainMessage != null)mainMessage(data);
-			}
-			catch (e:Dynamic)
-			{
-				trace("ser " + e + " data " + str);
-			}
+			//}
+			//catch (e:Dynamic)
+			//{
+			//	trace("ser " + e + " data " + str);
+			//}
 	}
 }
