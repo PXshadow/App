@@ -110,7 +110,6 @@ class App extends DisplayObjectContainer
 	 * false = User not on application / minimized
 	 */
 	public var active:Bool = true;
-	public var animation:Bool = false;
 	
 	public function new(sx:Int=640,sy:Int=1136,_font:Font=null) 
 	{
@@ -154,11 +153,11 @@ class App extends DisplayObjectContainer
 		Lib.current.addChild(this);
 		Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, function(e:MouseEvent)
 		{
-		state.mouseDown();
+		if(!App.state.stateAnimation)state.mouseDown();
 		});
 		Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, function(e:MouseEvent)
 		{
-		state.mouseUp();
+		if(!App.state.stateAnimation)state.mouseUp();
 		});
 		
 		#if !mobile
@@ -205,7 +204,7 @@ class App extends DisplayObjectContainer
 		Lib.current.stage.addEventListener(Event.ENTER_FRAME, function(e:Event)
 		{
 		if (App.network != null) App.network.update();
-		if (state != null)state.loop();
+		if (state != null && !state.stateAnimation)state.loop();
 		}); 
 		
 		Lib.current.stage.addEventListener (openfl.events.Event.ACTIVATE, function (_) {
