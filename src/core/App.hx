@@ -211,17 +211,12 @@ class App extends DisplayObjectContainer
 		Lib.current.stage.addEventListener (openfl.events.Event.ACTIVATE, function (_) {
 		Lib.current.stage.frameRate = 60;
 		active = true;
-		//re connect
-		//#if mobile
-		if (App.network != null) App.network.connect();
-		//#end
 		});
 		
 		Lib.current.stage.addEventListener (openfl.events.Event.DEACTIVATE, function (_) {
 			state.scrollSpeed = 0;
 			active = false;
 			Lib.current.stage.frameRate = 5;
-			App.network.close();
 		});
 	}
 			
@@ -417,23 +412,6 @@ Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
 	public static function createButton(?x:Int, ?y:Int, ?path:String,?sWidth:Int=-1,?sHeight:Int=-1):Button
 	{
 		return new Button(x,y,path,sWidth,sHeight);
-	}
-	/**
-	 * A custom ThinQbator round rectangle that's meant for our TextBubble Ui in code alternative.
-	 * @param	x
-	 * @param	y
-	 * @param	width
-	 * @param	height
-	 * @param	curve
-	 * @return
-	 */
-	public static function createTextBubble(width:Int, height:Int,curve:Int=50):openfl.Vector<IGraphicsData>
-	{
-		var txtBox = new Shape();
-		txtBox.graphics.beginGradientFill(GradientType.RADIAL, [11193343, 16777215], [0.2, 0.8], [0, 255]);
-		txtBox.graphics.drawRoundRect(0, 0, width, height, curve, curve);
-		txtBox.graphics.endFill();
-		return txtBox.graphics.readGraphicsData();
 	}
 	/**
 	 * ThinQbator custom exit Button

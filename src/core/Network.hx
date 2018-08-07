@@ -1,177 +1,308 @@
 package core;
 
 import haxe.Serializer;
-#if html5
-import js.html.WebSocket;
-#else
-import sys.net.Socket;
-import sys.net.Host;
-#end
 import haxe.Timer;
 import haxe.Unserializer;
+import haxe.io.Bytes;
 import haxe.io.Error;
-/**
- * ...
- * @author 
- */
-class Network 
-{
-	
-	public var secure:Bool = false;
-	private var port:Int = 9696;
-	public var connected:Bool = false;
-	public var connecting:Bool = false;
-	#if !html5
-	private var host:Host;
-	public var socket:Socket;
-	#end
-	
-	/**
-	 * onClose function 
-	 */
-	public var onClose:Void->Void;
-	/**
-	 * OnMessage function
-	 */
-	public var onMessage:Dynamic->Void;
-	/**
-	 * main
-	 */
-	public var mainMessage:Dynamic->Void;
-/** Callback used called when a connection is established. This callback should not be handled manually. **/
- public var onConnect:Void->Void;
+
+#if (neko || cpp)
+import sys.net.Socket;
+import sys.net.Host;
+#else
+import openfl.events.*;
+import openfl.net.Socket;
+#end
+
+class Network {
+  public var MAX_DATA_SIZE: Int = 65535;
+  public static var onConnect(default, default): Dynamic->Void;
+  public static var onClose(default, default): Dynamic->Void;
+  public var onMessage:Dynamic->Void;
+  public var mainMessage:Dynamic->Void;
+  public var connected: Bool;
+  private var _socket: Socket;
+  private var ip:String;
+  private var port:Int;
+  private var host:Host;
+  private var reconnectTimer:Timer;
+
   
-/**
- * Setup networking
- */
-	public function new(ipString:String,portInt:Int) 
+  public function new(ipString:String, portInt:Int ) 
+  {
+	ip = ipString;
+	port = portInt;
+	#if (neko || cpp)
+	try
 	{
-		#if html5
+		host = new Host(ip);
+	}catch (e:Dynamic)
+	{
 		
-		#else
-		try
-		{
-		host = new Host(ipString);
-		}catch (e:Dynamic)
-		{
-			
-		}
-		port = portInt;
-		#end
-		connect();
 	}
+	#end
+  }
+
+
+  
+  public function connect() {
+    #if (neko || cpp)
+	_socket = new Socket();
+    try {
+      _socket.connect(host, port);
+      _socket.setBlocking(false);
+	  _socket.setFastSend(true);
+      connected = true;
+	  //tcp relay
+	  _socket.output.writeString("8");
+	  if(onConnect != null)onConnect(null);
+    }
+    catch (e: Dynamic) {
+		reconnect();
+		trace("close " + e);
+    }
+    #else
+
+    var on_connect_handler: Dynamic->Void = function(e: Dynamic) {
+      try {
+        connected = true;
+        onConnect(e);
+      }
+      catch (e: Dynamic) {
+        onClose(e);
+      }
+    };
+
+    var on_failure_handler: Dynamic->Void = function(e: Dynamic) {
+      NetworkLogger.error(e);
+      if(!connected) {
+        onClose(e);
+        connected = false;
+      }
+    };
+
+    _socket.addEventListener(Event.CONNECT, on_connect_handler);
+    _socket.addEventListener(IOErrorEvent.IO_ERROR, on_failure_handler);
+    _socket.addEventListener(SecurityErrorEvent.SECURITY_ERROR, on_failure_handler);
+
+    _socket.connect(host, port);
+    #end
+
+  }
+  
+  public function reconnect()
+  {
+	  if (reconnectTimer == null)
+	  {
+	  if (onClose != null) onClose(null);
+	  reconnectTimer = new Timer(500);
+	  connected = false;
+	  reconnectTimer.run = function()
+	  {
+		  if (!connected)
+		  {
+		  //reconnect
+		  close();
+		  connect();
+		  }else{
+		  //finish
+		  if (onConnect != null) onConnect(null);
+		  reconnectTimer.stop();
+		  reconnectTimer = null;
+		  }
+	  }
+	  }
+  }
+
+  /**
+   * Close the client or server socket.
+   */
+  public function close() {
+    #if !(cpp || neko)
+    if (!_socket.connected) return;
+    #end
+
+    #if (!neko && cpp)
+    _socket.shutdown(true, true);
+    #end
+    _socket.close();
+	connected = false;
 	
-	public function connect()
+  }
+  
+  public function update()
+  {
+	  read();
+  }
+
+  /**
+   * Read a string from the socket buffer.
+   * This is a blocking method.
+   *
+   * @return A string.
+   */
+  /*public function read() {
+    #if !(neko || cpp)
+    if(!connected || (_socket.connected && _socket.bytesAvailable == 0)) return null;
+    if(!_socket.connected) throw 'Disconnected from server';
+    #end
+	try
 	{
-		connecting = false;
-		if (connecting) return;
-		#if html5
+	var str = readString();
+	if (str != "")
+	{
+	var obj = Unserializer.run(str);
+	onMessage(obj);
+	mainMessage(obj);
+	}
+	}catch (e:Dynamic)
+	{
 		
-		#else
-		connecting = true;
-		socket = new Socket();
-		try
-		{
-		socket.connect(host, port);
-		socket.setBlocking(false);
-		socket.setFastSend(true);
-		connected = true;
-		//tcp relay
-		socket.output.writeString("8");
-		connectEvent();
-		}catch (e:Dynamic)
-		{
-			trace("fail");
-			close();
-		}
-		#end
-		connecting = false;
 	}
-	
-	private function connectEvent()
-	{
-		var tim = new Timer(20);
-		tim.run = function()
-		{
-		if (onConnect != null) onConnect();
-		tim.stop();
-		tim = null;
-		}
-		connected = true;
-	}
-	
-	public function update()
-	{
-		#if (cpp || neko)
-		read();
-		#end
-	}
-	
-	public function close()
-	{
-		#if (cpp || neko)
-		socket.close();
-		#end
-		connected = false;
-		var tim = new Timer(20);
-		tim.run = function()
-		{
-		if (onClose != null) onClose();
-		tim.stop();
-		tim = null;
-		}
-	}
-	
-	public function read()
+  }*/
+  
+  public function read()
 	{
 		#if !html5
 		if (!connected) return;
 		try
 		{
-		var buff = socket.input.readUntil(0x0A);
-		unSer(buff);
+		var buff = _socket.input.readUntil(0x0A);
+		var obj = Unserializer.run(buff);
+		if (onMessage != null) onMessage(obj);
+		if (mainMessage != null) mainMessage(obj);
+		trace("message");
 		}catch (e:Dynamic)
 		{
-		if (e != Error.Blocked) trace("issue " + e);
+		if (e != Error.Blocked)
+		{
+			trace("issue " + e);
+			reconnect();
+		}
 		}
 		#end
 	}
 	
-	/**
-	 * Send Dynamic data 
-	 * @param	obj Data
-	 */
-	public function send(obj:Dynamic)
-	{
-		if(!connected)return;
-		var ser = new Serializer();
-		ser.serialize(obj);
-		try
-		{
-		#if html5
-		//ws.send(str);
-		#else
-		socket.output.writeString(ser.toString() + "\n");
-		#end
-		}
-		catch (e:Dynamic)
-		{
-			trace("write " + e);
-			close();
-		}
-	}
 	
-	public function unSer(str:String)
+
+  /**
+   * Write a string into the socket buffer.
+   *
+   * @param data String to write into the buffer.
+   */
+  public function write(data: String) {
+    #if !(neko || cpp)
+    if (_socket == null) return;
+    if (!connected || !_socket.connected) throw 'Connection not established.';
+    #end
+
+    writeString(data);
+    flush();
+  }
+  
+  public function send(obj:Dynamic)
+  {
+	  if(connected) _socket.output.writeString(Serializer.run(obj) + "\n");
+  }
+
+  /**
+   * Write raw bytes stored in a buffer. Only available in native targets.
+   *
+   * @param buffer Buffer to wrint onto the socket's buffer.
+   * @param length Buffer data's length.
+   * @param offset Buffer data's initial byte.
+   */
+  public function writeBytes(buffer: Bytes, length: Int, offset: Int = 0) {
+    #if (neko || cpp)
+    _socket.output.writeBytes(buffer, offset, length);
+    flush();
+    #else
+    throw 'Method not available in non-native targets.';
+    #end
+  }
+
+  /**
+   * Create a human readable representation of the socket.
+   *
+   * @return A string that represents the socket.
+   */
+  public function toString(): String {
+    try {
+      #if (neko || cpp)
+        var peer = _socket.peer();
+        return '${peer.host}:${peer.port}';
+      #else
+      return _socket.toString();
+      #end
+    }
+    catch (e: Dynamic) {
+      
+      return '?:?';
+    }
+  }
+
+  // Flush output content.
+  private function flush() {
+    #if (neko || cpp)
+    _socket.output.flush();
+    #else
+    _socket.flush();
+    #end
+  }
+
+  // Write 2 bytes as an unsigned integer.
+  private function writeUnsignedInt16(x: UInt) {
+    #if (neko || cpp)
+    _socket.output.writeByte((x >> 8) & 0xFF);
+    _socket.output.writeByte(x & 0xFF);
+    #else
+    _socket.writeByte((x >> 8) & 0xFF);
+    _socket.writeByte(x & 0xFF);
+    #end
+  }
+
+  // Write a string (size + bytes).
+  private function writeString(s: String) {
+    if (s.length > MAX_DATA_SIZE)
+      throw 'String data is too big - ${s.length} bytes (${MAX_DATA_SIZE} bytes max)';
+
+    writeUnsignedInt16(s.length);
+
+    #if (neko || cpp)
+    _socket.output.writeString(s);
+    #else
+    _socket.writeUTFBytes(s);
+    #end
+  }
+
+  // Read 2 bytes as an unsigned integer.
+  private function readUnsignedInt16(): UInt {
+    #if (neko || cpp)
+    var byte1: Int = _socket.input.readByte() & 0xFF;
+    var byte2: Int = _socket.input.readByte() & 0xFF;
+    #else
+    var byte1: Int = _socket.readByte() & 0xFF;
+    var byte2: Int = _socket.readByte() & 0xFF;
+    #end
+
+    return (byte1 << 8) | byte2;
+  }
+
+  // Read a string (size + bytes).
+  private function readString(): String {
+	  
+	  
+	try 
 	{
-		   // try
-			//{
-			var data = new Unserializer(str).unserialize();
-			if(onMessage != null)onMessage(data);
-			if(mainMessage != null)mainMessage(data);
-			//}
-			//catch (e:Dynamic)
-			//{
-			//	trace("ser " + e + " data " + str);
-			//}
+    var len: UInt = readUnsignedInt16();
+    #if (neko || cpp)
+    return _socket.input.readString(len);
+    #else
+    return _socket.readUTFBytes(len);
+    #end
+	}catch (e:Dynamic)
+	{
+		return "";
 	}
+  }
 }

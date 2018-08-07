@@ -81,10 +81,10 @@ class NativeTextField extends EditText implements View.OnFocusChangeListener
         }
 		
 		if(config.placeholderColor != null){
- 			setHintTextColor (config.placeholderColor);
+ 			setHintTextColor (0xff000000 | config.placeholderColor);
  		}
  		if(config.backgroundColor != null){
- 			setBackgroundColor (config.backgroundColor);
+ 			setBackgroundColor (0xff000000 | config.backgroundColor);
  		}
 
         try {

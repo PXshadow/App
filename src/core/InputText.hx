@@ -186,7 +186,7 @@ class InputText extends DisplayObjectContainer
 		keyboardType:_keyType,
 		returnKeyType:_returnType,
 		multiline:_multiline,
-		placeholderColor:pcolor
+		placeholderColor:pColor
 		});
 		#end
 		
@@ -198,7 +198,7 @@ class InputText extends DisplayObjectContainer
 	placeholderString = placeString;
 	textfield.mouseEnabled = false;
 	textfield.type = TextFieldType.DYNAMIC;
-	textfield.defaultTextFormat = new TextFormat(Assets.getFont(App.font.format).fontName, Math.floor(fsize), pcolor, false, false, false, "", "", align);
+	textfield.defaultTextFormat = new TextFormat(Assets.getFont(App.font.format).fontName, Math.floor(fsize), pColor, false, false, false, "", "", align);
 	textfield.multiline = _multiline;
 	#if !mobile
 	textfield.addEventListener(FocusEvent.FOCUS_OUT, focusOutFalseMobile);
