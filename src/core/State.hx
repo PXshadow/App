@@ -125,7 +125,6 @@ class State extends DisplayObjectContainer
 		mouseEnabled = false;
 		//drag not possible
 		dragRect = new Rectangle(0, 0, App.setWidth, App.setHeight);
-		App.main.animation = true;
 		//set resize
 		x = State.px; y = State.py;
 		scaleX = State.sx; scaleY = State.sy;
@@ -229,7 +228,6 @@ class State extends DisplayObjectContainer
 		stateAnimation = false;
 		App.main.removeChild(pastBitmap);
 		pastBitmap = null;
-		App.main.animation = false;
 	}
 	
 	public function moveCamera(dx:Float =0, dy:Float =0,frameX:Int=0,frameY:Int=0)

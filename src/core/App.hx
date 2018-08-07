@@ -196,7 +196,7 @@ class App extends DisplayObjectContainer
 			if (!backExit && e.keyCode == KeyCode.APP_CONTROL_BACK)
 			{
 			e.preventDefault();
-			if(!animation)state.back(e);
+			state.back(e);
 			}
 			#end
 		});
