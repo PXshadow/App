@@ -153,21 +153,21 @@ class App extends DisplayObjectContainer
 		Lib.current.addChild(this);
 		Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, function(e:MouseEvent)
 		{
-		if(!App.state.stateAnimation)state.mouseDown();
+		if(!state.stateAnimation)state.mouseDown();
 		});
 		Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, function(e:MouseEvent)
 		{
-		if(!App.state.stateAnimation)state.mouseUp();
+		if(!state.stateAnimation)state.mouseUp();
 		});
 		
 		#if !mobile
 		Lib.current.stage.addEventListener(MouseEvent.MOUSE_WHEEL,function(e:MouseEvent)
 		{
-			if (!animation && state != null) state.mouseWheel(e);
+			if (state != null && !state.stateAnimation) state.mouseWheel(e);
 		});
 		Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, function(e:KeyboardEvent)
 		{
-			if(!animation)state.keyDown(e);
+			if(state != null && !state.stateAnimation)state.keyDown(e);
 		});
 		Lib.current.stage.addEventListener(MouseEvent.MIDDLE_MOUSE_DOWN, function(e:MouseEvent)
 		{
