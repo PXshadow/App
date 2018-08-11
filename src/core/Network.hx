@@ -24,7 +24,9 @@ class Network {
   private var _socket: Socket;
   private var ip:String;
   private var port:Int;
+  #if (neko || cpp)
   private var host:Host;
+  #end
   private var reconnectTimer:Timer;
 
   
@@ -62,30 +64,18 @@ class Network {
 		trace("close " + e);
     }
     #else
+	function error(_)
+	{
+		reconnect();
+	}
+    /*_socket.addEventListener(Event.CONNECT, function(_)
+	{
+		if (onConnect != null) onConnect(null);
+	});
+    _socket.addEventListener(IOErrorEvent.IO_ERROR, error);
+    _socket.addEventListener(SecurityErrorEvent.SECURITY_ERROR,error);*/
 
-    var on_connect_handler: Dynamic->Void = function(e: Dynamic) {
-      try {
-        connected = true;
-        onConnect(e);
-      }
-      catch (e: Dynamic) {
-        onClose(e);
-      }
-    };
-
-    var on_failure_handler: Dynamic->Void = function(e: Dynamic) {
-      NetworkLogger.error(e);
-      if(!connected) {
-        onClose(e);
-        connected = false;
-      }
-    };
-
-    _socket.addEventListener(Event.CONNECT, on_connect_handler);
-    _socket.addEventListener(IOErrorEvent.IO_ERROR, on_failure_handler);
-    _socket.addEventListener(SecurityErrorEvent.SECURITY_ERROR, on_failure_handler);
-
-    _socket.connect(host, port);
+    //_socket.connect(ip, port);
     #end
 
   }
@@ -202,7 +192,9 @@ class Network {
   
   public function send(obj:Dynamic)
   {
-	  if(connected) _socket.output.writeString(Serializer.run(obj) + "\n");
+	  #if (neko || cpp)
+	  if (connected) _socket.output.writeString(Serializer.run(obj) + "\n");
+	  #end
   }
 
   /**

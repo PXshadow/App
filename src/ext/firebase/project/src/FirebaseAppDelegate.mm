@@ -51,7 +51,7 @@ NSString* firebaseInstanceIdToken = @"";
     [FIRApp configure];
     [FIRMessaging messaging].delegate = self;
 
-    // Push Notification Permission
+    /*// Push Notification Permission
     // This code will request permission from the user to accept Push Notifications on their device.
     // It is displayed when the app is launched. We will want some better control around when and how we ask users to enable push
     if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_9_x_Max) {
@@ -72,10 +72,10 @@ NSString* firebaseInstanceIdToken = @"";
             }];
         #endif
     }
-    [[UIApplication sharedApplication] registerForRemoteNotifications];
+    [[UIApplication sharedApplication] registerForRemoteNotifications];*/
 
     // Token may be null if it has not been generated yet.
-    NSLog(@"FirebaseAppDelegate: FCM registration token: %@", [FIRMessaging messaging].FCMToken);
+    //NSLog(@"FirebaseAppDelegate: FCM registration token: %@", [FIRMessaging messaging].FCMToken);
 
     return YES;
 }
