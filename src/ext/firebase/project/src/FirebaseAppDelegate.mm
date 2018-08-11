@@ -48,10 +48,10 @@ NSString* firebaseInstanceIdToken = @"";
 -(BOOL)application:(UIApplication *)application willFinishLaunchingWithOptions:(NSDictionary *) launchOptions
 {
     NSLog(@"FirebaseAppDelegate: willFinishLaunchingWithOptions");
-    [FIRApp configure];
+    /*[FIRApp configure];
     [FIRMessaging messaging].delegate = self;
 
-    /*// Push Notification Permission
+    // Push Notification Permission
     // This code will request permission from the user to accept Push Notifications on their device.
     // It is displayed when the app is launched. We will want some better control around when and how we ask users to enable push
     if (floor(NSFoundationVersionNumber) <= NSFoundationVersionNumber_iOS_9_x_Max) {
