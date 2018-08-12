@@ -70,6 +70,7 @@ class InputText extends DisplayObjectContainer
 	@:isVar public var text(get, set):String;
 	@:isVar public var focus(get, set):Bool;
 	@:isVar public var show(get, set):Bool;
+	public var desktopChange:Dynamic->Void;
 	
 	function get_show():Bool
 	{
@@ -261,6 +262,7 @@ class InputText extends DisplayObjectContainer
 			textfield.defaultTextFormat = new TextFormat(null, null, newColor);
 		}
 		App.state.stage.focus = textfield;
+		textfield.addEventListener(TextEvent.TEXT_INPUT, desktopChange);
 		#end
 		isDrag = App.state.dragBool;
 		App.state.disableCameraMovment();
@@ -311,6 +313,7 @@ class InputText extends DisplayObjectContainer
 	nativeText.Destroy();
 	#else
 	textfield.removeEventListener(FocusEvent.FOCUS_OUT, focusOutFalseMobile);
+	textfield.removeEventListener(TextEvent.TEXT_INPUT, desktopChange);
 	#end
 	}
 }
