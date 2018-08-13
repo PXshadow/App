@@ -496,8 +496,11 @@ class State extends DisplayObjectContainer
 	
 	public function setHeader(obj:DisplayObject,widthBool:Bool=true)
 	{
-		obj.x = -px * 1/App.scale;
-		if(widthBool)obj.width = Lib.current.stage.stageWidth * 1/App.scale;
+		if (App.state == this)
+		{
+			obj.x = -px * 1/App.scale;
+			if (widthBool) obj.width = Lib.current.stage.stageWidth * 1 / App.scale;
+		}
 	}
 	
 	/**

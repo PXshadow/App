@@ -480,7 +480,7 @@ Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
 		//rect
 		nextButton.graphics.endFill();
 		nextButton.graphics.beginFill(0, 0);
-		nextButton.graphics.drawRect( -80, -60, 160, 80 + 60);
+		nextButton.graphics.drawRect( -80, -60, 80, 80);
 		return nextButton;
 	}
 	/**
