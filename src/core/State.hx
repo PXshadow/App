@@ -124,7 +124,7 @@ class State extends DisplayObjectContainer
 		stateAnimation = true;
 		mouseEnabled = false;
 		//drag not possible
-		dragRect = new Rectangle(0, 0, App.setWidth, App.setHeight);
+		dragRect = new Rectangle(0, 0, App.setWidth, Math.floor(Lib.current.stage.stageHeight * 1 / App.scale));
 		//set resize
 		x = State.px; y = State.py;
 		scaleX = State.sx; scaleY = State.sy;
