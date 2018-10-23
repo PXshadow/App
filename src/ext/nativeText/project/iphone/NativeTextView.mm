@@ -22,6 +22,7 @@
     {
         self->m_autosizeWidth = YES;
         self->m_autosizeHeight = YES;
+		self.backgroundColor = [UIColor clearColor];
     }
     return self;
 }
@@ -34,8 +35,6 @@
     {
         self.textColor = extensionkit::iphone::UIColorFromRGB(config.fontColor.Value());
     }
-	//set background transparent
-	[self setBackgroundColor: [UIColor clearColor]];
 	
     if (config.fontAsset.IsSet() && config.fontSize.IsSet()) {
         NSString * font = [NSString stringWithUTF8String:config.fontAsset.Value().c_str()];
