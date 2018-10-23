@@ -70,10 +70,10 @@
         self.editable = (config.enabled.Value() ? YES : NO);
     }
 	
-	if (config.placeholder.IsSet())
+	/*if (config.placeholder.IsSet())
     {
         self.placeholder = [NSString stringWithUTF8String:config.placeholder.Value().c_str()];
-    }
+    }*/
 
     if (config.isPassword.IsSet())
     {
