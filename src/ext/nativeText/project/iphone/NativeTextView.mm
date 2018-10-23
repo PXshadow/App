@@ -22,7 +22,6 @@
     {
         self->m_autosizeWidth = YES;
         self->m_autosizeHeight = YES;
-		self.backgroundColor = [UIColor clearColor];
     }
     return self;
 }
@@ -33,9 +32,9 @@
 
     if (config.fontColor.IsSet())
     {
-        self.textColor = extensionkit::iphone::UIColorFromRGB(config.fontColor.Value1());
+        self.textColor = extensionkit::iphone::UIColorFromRGB(config.fontColor.Value());
     }
-	
+
     if (config.fontAsset.IsSet() && config.fontSize.IsSet()) {
         NSString * font = [NSString stringWithUTF8String:config.fontAsset.Value().c_str()];
 
@@ -69,11 +68,6 @@
     {
         self.editable = (config.enabled.Value() ? YES : NO);
     }
-	
-	/*if (config.placeholder.IsSet())
-    {
-        self.placeholder = [NSString stringWithUTF8String:config.placeholder.Value().c_str()];
-    }*/
 
     if (config.isPassword.IsSet())
     {
