@@ -87,7 +87,6 @@ namespace nativetext
                NativeTextView* textField = [[NativeTextView alloc] initWithFrame:frame];
                 textField.tag = eventDispatcherId;
                 textField.delegate = g_textFieldContainerView;
-
                 frame.size = textField.intrinsicContentSize;
                 [textField setFrame:frame];
 

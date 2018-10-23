@@ -467,6 +467,7 @@ class State extends DisplayObjectContainer
 	//protect against null
 	if (this != null)
 	{
+		App.main.removeChild(pastBitmap);
 		//take screenshot of last state for animations
 		pastBitmap = App.main.createScreenBitmap();
 		//Assets.cache.clear();

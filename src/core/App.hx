@@ -5,7 +5,6 @@ import core.State;
 import core.Text;
 import core.UrlState;
 import core.Network;
-import haxe.crypto.Base64;
 import lime.ui.KeyCode;
 import openfl.display.DisplayObjectContainer;
 import openfl.display.Graphics;

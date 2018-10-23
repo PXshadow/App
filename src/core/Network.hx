@@ -40,7 +40,7 @@ class Network {
 		host = new Host(ip);
 	}catch (e:Dynamic)
 	{
-		
+		trace("catch la hosters");
 	}
 	#end
   }
