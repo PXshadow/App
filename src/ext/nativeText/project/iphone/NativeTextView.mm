@@ -33,7 +33,7 @@
 
     if (config.fontColor.IsSet())
     {
-        self.textColor = extensionkit::iphone::UIColorFromRGB(config.fontColor.Value());
+        self.textColor = extensionkit::iphone::UIColorFromRGB(config.fontColor.Value1());
     }
 	
     if (config.fontAsset.IsSet() && config.fontSize.IsSet()) {
@@ -68,6 +68,11 @@
     if (config.enabled.IsSet())
     {
         self.editable = (config.enabled.Value() ? YES : NO);
+    }
+	
+	if (config.placeholder.IsSet())
+    {
+        self.placeholder = [NSString stringWithUTF8String:config.placeholder.Value().c_str()];
     }
 
     if (config.isPassword.IsSet())

@@ -85,6 +85,9 @@ namespace nativetext
 
             if (multiline) {
                NativeTextView* textField = [[NativeTextView alloc] initWithFrame:frame];
+			   //clear background
+			   [textField setBackgroundColor:[UIColor clearColor]];
+			   //set properties
                 textField.tag = eventDispatcherId;
                 textField.delegate = g_textFieldContainerView;
                 frame.size = textField.intrinsicContentSize;
