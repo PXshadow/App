@@ -104,6 +104,11 @@ class App extends DisplayObjectContainer
 	 * @param	sx Width of App
 	 * @param	sy Height of App
 	 */
+	 /**
+	  * active and deactive screen events
+	  */
+	public var activeEvent:Void->Void;
+	public var unActiveEvent:Void->Void;
 	
 	/**
 	 * false = User not on application / minimized
@@ -209,12 +214,14 @@ class App extends DisplayObjectContainer
 		Lib.current.stage.addEventListener (openfl.events.Event.ACTIVATE, function (_) {
 		Lib.current.stage.frameRate = 60;
 		active = true;
+		if (activeEvent != null) activeEvent();
 		});
 		
 		Lib.current.stage.addEventListener (openfl.events.Event.DEACTIVATE, function (_) {
 			state.scrollSpeed = 0;
 			active = false;
 			Lib.current.stage.frameRate = 5;
+			if (unActiveEvent != null) unActiveEvent();
 		});
 	}
 			
