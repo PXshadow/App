@@ -55,7 +55,7 @@ class Network {
 	  _socket.setFastSend(true);
       connected = true;
 	  //tcp relay
-	  _socket.output.writeString("8");
+	  _socket.output.writeString("9");
 	  if(onConnect != null)onConnect(null);
     }
     catch (e: Dynamic) {
