@@ -28,7 +28,6 @@ class Network {
   private var host:Host;
   #end
   private var reconnectTimer:Timer;
-
   
   public function new(ipString:String, portInt:Int ) 
   {
@@ -155,21 +154,29 @@ class Network {
 	{
 		#if !html5
 		if (!connected) return;
+		var buff:String = "";
+		var obj:Dynamic = null;
 		try
 		{
-		var buff = _socket.input.readUntil(0x0A);
-		var obj = Unserializer.run(buff);
+		buff = _socket.input.readUntil(0x0A);
+		trace("buff " + buff);
+		obj = Unserializer.run(buff);
 		if (onMessage != null) onMessage(obj);
 		if (mainMessage != null) mainMessage(obj);
-		trace("message");
-		}catch (e:Dynamic)
-		{
-		if (e != Error.Blocked)
-		{
-			trace("issue " + e);
-			reconnect();
-		}
-		}
+	}catch (e:Dynamic)
+	{
+		// end of stream
+    if (Std.is(e, haxe.io.Eof) || e == haxe.io.Eof)
+    {
+        // close the socket, etc.
+		reconnect();
+    }
+    else if (e == haxe.io.Error.Blocked)
+    {
+        // not an error - this is still a connected socket.
+        
+    }
+	}
 		#end
 	}
 	
@@ -193,7 +200,7 @@ class Network {
   public function send(obj:Dynamic)
   {
 	  #if (neko || cpp)
-	  if (connected) _socket.output.writeString(Serializer.run(obj) + "\n");
+	  if (connected) _socket.output.writeString(Serializer.run(obj) + "\r\n");
 	  #end
   }
 

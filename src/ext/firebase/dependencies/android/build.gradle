@@ -28,8 +28,8 @@ android {
 dependencies {
 	compile project(':deps:extension-api')
 	compile 'com.google.code.gson:gson:2.8.0'
-	compile 'com.google.firebase:firebase-core:10.0.1'
-	compile 'com.google.firebase:firebase-messaging:10.0.1'
+	compile 'com.google.firebase:firebase-core:16.0.4'
+	compile 'com.google.firebase:firebase-messaging:17.3.4'
 }
 
 apply plugin: 'com.google.gms.google-services'
