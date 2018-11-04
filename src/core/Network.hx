@@ -158,7 +158,7 @@ class Network {
 		var obj:Dynamic = null;
 		try
 		{
-		buff = _socket.input.readUntil(0x0A);
+		buff = _socket.input.readUntil(0x0D);
 		trace("buff " + buff);
 		obj = Unserializer.run(buff);
 		if (onMessage != null) onMessage(obj);

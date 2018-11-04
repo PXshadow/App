@@ -4,7 +4,7 @@
 - [Contact me](https://github.com/PXshadow/App/wiki/Contact)
 - [Haxelib](https://lib.haxe.org/p/app)
 ![icon](https://static.wixstatic.com/media/070b20_d1d024bcce924b86b555be7c8f1f21a4~mv2_d_1732_2812_s_2.png/v1/fill/w_196,h_319,al_c,usm_0.66_1.00_0.01/070b20_d1d024bcce924b86b555be7c8f1f21a4~mv2_d_1732_2812_s_2.png)
-[ThinQbator](https://www.thinqbator.net/)
+[ThinQbator](https://www.thinqbator.app/)
 ## Features
 States
 - Android and Ios firebase push notifications
