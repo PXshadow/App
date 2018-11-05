@@ -254,7 +254,7 @@ public function getUrlParams()
 	{
 	#if html5
 		var url = js.Browser.document.URL;
-		var e:EReg = new EReg("\\?([" + Base64.CHARS + "]+)$", "");
+		var e:EReg = new EReg("\\?([" + haxe.crypto.Base64.CHARS + "]+)$", "");
 		if (e.match(url)) {
 		 var pos = url.indexOf("?", 0);
 		 var pos2 = url.indexOf("/", pos);
@@ -538,6 +538,7 @@ Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
 	
 	public function createScreenBitmap(background:UInt=0xFFFFFF):Bitmap
     {
+		background = stage.color;
         var screen = new BitmapData(Math.floor(stage.stageWidth), Math.floor(stage.stageHeight), false, background);
         screen.draw(App.main);
         var data = new Bitmap(screen, null, true);

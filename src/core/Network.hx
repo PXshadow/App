@@ -47,8 +47,8 @@ class Network {
 
   
   public function connect() {
-    #if (neko || cpp)
-	_socket = new Socket();
+    _socket = new Socket();
+	 #if (neko || cpp)
     try {
       _socket.connect(host, port);
       _socket.setBlocking(false);
@@ -63,18 +63,29 @@ class Network {
 		trace("close " + e);
     }
     #else
-	function error(_)
+    _socket.addEventListener(Event.CONNECT, function(_)
+	{
+		trace("connect");
+		connected = true;
+		if (onConnect != null) onConnect(null);
+		
+		
+		@:privateAccess _socket.__socket.onmessage = function(buff:Dynamic)
+		{
+			trace("message " + buff.data);
+			var obj = Unserializer.run(buff.data);
+			if (onMessage != null) onMessage(obj);
+			if (mainMessage != null) mainMessage(obj);
+		}
+			
+	});
+	function error(data:Dynamic)
 	{
 		reconnect();
 	}
-    /*_socket.addEventListener(Event.CONNECT, function(_)
-	{
-		if (onConnect != null) onConnect(null);
-	});
     _socket.addEventListener(IOErrorEvent.IO_ERROR, error);
-    _socket.addEventListener(SecurityErrorEvent.SECURITY_ERROR,error);*/
-
-    //_socket.connect(ip, port);
+    _socket.addEventListener(SecurityErrorEvent.SECURITY_ERROR,error);
+    _socket.connect(ip, port);
     #end
 
   }
@@ -152,10 +163,11 @@ class Network {
   
   public function read()
 	{
-		#if !html5
 		if (!connected) return;
 		var buff:String = "";
 		var obj:Dynamic = null;
+		
+		#if !html5
 		try
 		{
 		buff = _socket.input.readUntil(0x0D);
@@ -177,7 +189,7 @@ class Network {
         
     }
 	}
-		#end
+	#end
 	}
 	
 	
@@ -199,9 +211,16 @@ class Network {
   
   public function send(obj:Dynamic)
   {
+	  if (connected)
+	  {
 	  #if (neko || cpp)
-	  if (connected) _socket.output.writeString(Serializer.run(obj) + "\r\n");
+	  _socket.output.writeString(Serializer.run(obj) + "\r");
+	  #else
+	  @:privateAccess _socket.__socket.send(Serializer.run(obj));
+	 // _socket.writeUTF(Serializer.run(obj));
+	 // _socket.flush();
 	  #end
+	  }
   }
 
   /**
