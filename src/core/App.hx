@@ -343,7 +343,7 @@ Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
 	 * @param	h height
 	 * @return
 	 */
-		public static function createSprite(?x:Float = 0, ?y:Float = 0, path:String,w:Int=-1,h:Int=-1,oval:Bool=false):Shape
+		public static function createSprite(?x:Float = 0, ?y:Float = 0, path:String,w:Int=-1,h:Int=-1,oval:Bool=false,localX:Float=0,localY:Float=0):Shape
 	{
 		var shape = new Shape();
 		var sub = path.substring(path.length - 4, path.length);
@@ -356,12 +356,13 @@ Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
 	if(w > 0) sx = 1 / bmd.width * w;
 	if(h > 0) sy = 1 / bmd.height * h;
 	mat.scale(sx, sy);
+	mat.translate(localX, localY);
 	shape.graphics.beginBitmapFill(bmd, mat, false, true);
 	if (oval)
 	{
-	shape.graphics.drawEllipse(0, 0, sx * bmd.width, sy * bmd.height);	
+	shape.graphics.drawEllipse(localX, localY, sx * bmd.width, sy * bmd.height);	
 	}else{
-	shape.graphics.drawRect(0, 0, sx * bmd.width, sy * bmd.height);
+	shape.graphics.drawRect(localX, localY, sx * bmd.width, sy * bmd.height);
 	}
 		}else{
 		if (oval) trace("vector graphic does not support Oval");
