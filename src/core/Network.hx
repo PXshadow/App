@@ -10,8 +10,7 @@ import haxe.io.Error;
 import sys.net.Socket;
 import sys.net.Host;
 #else
-import openfl.events.*;
-import openfl.net.Socket;
+import js.html.WebSocket;
 #end
 
 class Network {
@@ -21,18 +20,26 @@ class Network {
   public var onMessage:Dynamic->Void;
   public var mainMessage:Dynamic->Void;
   public var connected: Bool;
+  #if (neko || cpp)
   private var _socket: Socket;
+  #else
+  private var _socket:WebSocket;
+  #end
   private var ip:String;
   private var port:Int;
+  private var url:String;
   #if (neko || cpp)
   private var host:Host;
   #end
   private var reconnectTimer:Timer;
   
-  public function new(ipString:String, portInt:Int ) 
+  public var secure:Bool = false;
+  
+  public function new(ipString:String, portInt:Int,urlString:String="") 
   {
 	ip = ipString;
 	port = portInt;
+	url = urlString;
 	#if (neko || cpp)
 	try
 	{
@@ -47,8 +54,15 @@ class Network {
 
   
   public function connect() {
-    _socket = new Socket();
 	 #if (neko || cpp)
+	 _socket = new Socket();
+	 if (secure)
+	 {
+		//_socket.setCA(sys.ssl.Certificate.loadFile("assets/cert/cacert.pem"));
+		//_socket.setCertificate( sys.ssl.Certificate.loadFile("assets/cert/fullchain.pem"), sys.ssl.Key.loadFile("assets/cert/cert.pem") );
+		//var cert = _socket.peerCertificate();
+		//Sys.println( "Server CN=" + cert.commonName );
+	 }
     try {
       _socket.connect(host, port);
       _socket.setBlocking(false);
@@ -63,29 +77,24 @@ class Network {
 		trace("close " + e);
     }
     #else
-    _socket.addEventListener(Event.CONNECT, function(_)
+	_socket = new WebSocket(url);
+	_socket.onopen = function(_)
 	{
 		trace("connect");
 		connected = true;
 		if (onConnect != null) onConnect(null);
 		
-		
-		@:privateAccess _socket.__socket.onmessage = function(buff:Dynamic)
+		_socket.onmessage = function(buff:Dynamic)
 		{
 			trace("message " + buff.data);
 			var obj = Unserializer.run(buff.data);
 			if (onMessage != null) onMessage(obj);
 			if (mainMessage != null) mainMessage(obj);
 		}
+		_socket.onclose = function(){reconnect(); };
+		_socket.onerror = function(){reconnect(); };
 			
-	});
-	function error(data:Dynamic)
-	{
-		reconnect();
 	}
-    _socket.addEventListener(IOErrorEvent.IO_ERROR, error);
-    _socket.addEventListener(SecurityErrorEvent.SECURITY_ERROR,error);
-    _socket.connect(ip, port);
     #end
 
   }
@@ -119,7 +128,7 @@ class Network {
    */
   public function close() {
     #if !(cpp || neko)
-    if (!_socket.connected) return;
+   // if (!_socket.connected) return;
     #end
 
     #if (!neko && cpp)
@@ -202,7 +211,7 @@ class Network {
   public function write(data: String) {
     #if !(neko || cpp)
     if (_socket == null) return;
-    if (!connected || !_socket.connected) throw 'Connection not established.';
+    //if (!connected || !_socket.connected) throw 'Connection not established.';
     #end
 
     writeString(data);
@@ -216,7 +225,7 @@ class Network {
 	  #if (neko || cpp)
 	  _socket.output.writeString(Serializer.run(obj) + "\r");
 	  #else
-	  @:privateAccess _socket.__socket.send(Serializer.run(obj));
+	  @:privateAccess _socket.send(Serializer.run(obj));
 	 // _socket.writeUTF(Serializer.run(obj));
 	 // _socket.flush();
 	  #end
@@ -244,27 +253,27 @@ class Network {
    *
    * @return A string that represents the socket.
    */
-  public function toString(): String {
+  /*public function toString(): String {
     try {
       #if (neko || cpp)
         var peer = _socket.peer();
         return '${peer.host}:${peer.port}';
       #else
-      return _socket.toString();
+      //return _socket.toString();
       #end
     }
     catch (e: Dynamic) {
       
       return '?:?';
     }
-  }
+  }*/
 
   // Flush output content.
   private function flush() {
     #if (neko || cpp)
     _socket.output.flush();
     #else
-    _socket.flush();
+    //_socket.flush();
     #end
   }
 
@@ -274,8 +283,8 @@ class Network {
     _socket.output.writeByte((x >> 8) & 0xFF);
     _socket.output.writeByte(x & 0xFF);
     #else
-    _socket.writeByte((x >> 8) & 0xFF);
-    _socket.writeByte(x & 0xFF);
+    //_socket.writeByte((x >> 8) & 0xFF);
+   // _socket.writeByte(x & 0xFF);
     #end
   }
 
@@ -289,25 +298,25 @@ class Network {
     #if (neko || cpp)
     _socket.output.writeString(s);
     #else
-    _socket.writeUTFBytes(s);
+    _socket.send(s);
     #end
   }
 
   // Read 2 bytes as an unsigned integer.
-  private function readUnsignedInt16(): UInt {
+  /*private function readUnsignedInt16(): UInt {
     #if (neko || cpp)
     var byte1: Int = _socket.input.readByte() & 0xFF;
     var byte2: Int = _socket.input.readByte() & 0xFF;
     #else
-    var byte1: Int = _socket.readByte() & 0xFF;
-    var byte2: Int = _socket.readByte() & 0xFF;
+    //var byte1: Int = _socket.readByte() & 0xFF;
+    //var byte2: Int = _socket.readByte() & 0xFF;
     #end
 
     return (byte1 << 8) | byte2;
-  }
+  }*/
 
   // Read a string (size + bytes).
-  private function readString(): String {
+ /* private function readString(): String {
 	  
 	  
 	try 
@@ -322,5 +331,5 @@ class Network {
 	{
 		return "";
 	}
-  }
+  }*/
 }

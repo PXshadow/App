@@ -63,7 +63,7 @@ class InputText extends DisplayObjectContainer
 	public var nativeText:NativeTextField;
 	public static var focusInput:InputText;
 	#end
-	public var out:()->Void;
+	public var out:Void->Void;
 	
 	public var textfield:TextField;
 	public var button:Button;
