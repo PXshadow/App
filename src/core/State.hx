@@ -73,30 +73,38 @@ class State extends DisplayObjectContainer
 	//CameraScroll
 	public var cameraMinY:Int = 0;
 	public var cameraMaxY:Int = 0;
+	public var cameraMinX:Int = 0;
+	public var cameraMaxX:Int = 0;
 	
 	public var maxEventY:Void->Void;
 	public var minEventY:Void->Void;
+	public var maxEventX:Void->Void;
+	public var minEventX:Void->Void;
 	
 	//if camera is scrolling used to have buttons not go off during
 	public var scrollPress:Bool = false;
 	//start postion of scroll
 	public var scrollBool:Bool = false;
+	public var slideBool:Bool = false;
 	public var dragBool:Bool = true;
 	public var moveBool:Bool = false;
 	public var dragRect:Rectangle;
 	public var mouseDownBool:Bool = false;
 	public var camY:Int = 0;
+	public var camX:Int = 0;
 	//start posistion
 	public var spY:Int = 0;
 	public var spX:Int = 0;
 	//y
 	public var scrollSpeed:Int = 0;
-	public var scrollSlide:Int = 0;
+	public var slideSpeed:Int = 0;
 	//x
 	public var scrollDuration:Int = 0;
+	public var slideDuration:Int = 0;
 	
 	private var restrictInt:Int = 0;
 	public var scrollInt:Int = 0;
+	public var slideInt:Int = 0;
 	
 	public var vectorY:Vector<Int>;
 	public var vectorX:Vector<Int>;
@@ -109,7 +117,7 @@ class State extends DisplayObjectContainer
 		cameraMinY = -minY;
 		cameraMaxY = -maxY;
 		
-	//	dragBool = false;
+	    dragBool = false;
 		App.main.backExit = false;
 		mouseDownBool = false;
 		maxEventY = null;
@@ -249,26 +257,45 @@ class State extends DisplayObjectContainer
 	
 	public function scrollCamera()
 	{
-	//1950 / (1000 / 60) = 117;
-	if (dragBool && !moveBool && !App.state.stateAnimation)
-	{
-		mouseDownBool = false;
-		
-		if (Math.abs(spY - mouseY) > 5) return;
-		if (Math.abs(spX - mouseX) > 5) return;
-		scrollPress = true;
-		scrollDuration = 117;
-		if (Math.abs(scrollSpeed) > 0 && Math.abs(scrollSpeed) < 70) scrollDuration = 80;
-		//speed limiter
-		var limit = 140;
-		if (scrollSpeed > limit) scrollSpeed = limit;
-		if (scrollSpeed < -limit) scrollSpeed = -limit;
-		vectorY = velocityVector(scrollDuration, scrollSpeed);
-		scrollSpeed = 0;
-		scrollBool = true;
-		scrollInt = 0;
-		scrollDuration += -1;
+		//1950 / (1000 / 60) = 117;
+		if (dragBool && !moveBool && !App.state.stateAnimation)
+		{
+			mouseDownBool = false;
+			if (Math.abs(spY - mouseY) > 5) return;
+			scrollPress = true;
+			scrollDuration = 117;
+			if (Math.abs(scrollSpeed) > 0 && Math.abs(scrollSpeed) < 70) scrollDuration = 80;
+			//speed limiter
+			var limit = 140;
+			if (scrollSpeed > limit) scrollSpeed = limit;
+			if (scrollSpeed < -limit) scrollSpeed = -limit;
+			vectorY = velocityVector(scrollDuration, scrollSpeed);
+			scrollSpeed = 0;
+			scrollBool = true;
+			scrollInt = 0;
+			scrollDuration += -1;
+		}
 	}
+	
+	public function slideCamera()
+	{
+		if (dragBool && !moveBool && !App.state.stateAnimation)
+		{
+			mouseDownBool = false;
+			if (Math.abs(spX - mouseX) > 5) return;
+			scrollPress = true;
+			slideDuration = 117;
+			if (Math.abs(slideSpeed) > 0 && Math.abs(slideSpeed) < 70) slideDuration = 80;
+			//speed limiter
+			var limit = 140;
+			if (slideSpeed > limit) slideSpeed = limit;
+			if (slideSpeed < -limit) slideSpeed = -limit;
+			vectorX = velocityVector(slideDuration, slideSpeed);
+			slideSpeed = 0;
+			slideBool = true;
+			slideInt = 0;
+			slideDuration += -1;
+		}
 	}
 	
 	public function velocityVector(length:Int, velocity:Float):Vector<Int>
@@ -306,7 +333,11 @@ class State extends DisplayObjectContainer
 	//drag and scroll
 	if (mouseDownBool)
 	{
-	if (dragBool) scrollSpeed = Math.round(mouseY - omY);
+		if (dragBool) 
+		{
+			scrollSpeed = Math.round(mouseY - omY);
+			slideSpeed = Math.round(mouseX - omX);
+		}
 	}else{
 	if (scrollBool || moveBool)
 	{
@@ -321,9 +352,23 @@ class State extends DisplayObjectContainer
 	scrollInt++;
 	}
 	}
+	
+	if (slideBool)
+	{
+		slideSpeed = vectorX[scrollInt];
+		if (slideInt >= slideDuration)
+		{
+			slideBool = false;
+			slideSpeed = 0;
+			vectorX = null;
+		}else{
+			slideInt++;
+		}
+	}
+
 	}
 	
-			if (App.network != null) App.network.update();
+		if (App.network != null) App.network.update();
 		
 		//SEND OUT restrict events
 		if (restrictInt > 0)
@@ -334,6 +379,10 @@ class State extends DisplayObjectContainer
 				if(minEventY != null)minEventY();
 				case 2:
 				if (maxEventY != null) maxEventY();
+				case 3:
+				if (minEventX != null) minEventX();
+				case 4:
+				if (maxEventX != null) maxEventX();
 			}
 			//disable movement temp
 			scrollBool = false;
@@ -342,21 +391,42 @@ class State extends DisplayObjectContainer
 			//reset restrict
 			restrictInt = 0;
 		}
-		//RESTRICT Y
-		if (camY + scrollSpeed > cameraMinY && scrollSpeed > 0)
+		
+		if (Math.abs(scrollSpeed) > 0)
 		{
-		scrollSpeed = -camY + cameraMinY;
-		restrictInt = 1;
+			//RESTRICT Y
+			if (camY + scrollSpeed > cameraMinY)
+			{
+				scrollSpeed = -camY + cameraMinY;
+				restrictInt = 1;
+			}
+			if (camY + scrollSpeed < cameraMaxY)
+			{
+				scrollSpeed = -camY + cameraMaxY;
+				restrictInt = 2;
+			}
 		}
-		if (camY + scrollSpeed < cameraMaxY && scrollSpeed < 0)
+		if (Math.abs(slideSpeed) > 0)
 		{
-		scrollSpeed = -camY + cameraMaxY;
-		restrictInt = 2;
+			//RESTRICT X
+			if (camX + slideSpeed > cameraMinX && slideSpeed > 0)
+			{
+				slideSpeed = -camX + cameraMinX;
+				restrictInt = 3;
+			}
+			if (camX + slideSpeed < cameraMaxX && slideSpeed < 0)
+			{
+				slideSpeed = -camX + cameraMaxX;
+				restrictInt = 4;
+			}
+			
 		}
 		//Speed
 		camY += scrollSpeed;
+		camX += slideSpeed;
 		update();
 		omY = mouseY;
+		omX = mouseX;
 	}
 	public function update()
 	{
@@ -383,12 +453,12 @@ class State extends DisplayObjectContainer
 	{
 		if (App.pointRect(mouseX, mouseY, dragRect))
 		{
-		scrollPress = false;
-		mouseDownBool = true;
-		spY = Math.round(mouseY);
-		omY = spY;
-		spX = Math.round(mouseX);
-		omX = spX;
+			scrollPress = false;
+			mouseDownBool = true;
+			spY = Math.round(mouseY);
+			omY = spY;
+			spX = Math.round(mouseX);
+			omX = spX;
 		}
 	}
 	/**
