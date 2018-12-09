@@ -387,6 +387,7 @@ class State extends DisplayObjectContainer
 			}
 			//disable movement temp
 			scrollBool = false;
+			slideBool = false;
 			moveBool = false;
 			scrollSpeed = 0;
 			slideSpeed = 0;
@@ -395,12 +396,12 @@ class State extends DisplayObjectContainer
 		}
 		
 		//RESTRICT Y
-		if (camY > cameraMinY && scrollSpeed > 0)
+		if (camY + scrollSpeed > cameraMinY && scrollSpeed > 0)
 		{
 		scrollSpeed = -camY + cameraMinY;
 		restrictInt = 1;
 		}
-		if (camY < cameraMaxY && scrollSpeed < 0)
+		if (camY + scrollSpeed < cameraMaxY && scrollSpeed < 0)
 		{
 		scrollSpeed = -camY + cameraMaxY;
 		restrictInt = 2;
@@ -409,12 +410,12 @@ class State extends DisplayObjectContainer
 		if (dragSlideBool)
 		{
 		//RESTRICT X
-		if (camX > cameraMinX && slideSpeed > 0)
+		if (camX + slideSpeed > cameraMinX && slideSpeed > 0)
 		{
 			slideSpeed = -camX + cameraMinX;
 			restrictInt = 3;
 		}
-		if (camX < cameraMaxX && slideSpeed < 0)
+		if (camX + slideSpeed < cameraMaxX && slideSpeed < 0)
 		{
 			slideSpeed = -camX + cameraMaxX;
 			restrictInt = 4;
