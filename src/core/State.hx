@@ -87,6 +87,7 @@ class State extends DisplayObjectContainer
 	public var scrollBool:Bool = false;
 	public var slideBool:Bool = false;
 	public var dragBool:Bool = true;
+	public var dragSlideBool:Bool = true;
 	public var moveBool:Bool = false;
 	public var dragRect:Rectangle;
 	public var mouseDownBool:Bool = false;
@@ -120,6 +121,7 @@ class State extends DisplayObjectContainer
 		cameraMaxX = -maxX;
 		
 	    dragBool = false;
+		dragSlideBool = false;
 		App.main.backExit = false;
 		mouseDownBool = false;
 		maxEventY = null;
@@ -280,7 +282,7 @@ class State extends DisplayObjectContainer
 	
 	public function slideCamera()
 	{
-		if (dragBool && !moveBool && !App.state.stateAnimation)
+		if (dragSlideBool && !moveBool && !App.state.stateAnimation)
 		{
 			mouseDownBool = false;
 			if (Math.abs(spX - mouseX) > 5) scrollPress = true;
@@ -334,11 +336,9 @@ class State extends DisplayObjectContainer
 	//drag and scroll
 	if (mouseDownBool)
 	{
-		if (dragBool) 
-		{
-			scrollSpeed = Math.round(mouseY - omY);
-			slideSpeed = Math.round(mouseX - omX);
-		}
+		scrollSpeed = Math.round(mouseY - omY);
+		slideSpeed = Math.round(mouseX - omX);
+		
 	}else{
 	if (scrollBool || moveBool)
 	{
@@ -395,28 +395,32 @@ class State extends DisplayObjectContainer
 		}
 		
 		//RESTRICT Y
-		if (camY + scrollSpeed > cameraMinY && scrollSpeed > 0)
+		if (camY > cameraMinY && scrollSpeed > 0)
 		{
 		scrollSpeed = -camY + cameraMinY;
 		restrictInt = 1;
 		}
-		if (camY + scrollSpeed < cameraMaxY && scrollSpeed < 0)
+		if (camY < cameraMaxY && scrollSpeed < 0)
 		{
 		scrollSpeed = -camY + cameraMaxY;
 		restrictInt = 2;
 		}
+		
+		if (dragSlideBool)
+		{
 		//RESTRICT X
-		if (camX + slideSpeed > cameraMinX && slideSpeed > 0)
+		if (camX > cameraMinX && slideSpeed > 0)
 		{
 			slideSpeed = -camX + cameraMinX;
 			restrictInt = 3;
 		}
-		if (camX + slideSpeed < cameraMaxX && slideSpeed < 0)
+		if (camX < cameraMaxX && slideSpeed < 0)
 		{
 			slideSpeed = -camX + cameraMaxX;
 			restrictInt = 4;
 		}
-		//Speed
+		}
+		//speed
 		camY += scrollSpeed;
 		camX += slideSpeed;
 		update();
