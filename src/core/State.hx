@@ -116,6 +116,8 @@ class State extends DisplayObjectContainer
 		//set camera restriction
 		cameraMinY = -minY;
 		cameraMaxY = -maxY;
+		cameraMinX = -minX;
+		cameraMaxX = -maxX;
 		
 	    dragBool = false;
 		App.main.backExit = false;
@@ -257,12 +259,11 @@ class State extends DisplayObjectContainer
 	
 	public function scrollCamera()
 	{
-		//1950 / (1000 / 60) = 117;
-		if (dragBool && !moveBool && !App.state.stateAnimation)
-		{
+	//1950 / (1000 / 60) = 117;
+	if (dragBool && !moveBool && !App.state.stateAnimation)
+	{
+			if (Math.abs(spY - App.state.mouseY) < 5) scrollPress = true;
 			mouseDownBool = false;
-			if (Math.abs(spY - mouseY) > 5) return;
-			scrollPress = true;
 			scrollDuration = 117;
 			if (Math.abs(scrollSpeed) > 0 && Math.abs(scrollSpeed) < 70) scrollDuration = 80;
 			//speed limiter
@@ -282,7 +283,7 @@ class State extends DisplayObjectContainer
 		if (dragBool && !moveBool && !App.state.stateAnimation)
 		{
 			mouseDownBool = false;
-			if (Math.abs(spX - mouseX) > 5) return;
+			if (Math.abs(spX - mouseX) > 5) scrollPress = true;
 			scrollPress = true;
 			slideDuration = 117;
 			if (Math.abs(slideSpeed) > 0 && Math.abs(slideSpeed) < 70) slideDuration = 80;
@@ -328,7 +329,7 @@ class State extends DisplayObjectContainer
 	public function loop()
 	{
 		
-		//if move turn off mouseDown
+	//if move turn off mouseDown
 	if (moveBool) mouseDownBool = false;
 	//drag and scroll
 	if (mouseDownBool)
@@ -365,7 +366,7 @@ class State extends DisplayObjectContainer
 			slideInt++;
 		}
 	}
-
+	
 	}
 	
 		if (App.network != null) App.network.update();
@@ -388,38 +389,32 @@ class State extends DisplayObjectContainer
 			scrollBool = false;
 			moveBool = false;
 			scrollSpeed = 0;
+			slideSpeed = 0;
 			//reset restrict
 			restrictInt = 0;
 		}
 		
-		if (Math.abs(scrollSpeed) > 0)
+		//RESTRICT Y
+		if (camY + scrollSpeed > cameraMinY && scrollSpeed > 0)
 		{
-			//RESTRICT Y
-			if (camY + scrollSpeed > cameraMinY)
-			{
-				scrollSpeed = -camY + cameraMinY;
-				restrictInt = 1;
-			}
-			if (camY + scrollSpeed < cameraMaxY)
-			{
-				scrollSpeed = -camY + cameraMaxY;
-				restrictInt = 2;
-			}
+		scrollSpeed = -camY + cameraMinY;
+		restrictInt = 1;
 		}
-		if (Math.abs(slideSpeed) > 0)
+		if (camY + scrollSpeed < cameraMaxY && scrollSpeed < 0)
 		{
-			//RESTRICT X
-			if (camX + slideSpeed > cameraMinX && slideSpeed > 0)
-			{
-				slideSpeed = -camX + cameraMinX;
-				restrictInt = 3;
-			}
-			if (camX + slideSpeed < cameraMaxX && slideSpeed < 0)
-			{
-				slideSpeed = -camX + cameraMaxX;
-				restrictInt = 4;
-			}
-			
+		scrollSpeed = -camY + cameraMaxY;
+		restrictInt = 2;
+		}
+		//RESTRICT X
+		if (camX + slideSpeed > cameraMinX && slideSpeed > 0)
+		{
+			slideSpeed = -camX + cameraMinX;
+			restrictInt = 3;
+		}
+		if (camX + slideSpeed < cameraMaxX && slideSpeed < 0)
+		{
+			slideSpeed = -camX + cameraMaxX;
+			restrictInt = 4;
 		}
 		//Speed
 		camY += scrollSpeed;
