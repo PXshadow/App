@@ -1,5 +1,6 @@
 package core;
 import haxe.Constraints.Function;
+import openfl.display.BitmapData;
 import openfl.display.PixelSnapping;
 import openfl.display.Sprite;
 import openfl.events.MouseEvent;
@@ -58,7 +59,8 @@ class Button extends Sprite
 	
 	if(path.substring(path.length - 4, path.length) == ".png")
 	{
-	var bmd = Assets.getBitmapData(path);
+	Assets.loadBitmapData(path).onComplete(function(bmd:BitmapData)
+	{
 	var mat = new Matrix();
 	var sx:Float = 1;
 	var sy:Float = 1;
@@ -73,10 +75,15 @@ class Button extends Sprite
 	graphics.drawRect(0, 0, sx * bmd.width, sy * bmd.height);
 	}
 	vector = false;
+	});
 	}else{
 	//svg
-	new SVG(Assets.getText(path)).render(graphics, 0, 0, sWidth, sHeight);
-	vector = true;
+	Assets.loadText(path).onComplete(function(string:String)
+	{
+		new SVG(string).render(graphics, 0, 0, sWidth, sHeight);
+		if(rectBool)drawRect(sWidth,sHeight);
+		vector = true;
+	});
 	}
 }
   /*

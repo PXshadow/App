@@ -4,6 +4,7 @@ import core.InputText.NativeTextFieldKeyboardType;
 import haxe.Timer;
 import haxe.Utf8;
 import haxe.io.Input;
+import openfl.display.DOMSprite;
 import openfl.display.DisplayObject;
 import openfl.display.DisplayObjectContainer;
 import openfl.events.Event;
@@ -58,6 +59,7 @@ class InputText extends DisplayObjectContainer
 	public var posY:Int = -1;
 	public var oldX:Float = 0;
 	public var oldY:Float = 0;
+	public var textWidth:Float = 0;
 	var isDrag:Bool = true;
 	#if mobile
 	public var nativeText:NativeTextField;
@@ -216,6 +218,9 @@ class InputText extends DisplayObjectContainer
 	textfield.text = placeholderString;
 	textfield.height = textfield.textHeight + 4;
 	addChild(textfield);
+	#if html5
+		
+	#end
 	//button
 	button = App.createInvisButton(0, 0, Math.floor(textfield.width), Math.floor(textfield.height));
 	button.Click = focusIn;
@@ -301,6 +306,11 @@ class InputText extends DisplayObjectContainer
 		if (out != null) out();
 	}
 	
+	public function update(_)
+	{
+		
+	}
+	
 	public function removed(_)
 	{
 	removeEventListener(Event.REMOVED_FROM_STAGE, removed);
@@ -312,8 +322,7 @@ class InputText extends DisplayObjectContainer
 	}
 	nativeText.Destroy();
 	#else
-	textfield.removeEventListener(FocusEvent.FOCUS_OUT, focusOutFalseMobile);
-	textfield.removeEventListener(TextEvent.TEXT_INPUT, desktopChange);
+	removeEventListener(Event.ENTER_FRAME, update);
 	#end
 	}
 }

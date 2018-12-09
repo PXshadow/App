@@ -3,7 +3,6 @@ import core.App;
 import core.Button;
 import core.State;
 import core.Text;
-import core.UrlState;
 import core.Network;
 import lime.ui.KeyCode;
 import openfl.display.DisplayObjectContainer;
@@ -73,7 +72,6 @@ class App extends DisplayObjectContainer
 	/**
 	 *  Set Url's to Diffrent States
 	 */
-	public static var urlArray:Array<UrlState> = new Array<UrlState>();
 	public static var inital:Bool = true;
 	/**
 	 * Networking for App
@@ -249,71 +247,6 @@ class App extends DisplayObjectContainer
 		if (pX > rect.x + rect.width) return false;
 		return true;
 	}
-
-public function getUrlParams()
-	{
-	#if html5
-		var url = js.Browser.document.URL;
-		var e:EReg = new EReg("\\?([" + haxe.crypto.Base64.CHARS + "]+)$", "");
-		if (e.match(url)) {
-		 var pos = url.indexOf("?", 0);
-		 var pos2 = url.indexOf("/", pos);
-		 var name = url.substring(pos + 1, pos2);
-		 UrlState.data = url.substring(pos2 + 1, url.length);
-		 trace("URL name " + name + " data " + UrlState.data);  
-	for (urlObj in urlArray)
-	{
-			if (urlObj.name == name)
-			{
-				//timer to be able to remove state
-				var k = new Timer(5);
-				k.run = function()
-				{
-				App.state.remove();
-				App.state = Type.createInstance(urlObj.state, []);
-				k.stop();
-				k = null;
-				}
-			}
-	}
-	}
-	#end
-	}
-
-public static function toggleFullscreen() {
-#if html5
-trace("Toggle Full screen for html5 does not work yet :(");
-            var isInFullScreen = untyped __js__("(document.fullscreenElement && document.fullscreenElement !== null) ||
-            (document.webkitFullscreenElement && document.webkitFullscreenElement !== null) ||
-            (document.mozFullScreenElement && document.mozFullScreenElement !== null) ||
-            (document.msFullscreenElement && document.msFullscreenElement !== null);");
-            if (isInFullScreen) {
-                if (untyped __js__("document.exitFullscreen")) {
-                    untyped __js__("document.exitFullscreen()");
-                } else if (untyped __js__("document.webkitExitFullscreen")) {
-                    untyped __js__("document.webkitExitFullscreen();");
-                } else if (untyped __js__("document.mozCancelFullScreen")) {
-                    untyped __js__("document.mozCancelFullScreen();");
-                } else if (untyped __js__("document.msExitFullscreen")) {
-                    untyped __js__("document.msExitFullscreen();");
-                }
-            }
-            else {
-
-                if (untyped __js__('document.getElementById("openfl-content").requestFullscreen')) {
-                    untyped __js__('document.getElementById("openfl-content").requestFullscreen()');
-                } else if (untyped __js__('document.getElementById("openfl-content").mozRequestFullScreen')) {
-                    untyped __js__('document.getElementById("openfl-content").mozRequestFullScreen()');
-                } else if (untyped __js__('document.getElementById("openfl-content").webkitRequestFullscreen')) {
-                    untyped __js__('document.getElementById("openfl-content").webkitRequestFullscreen()');
-                } else if (untyped __js__('document.getElementById("openfl-content").msRequestFullscreen')) {
-                    untyped __js__('document.getElementById("openfl-content").msRequestFullscreen()');
-                }
-            }
-#else
-Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
-#end
-        }
 	/**
 	 * 
 	 * @param	original bitmap
@@ -349,7 +282,8 @@ Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
 		var sub = path.substring(path.length - 4, path.length);
 		if (sub == ".png" || sub == ".jpg")
 		{
-	var bmd = Assets.getBitmapData(path);
+	Assets.loadBitmapData(path).onComplete(function(bmd:BitmapData)
+	{
 	var mat = new Matrix();
 	var sx:Float = 1;
 	var sy:Float = 1;
@@ -364,9 +298,13 @@ Lib.application.window.fullscreen = !Lib.application.window.fullscreen;
 	}else{
 	shape.graphics.drawRect(localX, localY, sx * bmd.width, sy * bmd.height);
 	}
+	});
 		}else{
 		if (oval) trace("vector graphic does not support Oval");
-		new SVG(Assets.getText(path)).render(shape.graphics, 0, 0, w, h);
+		Assets.loadText(path).onComplete(function(string:String)
+		{
+		new SVG(string).render(shape.graphics, 0, 0, w, h);
+		});
 		}
 		shape.x = x;
 		shape.y = y;

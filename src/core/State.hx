@@ -87,8 +87,10 @@ class State extends DisplayObjectContainer
 	public var camY:Int = 0;
 	//start posistion
 	public var spY:Int = 0;
+	public var spX:Int = 0;
 	//y
 	public var scrollSpeed:Int = 0;
+	public var scrollSlide:Int = 0;
 	//x
 	public var scrollDuration:Int = 0;
 	
@@ -232,16 +234,16 @@ class State extends DisplayObjectContainer
 	
 	public function moveCamera(dx:Float =0, dy:Float =0,frameX:Int=0,frameY:Int=0)
 	{
-				var disX:Float = 0;
-				var disY:Float = 0;
-				disX = dx;
-				disY = dy;
-				mouseDownBool = false;
-				scrollDuration = Math.floor(Math.max(frameX, frameY));
-				scrollSpeed = Math.floor(disY / frameY);
-				scrollInt = 0;
-				moveBool = true;
-				scrollBool = false;
+		var disX:Float = 0;
+		var disY:Float = 0;
+		disX = dx;
+		disY = dy;
+		mouseDownBool = false;
+		scrollDuration = Math.floor(Math.max(frameX, frameY));
+		scrollSpeed = Math.floor(disY / frameY);
+		scrollInt = 0;
+		moveBool = true;
+		scrollBool = false;
 	}
 	
 	public function scrollCamera()
@@ -249,21 +251,23 @@ class State extends DisplayObjectContainer
 	//1950 / (1000 / 60) = 117;
 	if (dragBool && !moveBool && !App.state.stateAnimation)
 	{
-	if (Math.abs(spY - App.state.mouseY) < 5) scrollPress = true;
-	mouseDownBool = false;
-	scrollDuration = 117;
-	if (Math.abs(scrollSpeed) > 0 && Math.abs(scrollSpeed) < 70) scrollDuration = 80;
-	//speed limiter
-	var limit = 140;
-	if (scrollSpeed > limit) scrollSpeed = limit;
-	if (scrollSpeed < -limit) scrollSpeed = -limit;
-	vectorY = velocityVector(scrollDuration, scrollSpeed);
-	scrollSpeed = 0;
-	scrollBool = true;
-	scrollInt = 0;
-	scrollDuration += -1;
+		mouseDownBool = false;
+		
+		if (Math.abs(spY - mouseY) > 5) return;
+		if (Math.abs(spX - mouseX) > 5) return;
+		scrollPress = true;
+		scrollDuration = 117;
+		if (Math.abs(scrollSpeed) > 0 && Math.abs(scrollSpeed) < 70) scrollDuration = 80;
+		//speed limiter
+		var limit = 140;
+		if (scrollSpeed > limit) scrollSpeed = limit;
+		if (scrollSpeed < -limit) scrollSpeed = -limit;
+		vectorY = velocityVector(scrollDuration, scrollSpeed);
+		scrollSpeed = 0;
+		scrollBool = true;
+		scrollInt = 0;
+		scrollDuration += -1;
 	}
-	
 	}
 	
 	public function velocityVector(length:Int, velocity:Float):Vector<Int>
@@ -382,6 +386,7 @@ class State extends DisplayObjectContainer
 		mouseDownBool = true;
 		spY = Math.round(mouseY);
 		omY = spY;
+		spX = Math.
 		}
 	}
 	/**
@@ -413,15 +418,15 @@ class State extends DisplayObjectContainer
 	 */
 	public function mouseWheel(e:MouseEvent)
 	{
-		
+		moveCamera(0, e.delta, 0, 5);
 	}
 	public function mouseWheelDown(e:MouseEvent)
 	{
-		
+		mouseDown();
 	}
 	public function mouseWheelUp(e:MouseEvent)
 	{
-		
+		mouseUp();
 	}
 	public function mouseRightDown(e:MouseEvent)
 	{
