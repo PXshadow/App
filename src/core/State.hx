@@ -69,6 +69,7 @@ class State extends DisplayObjectContainer
 	
 	//old mouse postions
 	public var omY:Float = 0;
+	public var omX:Float = 0;
 	//CameraScroll
 	public var cameraMinY:Int = 0;
 	public var cameraMaxY:Int = 0;
@@ -386,7 +387,8 @@ class State extends DisplayObjectContainer
 		mouseDownBool = true;
 		spY = Math.round(mouseY);
 		omY = spY;
-		spX = Math.
+		spX = Math.round(mouseX);
+		omX = spX;
 		}
 	}
 	/**
