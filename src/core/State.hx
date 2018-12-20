@@ -119,16 +119,13 @@ class State extends DisplayObjectContainer
 		cameraMaxY = -maxY;
 		cameraMinX = -minX;
 		cameraMaxX = -maxX;
-		
 	    dragBool = false;
 		dragSlideBool = false;
-		App.main.backExit = false;
+		App.screen.backExit = false;
 		mouseDownBool = false;
 		maxEventY = null;
 		minEventY = null;
 		if(App.network != null)App.network.onMessage = null;
-		//add
-		App.main.addChild(this);
 		omY = mouseY;
 		vectorY = null;
 		vectorX = null;
@@ -140,109 +137,8 @@ class State extends DisplayObjectContainer
 		mouseEnabled = false;
 		//drag not possible
 		dragRect = new Rectangle(0, 0, App.setWidth, Math.floor(Lib.current.stage.stageHeight * 1 / App.scale));
-		//set resize
-		x = State.px; y = State.py;
-		scaleX = State.sx; scaleY = State.sy;
-		var tim = new Timer(1);
-		tim.run = function()
-		{
-		resize();
-		tim.stop();
-		tim = null;
-		}
-		//add past state for animated state tweens
-		if (pastBitmap != null && animation != Animation.NONE)
-		{
-		App.main.addChild(pastBitmap);
-		stateAnimation = true;
-		}else{
-		finishAnimation();
-		}
-		resizeBool = true;
-		//set animation postions
-		if (stateAnimation)
-		{
-		switch(animation)
-		{
-		case Animation.FADEIN:
-			pastBitmap.y = 0;
-			pastBitmap.alpha = 1;
-			Actuate.tween(pastBitmap, 0.8, {alpha:0}).onComplete(function(_)
-			{
-			finishAnimation();
-			}).ease(Expo.easeOut);
-		case Animation.SLIDEUP:
-			
-			pastBitmap.y = 0;
-			y = 0;
-			Actuate.tween(this, 0.4, {y:py}).onComplete(function(_)
-			{
-			finishAnimation();
-			}).ease(Expo.easeIn).delay(0.1);
-			
-		case Animation.SLIDEDOWN:
-			throw("not setup yet");
-			
-		case Animation.OVERLAYUP:
-			pastBitmap.y = 0;
-			Actuate.tween(pastBitmap, 0.4, {y:height}).onComplete(function(_)
-			{
-			finishAnimation();
-			}).ease(Expo.easeIn).delay(0.1);
-			
-		case Animation.OVERLAYDOWN:
-			pastBitmap.y = 0;
-			Actuate.tween(pastBitmap, 0.4, {y:App.setHeight}).onComplete(function(_)
-			{
-			finishAnimation();
-			}).ease(Expo.easeIn).delay(0.1);
-			
-		case Animation.SLIDELEFT:
-			pastBitmap.y = 0;
-			pastBitmap.x = 0;
-			//pastBitmap.visible = false;
-			x = Lib.current.stage.stageWidth;
-			Actuate.tween(pastBitmap, 0.6, {x:-Lib.current.stage.stageWidth}).ease(Quad.easeInOut);
-			Actuate.tween(this, 0.6, {x:px}).onComplete(function(_)
-			{
-			finishAnimation();
-			}).delay(0).ease(Quad.easeInOut);
-		case Animation.SLIDERIGHT:
-			pastBitmap.y = 0;
-			pastBitmap.x = 0;
-			x = -Lib.current.stage.stageWidth;
-			Actuate.tween(pastBitmap, 0.6, {x: Lib.current.stage.stageWidth}).ease(Quad.easeInOut);
-			Actuate.tween(this, 0.6, {x:px}).onComplete(function(_)
-			{
-			finishAnimation();
-			}).delay(0).ease(Quad.easeInOut);
-		case Animation.SLIDEINUP:
-			App.main.swapChildren(this, pastBitmap);
-			y = Lib.current.stage.stageHeight;
-			//Actuate.tween(pastBitmap, 0.6, {y:-Lib.current.stage.stageHeight}).ease(Quad.easeInOut).delay(0);
-			Actuate.tween(this, 0.6, {y:py}).onComplete(function(_)
-			{
-			finishAnimation();
-			}).ease(Quad.easeInOut).delay(0);
-		case Animation.SLIDEINDOWN:
-			App.main.swapChildren(this, pastBitmap);
-			y = -Lib.current.stage.stageHeight;
-			//Actuate.tween(pastBitmap, 0.6, {y:Lib.current.stage.stageHeight}).ease(Quad.easeInOut).delay(0);
-			Actuate.tween(this, 0.6, {y:py}).onComplete(function(_)
-			{
-			finishAnimation();
-			}).ease(Quad.easeInOut).delay(0);
-		default:
-		trace("not a supported Animation currently");
-		}
+		App.main.addChild(this);
 		stateAnimation = false;
-		}
-	}
-	public function finishAnimation()
-	{
-		stateAnimation = false;
-		App.main.removeChild(pastBitmap);
-		pastBitmap = null;
 	}
 	
 	public function moveCamera(dx:Float =0, dy:Float =0,frameX:Int=0,frameY:Int=0)
@@ -261,9 +157,9 @@ class State extends DisplayObjectContainer
 	
 	public function scrollCamera()
 	{
-	//1950 / (1000 / 60) = 117;
-	if (dragBool && !moveBool && !App.state.stateAnimation)
-	{
+		//1950 / (1000 / 60) = 117;
+		if (dragBool && !moveBool && !stateAnimation)
+		{
 			if (Math.abs(spY - App.state.mouseY) < 5) scrollPress = true;
 			mouseDownBool = false;
 			scrollDuration = 117;
@@ -282,7 +178,7 @@ class State extends DisplayObjectContainer
 	
 	public function slideCamera()
 	{
-		if (dragSlideBool && !moveBool && !App.state.stateAnimation)
+		if (dragSlideBool && !moveBool && !stateAnimation)
 		{
 			mouseDownBool = false;
 			if (Math.abs(spX - mouseX) > 5) scrollPress = true;
@@ -451,15 +347,15 @@ class State extends DisplayObjectContainer
 	 */
 	public function mouseDown()
 	{
-		if (App.pointRect(mouseX, mouseY, dragRect))
-		{
+		//if (App.pointRect(mouseX, mouseY, dragRect))
+		//{
 			scrollPress = false;
 			mouseDownBool = true;
 			spY = Math.round(mouseY);
 			omY = spY;
 			spX = Math.round(mouseX);
 			omX = spX;
-		}
+		//}
 	}
 	/**
 	 * State mouse/touch is UP
@@ -546,10 +442,17 @@ class State extends DisplayObjectContainer
 	{
 		App.main.removeChild(pastBitmap);
 		//take screenshot of last state for animations
-		pastBitmap = App.main.createScreenBitmap();
+		//pastBitmap = createScreenBitmap();
 		//Assets.cache.clear();
 		App.main.removeChild(this);
 		App.state = null;
+		trace("num " + numChildren);
+		/*for (i in 0...numChildren)
+		{
+			var child = getChildAt(i);
+			removeChild(child);
+			child = null;
+		}*/
 		//input text focus out
 		#if mobile
 		nativetext.NativeTextField.returnKey = null;
@@ -587,7 +490,7 @@ class State extends DisplayObjectContainer
 	 */
 	public function createScreenBitmap(background:UInt=0xFFFFFF):Bitmap
 	{
-		var screen = new BitmapData(Math.floor(App.setWidth), Math.floor(App.setHeight), false,background);
+		var screen = new BitmapData(Math.floor(App.main.width), Math.floor(App.main.height), false,background);
 		var mat = new Matrix();
 		mat.translate(0, -y);
 		screen.draw(this, mat);

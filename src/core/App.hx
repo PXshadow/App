@@ -63,7 +63,8 @@ class App extends DisplayObjectContainer
 	**/
 	public static var infoSize:Int = 12;
 	//refrence self in static
-	public static var main:App;
+	public static var main:DisplayObjectContainer;
+	public static var screen:App;
 	//Performance Idler
 	/**
 	 *  Set FrameRate when App is De Activated 
@@ -149,10 +150,21 @@ class App extends DisplayObjectContainer
 		setWidth = sx;
 		setHeight = sy;
 		mouseEnabled = false;
-		main = this;
+		
+		screen = this;
+		main = new DisplayObjectContainer();
+		var shape = new Shape();
+		shape.graphics.beginFill(0);
+		shape.graphics.drawRect(0, 0, 300, 300);
+		//main.addChild(shape);
+		//addChild(shape);
+		addChild(main);
+		State.pastBitmap = new Bitmap();
+		addChild(State.pastBitmap);
 		Lib.current.stage.addEventListener(Event.RESIZE, resize);
 		//add self
-		Lib.current.addChild(this);
+		Lib.current.addChild(screen);
+		//events
 		Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, function(e:MouseEvent)
 		{
 		if(!state.stateAnimation)state.mouseDown();
@@ -451,7 +463,7 @@ class App extends DisplayObjectContainer
 	public function resize(e:Event)
 	{
 		//safe NEP
-		if (state != null && App.main.contains(this))
+		if (state != null)
 		{
 		var tempX:Float = stage.stageWidth/ setWidth;
 		var tempY:Float = stage.stageHeight/ setHeight;
@@ -461,29 +473,15 @@ class App extends DisplayObjectContainer
 		State.sx = scale;
 		State.sy = scale;
 		//set resize
-		state.x = State.px; state.y = State.py;
-		state.scaleX = State.sx; state.scaleY = State.sy;
+		x = State.px; 
+		y = State.py;
+		scaleX = State.sx; 
+		scaleY = State.sy;
 		state.resize();
 		}
 		//call on resize
 		if (onResize != null) onResize(e);
 	}
-/**
- * A way to set a bottom bar a header etc. Make's it so it can strech to the edges of the screen or be at absoulte postion x r
- * @param	obj
- * @param	widthBool
- */
-	
-	
-	public function createScreenBitmap(background:UInt=0xFFFFFF):Bitmap
-    {
-		background = stage.color;
-        var screen = new BitmapData(Math.floor(stage.stageWidth), Math.floor(stage.stageHeight), false, background);
-        screen.draw(App.main);
-        var data = new Bitmap(screen, null, true);
-		screen = null;
-        return data;
-    }
 	
 
 }
