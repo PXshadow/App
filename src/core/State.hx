@@ -136,11 +136,18 @@ class State extends DisplayObjectContainer
 		stateAnimation = true;
 		mouseEnabled = false;
 		//drag not possible
-		dragRect = new Rectangle(0, 0, App.setWidth, Math.floor(Lib.current.stage.stageHeight * 1 / App.scale));
+		dragRect = null;
 		App.main.addChild(this);
 		stateAnimation = false;
+		//render
+		addEventListener(Event.ENTER_FRAME, render);
 	}
 	
+	private function render(_)
+	{
+		resize();
+		removeEventListener(Event.ENTER_FRAME, render);
+	}
 	public function moveCamera(dx:Float =0, dy:Float =0,frameX:Int=0,frameY:Int=0)
 	{
 		var disX:Float = 0;
@@ -347,15 +354,15 @@ class State extends DisplayObjectContainer
 	 */
 	public function mouseDown()
 	{
-		//if (App.pointRect(mouseX, mouseY, dragRect))
-		//{
+		if (dragRect == null || App.pointRect(mouseX, mouseY, dragRect))
+		{
 			scrollPress = false;
 			mouseDownBool = true;
 			spY = Math.round(mouseY);
 			omY = spY;
 			spX = Math.round(mouseX);
 			omX = spX;
-		//}
+		}
 	}
 	/**
 	 * State mouse/touch is UP

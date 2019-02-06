@@ -4,7 +4,6 @@ import core.InputText.NativeTextFieldKeyboardType;
 import haxe.Timer;
 import haxe.Utf8;
 import haxe.io.Input;
-import openfl.display.DOMSprite;
 import openfl.display.DisplayObject;
 import openfl.display.DisplayObjectContainer;
 import openfl.events.Event;
@@ -235,7 +234,7 @@ class InputText extends DisplayObjectContainer
 		#if mobile
 		if (bool) 
 		{
-		nativeText.Configure({x:Math.round(x * App.scale + App.state.x), y:Math.round(y * App.scale + App.state.y), enabled:true, visible:true});
+		nativeText.Configure({x:Math.round(x * App.scale + App.screen.x), y:Math.round(y * App.scale + App.screen.y), enabled:true, visible:true});
 		}else{
 		nativeText.Configure({visible:false, enabled:false});
 		}

@@ -6,7 +6,7 @@ import haxe.Unserializer;
 import haxe.io.Bytes;
 import haxe.io.Error;
 
-#if (neko || cpp)
+#if (neko || cpp || android || ios)
 import sys.net.Socket;
 import sys.net.Host;
 #else

@@ -38,8 +38,6 @@ import openfl.events.KeyboardEvent;
  */
 class App extends DisplayObjectContainer
 {
-	//colors
-	public static var colorArray = [755381, 16761913, 11654726];
 	//main
 	public static var setWidth:Int = 0;
 	public static var setHeight:Int =0;
