@@ -55,4 +55,26 @@ public class Firebase extends Extension {
 		//startVibrate();
 		//msgs = new MyFirebaseMessagingService();
 	}
+	private static Bundle getFirebaseAnalyticsBundleFromJson(String jsonString) {
+		Map<String, String> payloadMap = getPayloadFromJson(jsonString);
+
+		Bundle payloadBundle = new Bundle();
+		for (Map.Entry<String, String> entry : payloadMap.entrySet()) {
+			payloadBundle.putString(entry.getKey(), entry.getValue());
+		}
+
+		return payloadBundle;
+	}
+	private static Map<String, String> getPayloadFromJson(String jsonString) {
+		Type type = new TypeToken<Map<String, String>>(){}.getType();
+		Map<String, String> payload = new Gson().fromJson(jsonString, type);
+		return payload;
+	}
+	public static void sendFirebaseAnalyticsEvent(String eventName, String jsonPayload) {
+		Log.i("trace","Firebase.java: sendFirebaseAnalyticsEvent name= " + eventName + ", payload= " + jsonPayload);
+		Application mainApp = Extension.mainActivity.getApplication();
+		FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(mainApp);
+		Bundle payloadBundle = getFirebaseAnalyticsBundleFromJson(jsonPayload);
+		firebaseAnalytics.logEvent(eventName, payloadBundle);
+	}
 }
