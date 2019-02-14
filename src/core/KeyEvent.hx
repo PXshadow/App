@@ -20,6 +20,9 @@ class KeyEvent
 		addParam("utc", "timestamp");
 		addParam("utt", Std.string(stamp));
 		addParam("utl", name);
+		#if mobile
+		extension.haxe.Firebase.sendFirebaseAnalyticsEvent("timestamp_" + name, "{value:" + stamp + "}");
+		#end
 		run();
 	}
 	public static function view(name:String)
@@ -29,6 +32,9 @@ class KeyEvent
 		addParam("ec", "state");
 		addParam("ea", "view");
 		addParam("el", name);
+		#if mobile
+		extension.haxe.Firebase.sendFirebaseAnalyticsEvent("view_" + name, "{value:0}");
+		#end
 		run();
 	}
 	public static function inital(name:String)
@@ -38,6 +44,9 @@ class KeyEvent
 		addParam("ec", "state");
 		addParam("ea", "inital");
 		addParam("el", name);
+		#if mobile
+		extension.haxe.Firebase.sendFirebaseAnalyticsEvent("inital_" + name, "{value:0}");
+		#end
 		run();
 	}
 	public static function page(name:String)
@@ -47,6 +56,9 @@ class KeyEvent
 		addParam("dh", "app");
 		addParam("dp", name);
 		run();
+		#if mobile
+		extension.haxe.Firebase.sendFirebaseAnalyticsEvent(name, "{value:0}");
+		#end
 	}
 	private static function addParam(name:String, value:String)
 	{

@@ -42,8 +42,8 @@ class Button extends Sprite
 	if(sWidth > 0)
 	{
 	//invis button
-	this.graphics.beginFill(0, 0);
-	this.graphics.drawRect(0, 0, sWidth, sHeight);
+	graphics.beginFill(0, 0);
+	graphics.drawRect(0, 0, sWidth, sHeight);
 	}
 	}
 	x = xpos;
@@ -81,7 +81,6 @@ class Button extends Sprite
 	Assets.loadText(path).onComplete(function(string:String)
 	{
 		new SVG(string).render(graphics, 0, 0, sWidth, sHeight);
-		if(rectBool)drawRect(sWidth,sHeight);
 		vector = true;
 	});
 	}

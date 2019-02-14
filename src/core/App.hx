@@ -421,7 +421,7 @@ class App extends DisplayObjectContainer
 	 */
 	public static function createBack(color:Int = 0):Button
 	{
-		var nextButton = new Button(50,40);
+		var nextButton = new Button(40,66);
 		var thick:Int = 4;
 		var radius:Int = 33;
 		nextButton.graphics.lineStyle(thick, color);
