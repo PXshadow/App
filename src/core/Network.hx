@@ -180,7 +180,6 @@ class Network {
 		try
 		{
 		buff = _socket.input.readUntil(0x0D);
-		trace("buff " + buff);
 		obj = Unserializer.run(buff);
 		if (onMessage != null) onMessage(obj);
 		if (mainMessage != null) mainMessage(obj);

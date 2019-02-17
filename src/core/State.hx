@@ -65,7 +65,7 @@ class State extends DisplayObjectContainer
 	 */
 	public var background:DisplayObject;
 	//variable used to check for Animation of state between resize call
-	public var stateAnimation:Bool = false;
+	public var occupied:Bool = false;
 	
 	//old mouse postions
 	public var omY:Float = 0;
@@ -133,12 +133,12 @@ class State extends DisplayObjectContainer
 		scrollSpeed = 0;
 		moveBool = false;
 		scrollBool = false;
-		stateAnimation = true;
+		occupied = true;
 		mouseEnabled = false;
 		//drag not possible
 		dragRect = null;
 		App.main.addChild(this);
-		stateAnimation = false;
+		occupied = false;
 		//render
 		addEventListener(Event.ENTER_FRAME, render);
 	}
@@ -165,7 +165,7 @@ class State extends DisplayObjectContainer
 	public function scrollCamera()
 	{
 		//1950 / (1000 / 60) = 117;
-		if (dragBool && !moveBool && !stateAnimation)
+		if (dragBool && !moveBool && !occupied)
 		{
 			if (Math.abs(spY - App.state.mouseY) < 5) scrollPress = true;
 			mouseDownBool = false;
@@ -185,7 +185,7 @@ class State extends DisplayObjectContainer
 	
 	public function slideCamera()
 	{
-		if (dragSlideBool && !moveBool && !stateAnimation)
+		if (dragSlideBool && !moveBool && !occupied)
 		{
 			mouseDownBool = false;
 			if (Math.abs(spX - mouseX) > 5) scrollPress = true;
@@ -464,7 +464,24 @@ class State extends DisplayObjectContainer
 		#if mobile
 		nativetext.NativeTextField.returnKey = null;
 		#end
+		#if neko
+		neko.vm.Gc.run(true);
+		#end
+		#if cpp
+		cpp.vm.Gc.exitGCFreeZone();
+		cpp.vm.Gc.run(true);
+		#end
 	}
+	}
+	
+	public function pauseGc()
+	{
+		#if neko
+		
+		#end
+		#if cpp
+		cpp.vm.Gc.enterGCFreeZone();
+		#end
 	}
 	
 	/**

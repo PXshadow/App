@@ -37,6 +37,18 @@ class KeyEvent
 		#end
 		run();
 	}
+	public static function button(name:String)
+	{
+		defualt();
+		addParam("t", "event");
+		addParam("ec", "button");
+		addParam("ea", "click");
+		addParam("el", name);
+		#if mobile
+		extension.haxe.Firebase.sendFirebaseAnalyticsEvent("button_" + name, "{value:0}");
+		#end
+		run();
+	}
 	public static function inital(name:String)
 	{
 		defualt();

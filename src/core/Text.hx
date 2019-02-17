@@ -34,7 +34,8 @@ class Text extends TextField
 	#end
 	selectable = false;
 	wordWrap = true;
-	//embedFonts = true;
+	embedFonts = true;
+	border = false;
 	x = xp;
 	y = yp;
 	if (fieldWidth == 0)

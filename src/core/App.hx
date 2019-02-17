@@ -165,21 +165,21 @@ class App extends DisplayObjectContainer
 		//events
 		Lib.current.stage.addEventListener(MouseEvent.MOUSE_DOWN, function(e:MouseEvent)
 		{
-		if(!state.stateAnimation)state.mouseDown();
+		if(!state.occupied)state.mouseDown();
 		});
 		Lib.current.stage.addEventListener(MouseEvent.MOUSE_UP, function(e:MouseEvent)
 		{
-		if(!state.stateAnimation)state.mouseUp();
+		if(!state.occupied)state.mouseUp();
 		});
 		
 		#if !mobile
 		Lib.current.stage.addEventListener(MouseEvent.MOUSE_WHEEL,function(e:MouseEvent)
 		{
-			if (state != null && !state.stateAnimation) state.mouseWheel(e);
+			if (state != null && !state.occupied) state.mouseWheel(e);
 		});
 		Lib.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, function(e:KeyboardEvent)
 		{
-			if(state != null && !state.stateAnimation)state.keyDown(e);
+			if(state != null && !state.occupied)state.keyDown(e);
 		});
 		Lib.current.stage.addEventListener(MouseEvent.MIDDLE_MOUSE_DOWN, function(e:MouseEvent)
 		{
@@ -216,7 +216,7 @@ class App extends DisplayObjectContainer
 		Lib.current.stage.addEventListener(Event.ENTER_FRAME, function(e:Event)
 		{
 		if (App.network != null) App.network.update();
-		if (state != null && !state.stateAnimation)state.loop();
+		if (state != null && !state.occupied)state.loop();
 		}); 
 		
 		Lib.current.stage.addEventListener (openfl.events.Event.ACTIVATE, function (_) {
