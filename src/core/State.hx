@@ -227,11 +227,11 @@ class State extends DisplayObjectContainer
 	
 	}
 	
-		
+	
 	/**
 	 * Update State
 	 */
-	public function loop()
+	public function loop(elapsed:Float)
 	{
 		
 	//if move turn off mouseDown
@@ -239,8 +239,8 @@ class State extends DisplayObjectContainer
 	//drag and scroll
 	if (mouseDownBool)
 	{
-		scrollSpeed = Math.round(mouseY - omY);
-		slideSpeed = Math.round(mouseX - omX);
+		scrollSpeed = Math.round((mouseY - omY) * elapsed);
+		slideSpeed = Math.round((mouseX - omX) * elapsed);
 		
 	}else{
 	if (scrollBool || moveBool)

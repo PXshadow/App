@@ -4,6 +4,7 @@ import core.Button;
 import core.State;
 import core.Text;
 import core.Network;
+import lime.app.Application;
 import lime.ui.KeyCode;
 import openfl.display.DisplayObjectContainer;
 import openfl.display.Graphics;
@@ -47,27 +48,9 @@ class App extends DisplayObjectContainer
 	 * Enabled let's android back button leave app
 	 */
 	public var backExit:Bool = false;
-	//debug
-	/**
-	 * Set to False to Remove Info Bool
-	 */
-	public static var infoBool:Bool = true;
-	/**
-	 * color of Info Text Defualt Black = 0 white = 16777215
-	 */
-	public static var infoColor:Int = 0;
-	/**
-	* info Text size
-	**/
-	public static var infoSize:Int = 12;
 	//refrence self in static
 	public static var main:DisplayObjectContainer;
 	public static var screen:App;
-	//Performance Idler
-	/**
-	 *  Set FrameRate when App is De Activated 
-	 */
-	public var idle:Int = 5;
 	/**
 	 *  Set Url's to Diffrent States
 	 */
@@ -112,6 +95,8 @@ class App extends DisplayObjectContainer
 	 */
 	public var active:Bool = true;
 	
+	var elapsedTime:Float = 0;
+	var lastTime:Float = 0;
 	public function new(sx:Int=640,sy:Int=1136,_font:Font=null) 
 	{
 		super();
@@ -215,12 +200,17 @@ class App extends DisplayObjectContainer
 		
 		Lib.current.stage.addEventListener(Event.ENTER_FRAME, function(e:Event)
 		{
-		if (App.network != null) App.network.update();
-		if (state != null && !state.occupied)state.loop();
+		elapsedTime = Timer.stamp();
+		if (elapsedTime - lastTime > 1/50) 
+		{
+			if (App.network != null) App.network.update();
+			if (state != null && !state.occupied) state.loop(1 - (elapsedTime - lastTime));
+			lastTime = elapsedTime;
+		}
 		}); 
 		
 		Lib.current.stage.addEventListener (openfl.events.Event.ACTIVATE, function (_) {
-		Lib.current.stage.frameRate = 60;
+		Lib.current.stage.frameRate = 61;
 		active = true;
 		if (activeEvent != null) activeEvent();
 		});
