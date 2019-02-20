@@ -97,6 +97,7 @@ class App extends DisplayObjectContainer
 	
 	var elapsedTime:Float = 0;
 	var lastTime:Float = 0;
+	public static var minFps:Int = 40;
 	public function new(sx:Int=640,sy:Int=1136,_font:Font=null) 
 	{
 		super();
@@ -200,13 +201,10 @@ class App extends DisplayObjectContainer
 		
 		Lib.current.stage.addEventListener(Event.ENTER_FRAME, function(e:Event)
 		{
-		elapsedTime = Timer.stamp();
-		if (elapsedTime - lastTime > 1/50) 
-		{
+			elapsedTime = Timer.stamp();
 			if (App.network != null) App.network.update();
 			if (state != null && !state.occupied) state.loop(1 - (elapsedTime - lastTime));
 			lastTime = elapsedTime;
-		}
 		}); 
 		
 		Lib.current.stage.addEventListener (openfl.events.Event.ACTIVATE, function (_) {
@@ -411,7 +409,7 @@ class App extends DisplayObjectContainer
 	 */
 	public static function createBack(color:Int = 0):Button
 	{
-		var nextButton = new Button(40,66);
+		var nextButton = new Button(60,70);
 		var thick:Int = 4;
 		var radius:Int = 33;
 		nextButton.graphics.lineStyle(thick, color);
