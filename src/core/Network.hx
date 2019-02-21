@@ -6,7 +6,7 @@ import haxe.Unserializer;
 import haxe.io.Bytes;
 import haxe.io.Error;
 
-#if (neko || cpp || android || ios)
+#if (neko || cpp || android || ios || eval)
 import sys.net.Socket;
 import sys.net.Host;
 #end
@@ -18,10 +18,10 @@ class Network {
   public var onMessage:Dynamic->Void;
   public var mainMessage:Dynamic->Void;
   public var connected: Bool;
-  #if (neko || cpp)
-  private var _socket: Socket;
-  #else
+  #if (js || html)
   private var _socket:js.html.WebSocket;
+  #else
+  private var _socket: Socket;
   #end
   private var ip:String;
   private var port:Int;
@@ -52,7 +52,28 @@ class Network {
 
   
   public function connect() {
-	 #if (neko || cpp)
+	 
+	  
+	 #if (html || js)
+	 _socket = new js.html.WebSocket(url);
+	_socket.onopen = function(_)
+	{
+		trace("connect");
+		connected = true;
+		if (onConnect != null) onConnect(null);
+		
+		_socket.onmessage = function(buff:Dynamic)
+		{
+			trace("message " + buff.data);
+			var obj = Unserializer.run(buff.data);
+			if (onMessage != null) onMessage(obj);
+			if (mainMessage != null) mainMessage(obj);
+		}
+		_socket.onclose = function(){reconnect(); };
+		_socket.onerror = function(){reconnect(); };
+			
+	}
+	 #else
 	 _socket = new Socket();
 	 if (secure)
 	 {
@@ -74,25 +95,6 @@ class Network {
 		reconnect();
 		trace("close " + e);
     }
-    #else
-	_socket = new js.html.WebSocket(url);
-	_socket.onopen = function(_)
-	{
-		trace("connect");
-		connected = true;
-		if (onConnect != null) onConnect(null);
-		
-		_socket.onmessage = function(buff:Dynamic)
-		{
-			trace("message " + buff.data);
-			var obj = Unserializer.run(buff.data);
-			if (onMessage != null) onMessage(obj);
-			if (mainMessage != null) mainMessage(obj);
-		}
-		_socket.onclose = function(){reconnect(); };
-		_socket.onerror = function(){reconnect(); };
-			
-	}
     #end
 
   }
@@ -130,7 +132,7 @@ class Network {
     #end
 
     #if (!neko && cpp)
-    _socket.shutdown(true, true);
+    //_socket.shutdown(true, true);
     #end
     _socket.close();
 	connected = false;
