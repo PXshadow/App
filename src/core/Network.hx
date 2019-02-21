@@ -292,10 +292,10 @@ class Network {
 
     writeUnsignedInt16(s.length);
 
-    #if (neko || cpp)
-    _socket.output.writeString(s);
+    #if (js || html)
+	_socket.send(s);
     #else
-    _socket.send(s);
+	_socket.output.writeString(s);
     #end
   }
 
