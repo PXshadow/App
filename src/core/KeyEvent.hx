@@ -33,7 +33,7 @@ class KeyEvent
 		addParam("ea", "view");
 		addParam("el", name);
 		#if mobile
-		extension.haxe.Firebase.sendFirebaseAnalyticsEvent("view_" + name, "{value:0}");
+		//extension.haxe.Firebase.sendFirebaseAnalyticsEvent("view_" + name, "{value:0}");
 		#end
 		run();
 	}
@@ -88,7 +88,7 @@ class KeyEvent
 		params = params.substring(0, params.length - 1);
 		var http = new Http(url + params);
 		#if js
-		http.async = true;
+		//http.async = true;
 		#end
 		http.request(false);
 		http = null;
