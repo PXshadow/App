@@ -221,12 +221,10 @@ class Network {
   {
 	  if (connected)
 	  {
-	  #if (neko || cpp)
-	  _socket.output.writeString(Serializer.run(obj) + "\r");
-	  #else
+	  #if (js || html)
 	  @:privateAccess _socket.send(Serializer.run(obj));
-	 // _socket.writeUTF(Serializer.run(obj));
-	 // _socket.flush();
+	  #else
+	 _socket.output.writeString(Serializer.run(obj) + "\r");
 	  #end
 	  }
   }
