@@ -26,7 +26,7 @@ class Network {
   private var ip:String;
   private var port:Int;
   private var url:String;
-  #if (neko || cpp)
+  #if !(js || html)
   private var host:Host;
   #end
   private var reconnectTimer:Timer;
@@ -38,7 +38,7 @@ class Network {
 	ip = ipString;
 	port = portInt;
 	url = urlString;
-	#if (neko || cpp || eval)
+	#if !(js || html)
 	try
 	{
 		host = new Host(ip);
