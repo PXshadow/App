@@ -9,8 +9,6 @@ import haxe.io.Error;
 #if (neko || cpp || android || ios)
 import sys.net.Socket;
 import sys.net.Host;
-#else
-import js.html.WebSocket;
 #end
 
 class Network {
@@ -23,7 +21,7 @@ class Network {
   #if (neko || cpp)
   private var _socket: Socket;
   #else
-  private var _socket:WebSocket;
+  private var _socket:js.html.WebSocket;
   #end
   private var ip:String;
   private var port:Int;
@@ -77,7 +75,7 @@ class Network {
 		trace("close " + e);
     }
     #else
-	_socket = new WebSocket(url);
+	_socket = new js.html.WebSocket(url);
 	_socket.onopen = function(_)
 	{
 		trace("connect");

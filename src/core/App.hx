@@ -409,7 +409,7 @@ class App extends DisplayObjectContainer
 	 */
 	public static function createBack(color:Int = 0):Button
 	{
-		var nextButton = new Button(60,70);
+		var nextButton = new Button(60,70 + 15);
 		var thick:Int = 4;
 		var radius:Int = 33;
 		nextButton.graphics.lineStyle(thick, color);
@@ -423,7 +423,7 @@ class App extends DisplayObjectContainer
 		//rect
 		nextButton.graphics.endFill();
 		nextButton.graphics.beginFill(0, 0);
-		nextButton.graphics.drawRect( -80, -60, 80, 80);
+		nextButton.graphics.drawRect( -80, -60, 120, 100);
 		return nextButton;
 	}
 	/**
