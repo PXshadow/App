@@ -38,7 +38,7 @@ class Network {
 	ip = ipString;
 	port = portInt;
 	url = urlString;
-	#if (neko || cpp)
+	#if (neko || cpp || eval)
 	try
 	{
 		host = new Host(ip);
