@@ -19,7 +19,6 @@ import openfl.events.MouseEvent;
 import openfl.geom.Matrix;
 import openfl.geom.Rectangle;
 import openfl.system.System;
-import openfl.system.System.gc;
 import openfl.Lib;
 import openfl.text.TextField;
 import motion.Actuate;
@@ -464,24 +463,7 @@ class State extends DisplayObjectContainer
 		#if mobile
 		nativetext.NativeTextField.returnKey = null;
 		#end
-		#if neko
-		neko.vm.Gc.run(true);
-		#end
-		#if cpp
-		cpp.vm.Gc.exitGCFreeZone();
-		cpp.vm.Gc.run(true);
-		#end
 	}
-	}
-	
-	public function pauseGc()
-	{
-		#if neko
-		
-		#end
-		#if cpp
-		cpp.vm.Gc.enterGCFreeZone();
-		#end
 	}
 	
 	/**

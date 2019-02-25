@@ -12,6 +12,9 @@ import openfl.text.TextFieldType;
 import openfl.text.TextFormat;
 import openfl.text.TextFormatAlign;
 import openfl.Assets;
+import openfl.events.MouseEvent;
+import openfl.events.KeyboardEvent;
+import openfl.events.FocusEvent;
 
 /**
  * ...
@@ -49,6 +52,12 @@ class Text extends TextField
 	if (App.font != null) fn = Assets.getFont(App.font.format).fontName;
 	defaultTextFormat = new TextFormat(fn, size, color, false, false, false, "", "", align, null, null, null, ident);
 	cacheAsBitmap = true;
+	//events
+	@:privateAccess removeEventListener(MouseEvent.MOUSE_DOWN, this_onMouseDown);
+	@:privateAccess removeEventListener(FocusEvent.FOCUS_IN, this_onFocusIn);
+	@:privateAccess removeEventListener(FocusEvent.FOCUS_OUT, this_onFocusOut);
+	@:privateAccess removeEventListener(KeyboardEvent.KEY_DOWN, this_onKeyDown);
+	@:privateAccess removeEventListener(MouseEvent.MOUSE_WHEEL, this_onMouseWheel);
 	}
 	
 	/*@:noCompletion override private function __updateText(value:String):Void
