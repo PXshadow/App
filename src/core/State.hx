@@ -108,6 +108,7 @@ class State extends DisplayObjectContainer
 	
 	public var vectorY:Vector<Int>;
 	public var vectorX:Vector<Int>;
+	public static var prev:String = "";
 	
 	public function new(minY:Int=0,maxY:Int=0,minX:Int=0,maxX:Int=0,animation:Animation=Animation.NONE) 
 	{
@@ -446,6 +447,9 @@ class State extends DisplayObjectContainer
 	//protect against null
 	if (this != null)
 	{
+		//set prev
+		prev = App.getStateName();
+		trace("prev " + prev);
 		App.main.removeChild(pastBitmap);
 		//take screenshot of last state for animations
 		//pastBitmap = createScreenBitmap();

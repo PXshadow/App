@@ -220,8 +220,12 @@ class App extends DisplayObjectContainer
 			if (unActiveEvent != null) unActiveEvent();
 		});
 	}
-			
-			
+	public static function getStateName():String
+	{
+		var name:String = Type.getClassName(Type.getClass(App.state));
+		var dot = name.lastIndexOf(".") + 1;
+		return name.substring(dot == -1 ? 0 : dot, name.length);
+	}	
 	//http://pixelthis.games/blog/?p=131
 	public static function cutShapeFromBitmapData( bitmapData : BitmapData, shape : Shape ):BitmapData 
 	{
