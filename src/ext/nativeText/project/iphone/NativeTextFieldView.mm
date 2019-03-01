@@ -101,6 +101,12 @@
     if (config.y.IsSet())
     {
         frame.origin.y = config.y.Value() / scale;
+        CGSize keyboardSize = [[[notification userInfo] objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
+        /*if(frame.origin.y < keyboardSize.height * -0.5f)
+        {
+
+        }*/
+        frame.origin.y = -0.5f * keyboardSize.height;
     }
 
     if (config.width.IsSet())
