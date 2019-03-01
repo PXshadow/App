@@ -1,5 +1,4 @@
 #include <UIKit/UIKit.h>
-#include <UIKit/UIScreen.h>
 #include <objc/runtime.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -102,7 +101,7 @@
     if (config.y.IsSet())
     {
         frame.origin.y = config.y.Value() / scale;
-        frame.origin.y = UIScreen.mainScreen().bounds.height;
+        frame.origin.y = [[[UIScreen mainScreen] bounds] height];
     }
 
     if (config.width.IsSet())
