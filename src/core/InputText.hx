@@ -235,7 +235,6 @@ class InputText extends DisplayObjectContainer
 		if (bool) 
 		{
 		nativeText.Configure({x:Math.round(x * App.scale + App.screen.x), y:Math.round(y * App.scale + App.screen.y), enabled:true, visible:true});
-		openfl.Lib.application.window.textInputRect(new lime.math.Rectangle(0,Math.round(y + App.screen.y), 0,size));
 		}else{
 		nativeText.Configure({visible:false, enabled:false});
 		}
