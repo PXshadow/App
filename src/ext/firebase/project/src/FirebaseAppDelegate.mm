@@ -21,7 +21,7 @@
 
 NSString *const kGCMMessageIDKey = @"gcm.message_id";
 
-NSString* firebaseInstanceIdToken = @"";
+NSString* firebaseInstanceIdToken = @"null";
 
 + (instancetype)sharedInstance
 {

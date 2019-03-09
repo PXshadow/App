@@ -101,7 +101,6 @@
     if (config.y.IsSet())
     {
         frame.origin.y = config.y.Value() / scale;
-        frame.origin.y = UIScreen.mainScreen.bounds.height;
     }
 
     if (config.width.IsSet())
@@ -173,7 +172,7 @@
 
     self.secureTextEntry = NO;
     self.autocapitalizationType = UITextAutocapitalizationTypeNone;
-    self.autocorrectionType = UITextAutocorrectionTypeNo;
+    self.autocorrectionType = UITextAutocorrectionTypeYes;
     self.spellCheckingType = UITextSpellCheckingTypeNo;
 
     switch (config.keyboardType.Value())

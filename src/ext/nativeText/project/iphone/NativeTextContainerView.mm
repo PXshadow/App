@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include "ExtensionKit.h"
 #include "ExtensionKitIPhone.h"
+//#include "NSNotificationCenter.h"
 
 #include "NativeTextContainerView.h"
 
@@ -34,15 +35,30 @@
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField
 {
+    //event
     extensionkit::DispatchEventToHaxeInstance(
         textField.tag,
         "nativetext.event.NativeTextEvent",
         extensionkit::CSTRING, "nativetext_focus_in",
         extensionkit::CEND);
 }
+    
+    // Call this method somewhere in your view controller setup code.
+- (void)registerForKeyboardNotifications
+    {
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(keyboardWasShown:)
+                                                     name:UIKeyboardDidShowNotification object:nil];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(keyboardWillBeHidden:)
+                                                     name:UIKeyboardWillHideNotification object:nil];
+        
+    }
 
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
+    //event
     extensionkit::DispatchEventToHaxeInstance(
         textField.tag,
         "nativetext.event.NativeTextEvent",
@@ -92,6 +108,11 @@
 
 - (void)textViewDidBeginEditing:(UITextView *)textView
 {
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDuration:0.25];
+    UIView.view.frame = CGRectMake(0,-300,UIView.view.frame.width,UIView.view.frame.height);
+    [UIView commitAnimations];
+    
       extensionkit::DispatchEventToHaxeInstance(
       textView.tag,
       "nativetext.event.NativeTextEvent",
