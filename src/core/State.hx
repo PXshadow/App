@@ -109,11 +109,16 @@ class State extends DisplayObjectContainer
 	public var vectorY:Vector<Int>;
 	public var vectorX:Vector<Int>;
 	public static var prev:String = "";
+	private var animate:Animation;
 	
 	public function new(minY:Int=0,maxY:Int=0,minX:Int=0,maxX:Int=0,animation:Animation=Animation.NONE) 
 	{
 		super();
+		@:privateAccess __removeAllListeners();
 		if (background != null) addChild(background);
+		//set animation
+		animate = animation;
+		animation = null;
 		//set camera restriction
 		cameraMinY = -minY;
 		cameraMaxY = -maxY;
@@ -133,12 +138,10 @@ class State extends DisplayObjectContainer
 		scrollSpeed = 0;
 		moveBool = false;
 		scrollBool = false;
-		occupied = true;
 		mouseEnabled = false;
 		//drag not possible
 		dragRect = null;
 		App.main.addChild(this);
-		occupied = false;
 		//render
 		addEventListener(Event.ENTER_FRAME, render);
 	}
@@ -146,7 +149,58 @@ class State extends DisplayObjectContainer
 	private function render(_)
 	{
 		resize();
+		animation();
 		removeEventListener(Event.ENTER_FRAME, render);
+	}
+	private function animation()
+	{
+		occupied = true;
+		if(animate == Animation.NONE)
+		{
+			completeAnimation();
+			return;
+		}
+		App.main.addChild(pastBitmap);
+		switch(animate)
+		{
+			case Animation.FADEIN:
+
+			case Animation.SLIDELEFT:
+			x = pastBitmap.width + State.px;
+			//Actuate.tween(pastBitmap,0.6, {alpha:0}).ease(Quad.easeInOut);
+			Actuate.tween(App.main, 0.6, {x:-pastBitmap.width - State.px}).ease(Quad.easeInOut).onComplete(function(_)
+			{
+				completeAnimation();
+			});
+			case Animation.SLIDERIGHT:
+			x = -(pastBitmap.width + State.px);
+			//Actuate.tween(pastBitmap,0.6, {alpha:0}).ease(Quad.easeInOut);
+			Actuate.tween(App.main, 0.6, {x:pastBitmap.width + State.px}).ease(Quad.easeInOut).onComplete(function(_)
+			{
+				completeAnimation();
+			});
+			trace("right");
+			case Animation.SLIDEINUP:
+			trace("slide in and up");
+			pastBitmap.y = 0;
+			y = App.setHeight;
+			Actuate.tween(pastBitmap,0.6,{alpha:0}).ease(Quad.easeIn);
+			Actuate.tween(this,0.6,{y:0}).ease(Quad.easeIn).onComplete(function(_)
+			{
+				completeAnimation();
+			});
+			default:
+			completeAnimation();
+		}
+	}
+	private function completeAnimation()
+	{
+		occupied = false;
+		App.main.removeChild(pastBitmap);
+		pastBitmap = null;
+		App.main.x = 0;
+		x = 0;
+		y = 0;
 	}
 	public function moveCamera(dx:Float =0, dy:Float =0,frameX:Int=0,frameY:Int=0)
 	{
@@ -354,6 +408,7 @@ class State extends DisplayObjectContainer
 	 */
 	public function mouseDown()
 	{
+		if(occupied) return;
 		if (dragRect == null || App.pointRect(mouseX, mouseY, dragRect))
 		{
 			scrollPress = false;
@@ -369,6 +424,7 @@ class State extends DisplayObjectContainer
 	 */
 	public function mouseUp()
 	{
+		if(occupied) return;
 		mouseDownBool = false;
 	}
 	/**
@@ -447,12 +503,11 @@ class State extends DisplayObjectContainer
 	//protect against null
 	if (this != null)
 	{
+		//take screenshot of last state for animations
+		pastBitmap = createScreenBitmap();
 		//set prev
 		prev = App.getStateName();
 		trace("prev " + prev);
-		App.main.removeChild(pastBitmap);
-		//take screenshot of last state for animations
-		//pastBitmap = createScreenBitmap();
 		//Assets.cache.clear();
 		App.main.removeChild(this);
 		App.state = null;
@@ -490,7 +545,7 @@ class State extends DisplayObjectContainer
 		if (App.state == this)
 		{
 			obj.x = -px * 1/App.scale;
-			if (widthBool) obj.width = Lib.current.stage.stageWidth * 1 / App.scale;
+			if (widthBool) obj.width = stage.stageWidth * 1 / App.scale;
 		}
 	}
 	
@@ -500,13 +555,10 @@ class State extends DisplayObjectContainer
 	 */
 	public function createScreenBitmap(background:UInt=0xFFFFFF):Bitmap
 	{
-		var screen = new BitmapData(Math.floor(App.main.width), Math.floor(App.main.height), false,background);
+		var screen = new BitmapData(Math.floor(App.setWidth), Math.floor(App.setHeight), false,background);
 		var mat = new Matrix();
-		mat.translate(0, -y);
-		screen.draw(this, mat);
+		screen.draw(this,mat,null,null,null,true);
 		var data = new Bitmap(screen, null, true);
-		data.scaleX = 1 / scaleX;
-		data.scaleY = 1 / scaleY;
 		return data;
 	}
 }

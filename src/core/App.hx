@@ -101,6 +101,7 @@ class App extends DisplayObjectContainer
 	public function new(sx:Int=640,sy:Int=1136,_font:Font=null) 
 	{
 		super();
+		@:privateAccess __removeAllListeners();
 		if (_font != null) font = _font;
 		Lib.current.mouseEnabled = false;
 		#if html5
@@ -137,14 +138,10 @@ class App extends DisplayObjectContainer
 		
 		screen = this;
 		main = new DisplayObjectContainer();
-		var shape = new Shape();
-		shape.graphics.beginFill(0);
-		shape.graphics.drawRect(0, 0, 300, 300);
-		//main.addChild(shape);
-		//addChild(shape);
+		@:privateAccess main.__removeAllListeners();
 		addChild(main);
 		State.pastBitmap = new Bitmap();
-		addChild(State.pastBitmap);
+		main.addChild(State.pastBitmap);
 		Lib.current.stage.addEventListener(Event.RESIZE, resize);
 		//add self
 		Lib.current.addChild(screen);

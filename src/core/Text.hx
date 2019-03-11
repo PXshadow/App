@@ -53,11 +53,7 @@ class Text extends TextField
 	defaultTextFormat = new TextFormat(fn, size, color, false, false, false, "", "", align, null, null, null, ident);
 	cacheAsBitmap = true;
 	//events
-	@:privateAccess removeEventListener(MouseEvent.MOUSE_DOWN, this_onMouseDown);
-	@:privateAccess removeEventListener(FocusEvent.FOCUS_IN, this_onFocusIn);
-	@:privateAccess removeEventListener(FocusEvent.FOCUS_OUT, this_onFocusOut);
-	@:privateAccess removeEventListener(KeyboardEvent.KEY_DOWN, this_onKeyDown);
-	@:privateAccess removeEventListener(MouseEvent.MOUSE_WHEEL, this_onMouseWheel);
+	@:privateAccess __removeAllListeners();
 	}
 	
 	/*@:noCompletion override private function __updateText(value:String):Void

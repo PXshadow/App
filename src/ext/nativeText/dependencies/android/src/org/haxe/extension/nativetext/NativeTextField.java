@@ -32,7 +32,7 @@ class NativeTextField extends EditText implements View.OnFocusChangeListener
         setId(eventDispatcherId);
         setSingleLine(true);
         setBackgroundDrawable(null);
-        setPadding(0, 0, 0, 0);
+        setPadding(0, 0, 0, 40);
 
         SetReturnKeyType(NativeTextFieldReturnKeyType.Default);        
 
