@@ -15,6 +15,7 @@ import openfl.Assets;
 import openfl.events.MouseEvent;
 import openfl.events.KeyboardEvent;
 import openfl.events.FocusEvent;
+import lime.text.UTF8String;
 
 /**
  * ...
@@ -54,23 +55,43 @@ class Text extends TextField
 	cacheAsBitmap = true;
 	//events
 	@:privateAccess __removeAllListeners();
+	@:privateAccess __textEngine.getLayoutGroups();
 	}
-	
-	/*@:noCompletion override private function __updateText(value:String):Void
+
+	public function scrollY(scroll:Float=0)
 	{
-		super.__updateText(value);
-		//redraw();
-	}
-	
-	public function redraw()
-	{
-		cacheAsBitmap = false;
-		var timer = new Timer(1);
-		timer.run = function()
+		for(group in __textEngine.layoutGroups)
 		{
-			cacheAsBitmap = true;
-			timer.stop();
-			timer = null;
+			group.offsetY += scroll;
 		}
-	}*/
+		@:privateAccess __dirty = true;
+	}
+
+	@:noCompletion override private function set_text(value:String):String
+	{
+		__dirty = true;
+		__layoutDirty = true;
+		__setRenderDirty();
+		if (__textEngine.textFormatRanges.length > 1)
+		{
+			__textEngine.textFormatRanges.splice(1, __textEngine.textFormatRanges.length - 1);
+		}
+
+		var utfValue:UTF8String = value;
+		var range = __textEngine.textFormatRanges[0];
+		range.format = __textFormat;
+		range.start = 0;
+		range.end = utfValue.length;
+
+		__isHTML = false;
+
+		//__forceCachedBitmapUpdate = false;
+		
+		__textEngine.text = value;
+		__text = __textEngine.text;
+
+
+		return value;
+	}
+
 }
