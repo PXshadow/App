@@ -115,7 +115,6 @@ class State extends DisplayObjectContainer
 	{
 		super();
 		@:privateAccess __removeAllListeners();
-		if (background != null) addChild(background);
 		//set animation
 		animate = animation;
 		animation = null;
@@ -141,15 +140,14 @@ class State extends DisplayObjectContainer
 		mouseEnabled = false;
 		//drag not possible
 		dragRect = null;
-		App.main.addChild(this);
 		//render
 		addEventListener(Event.ENTER_FRAME, render);
 	}
 	
 	private function render(_)
 	{
-		resize();
 		animation();
+		resize();
 		removeEventListener(Event.ENTER_FRAME, render);
 	}
 	private function animation()
@@ -160,6 +158,7 @@ class State extends DisplayObjectContainer
 			completeAnimation();
 			return;
 		}
+		App.main.addChild(this);
 		App.main.addChild(pastBitmap);
 		switch(animate)
 		{
@@ -167,25 +166,26 @@ class State extends DisplayObjectContainer
 
 			case Animation.SLIDELEFT:
 			x = pastBitmap.width + State.px;
-			//Actuate.tween(pastBitmap,0.6, {alpha:0}).ease(Quad.easeInOut);
 			Actuate.tween(App.main, 0.6, {x:-pastBitmap.width - State.px}).ease(Quad.easeInOut).onComplete(function(_)
 			{
 				completeAnimation();
 			});
 			case Animation.SLIDERIGHT:
 			x = -(pastBitmap.width + State.px);
-			//Actuate.tween(pastBitmap,0.6, {alpha:0}).ease(Quad.easeInOut);
 			Actuate.tween(App.main, 0.6, {x:pastBitmap.width + State.px}).ease(Quad.easeInOut).onComplete(function(_)
 			{
 				completeAnimation();
 			});
 			trace("right");
-			case Animation.SLIDEINUP:
-			trace("slide in and up");
-			pastBitmap.y = 0;
-			y = App.setHeight;
-			Actuate.tween(pastBitmap,0.6,{alpha:0}).ease(Quad.easeIn);
-			Actuate.tween(this,0.6,{y:0}).ease(Quad.easeIn).onComplete(function(_)
+			case Animation.SLIDEUP:
+			y = (pastBitmap.height + State.py);
+			Actuate.tween(App.main, 0.6, {y:-pastBitmap.height - State.py}).ease(Quad.easeInOut).onComplete(function(_)
+			{
+				completeAnimation();
+			});
+			case Animation.SLIDEDOWN:
+			y = -(pastBitmap.height + State.py);
+			Actuate.tween(App.main, 0.6, {y:pastBitmap.height + State.py}).ease(Quad.easeInOut).onComplete(function(_)
 			{
 				completeAnimation();
 			});
@@ -195,10 +195,12 @@ class State extends DisplayObjectContainer
 	}
 	private function completeAnimation()
 	{
+		if(!App.main.contains(this)) App.main.addChild(this);
 		occupied = false;
 		App.main.removeChild(pastBitmap);
 		pastBitmap = null;
 		App.main.x = 0;
+		App.main.y = 0;
 		x = 0;
 		y = 0;
 	}
@@ -481,17 +483,6 @@ class State extends DisplayObjectContainer
 	public function resize()
 	{
 		if (App.state != this) return;
-		backgroundResize();
-	}
-	
-	public function backgroundResize()
-	{
-		if (background != null)
-		{
-		background.x = -px * 1 / sx;
-		background.width = Lib.current.stage.stageWidth * 1 / sx;
-		background.height = Lib.current.stage.stageHeight * 1 / sy;
-		}
 	}
 	/**
 	 * Remove State
