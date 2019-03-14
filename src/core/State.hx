@@ -59,10 +59,6 @@ class State extends DisplayObjectContainer
 	/**
 	 * Min and Max Camera Scroll Distances Defualt is no Restrictions
 	 */
-	/**
-	 *  Object that is below the entire state can be any display object
-	 */
-	public var background:DisplayObject;
 	//variable used to check for Animation of state between resize call
 	public var occupied:Bool = false;
 	
