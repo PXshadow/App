@@ -532,7 +532,17 @@ class State extends DisplayObjectContainer
 		if (App.state == this)
 		{
 			obj.x = -px * 1/App.scale;
-			if (widthBool) obj.width = stage.stageWidth * 1 / App.scale;
+			if (widthBool) obj.width = Lib.current.stage.stageWidth * 1 / App.scale;
+		}
+	}
+	public function setStage(obj:DisplayObject)
+	{
+		if(App.state == this)
+		{
+			obj.x = -px * 1/App.scale;
+			obj.y = -py * 1/App.scale;
+			obj.width = Lib.current.stage.stageWidth * 1 / App.scale;
+			obj.height = Lib.current.stage.stageHeight * 1 / App.scale;
 		}
 	}
 	
