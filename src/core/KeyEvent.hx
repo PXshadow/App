@@ -85,10 +85,13 @@ class KeyEvent
 	}
 	public static function run()
 	{
+		#if (js || html)
+		return;
+		#end
 		params = params.substring(0, params.length - 1);
 		var http = new Http(url + params);
-		#if js
-		//http.async = true;
+		#if (js || html)
+		http.async = true;
 		#end
 		http.request(false);
 		http = null;

@@ -508,6 +508,9 @@ class State extends DisplayObjectContainer
 		//input text focus out
 		#if mobile
 		nativetext.NativeTextField.returnKey = null;
+		nativetext.NativeTextField.focusOut = null;
+		nativetext.NativeTextField.focusIn = null;
+		nativetext.NativeTextField.change = null;
 		#end
 	}
 	}
