@@ -1,140 +1,155 @@
 package core;
 
-import openfl.utils.ByteArray;
 import haxe.io.Eof;
-import haxe.io.BytesBuffer;
-import openfl.events.ProgressEvent;
-import openfl.events.Event;
 import haxe.Serializer;
 import haxe.Timer;
 import haxe.Unserializer;
 import haxe.io.Bytes;
 import haxe.io.Error;
+#if (js || html)
+import js.html.WebSocket as Socket;
+#else
+import sys.net.Socket;
+#end
 
 class Network {
-  public var MAX_DATA_SIZE: Int = 65535;
-  public static var onConnect(default, default): Dynamic->Void;
-  public static var onClose(default, default): Dynamic->Void;
+  public static var onConnect(default, default): Void->Void;
+  public static var onClose(default, default): Void->Void;
   public var onMessage:Dynamic->Void;
   public var mainMessage:Dynamic->Void;
-  private var ip:String;
-  private var port:Int;
-  private var url:String;
-  private var socket:openfl.net.Socket;
+  #if (cpp || neko)
+  var host:sys.net.Host;
+  #end
+  var port:Int;
+  var url:String;
+  var connected:Bool = false;
+  var closed:Bool = true;
+  var MAX_DATA_SIZE: Int = 65535;
+  private var socket:Socket;
   
   public function new(ipString:String, portInt:Int,urlString:String="") 
   {
-	  ip = ipString;
   	port = portInt;
 	  url = urlString;
-    socket = new openfl.net.Socket();
-    #if (html || js)
-    @:privateAccess socket.secure = true;
+    socket = new Socket();
+
+    #if (cpp || neko)
+    try {
+      host = new sys.net.Host(ipString);
+    }catch(e:Dynamic)
+    {
+      trace("unacccepted host");
+    }
     #end
-  }
-  private function _removeEvents()
-  {
-    socket.removeEventListener(Event.CONNECT,_connect);
-    socket.removeEventListener(Event.CLOSE,_close);
-    socket.removeEventListener(ProgressEvent.SOCKET_DATA,_message);
   }
   private function _connect(_)
   {
     trace("connect");
-    #if (neko || cpp || mobile)
-    socket.writeUTFBytes("9");
-    socket.flush();
+    connected = true;
+    //write
+    #if (cpp || neko)
+    write("9");
     #end
-    if(onConnect != null) onConnect(null);
+    //connect
+    if (onConnect != null) onConnect();
   }
   private function _close(_)
   {
-    trace("close");
+    closed = true;
+    connected = false;
+    socket.close();
+    //close
+    if(onClose != null) onClose();
+  }
 
-  }
-  // Read 2 bytes as an unsigned integer.
-  private function readUnsignedInt16(): UInt 
-  {
-    var byte1: Int = socket.readByte() & 0xFF;
-    var byte2: Int = socket.readByte() & 0xFF;
-    return (byte1 << 8) | byte2;
-  }
-  private function _message(e:ProgressEvent)
-  {
-    if(socket.connected)
-    {
-      if(socket.bytesAvailable == 0) return;
-    }else{
-      throw 'Disconnected';
-    }
-    var data:Dynamic = null;
-    try {
-    data = Unserializer.run(readUntil(0x0D));
-    }catch(e:Dynamic){
-      trace("e " + e);
-    }
-    if(data != null)
-    {
-      if(onMessage != null) onMessage(data);
-      if(mainMessage != null) mainMessage(data);
-    }
-  }
-  public function readUntil( end : Int ) : String 
-  {
-		var buf = new BytesBuffer();
-		var last : Int;
-		while( (last = socket.readByte()) != end )
-			buf.addByte( last );
-		return buf.getBytes().toString();
-  }
   public function connect() 
   {
-    _removeEvents();
-    socket.addEventListener(Event.CLOSE, _close);
-    socket.addEventListener(Event.CONNECT, _connect);
-    #if (neko || cpp || mobile)
-    socket.addEventListener(ProgressEvent.SOCKET_DATA,_message);
-    socket.connect(ip,port);
+    #if (js || html)
+    socket = new Socket(url);
+    socket.onopen = _connect;
+    socket.onclose = _close;
+    socket.onmessage = _message;
     #else
-    @:privateAccess socket.__timestamp = Timer.stamp();
-    @:privateAccess socket.__host = ip;
-		@:privateAccess socket.__port = port;
-
-		@:privateAccess socket.__output = new ByteArray();
-		@:privateAccess socket.__output.endian = socket.__endian;
-		@:privateAccess socket.__input = new ByteArray();
-    @:privateAccess socket.__input.endian = socket.__endian;
-    @:privateAccess socket.__socket = new js.html.WebSocket(url);
-		@:privateAccess socket.__socket.binaryType = "arraybuffer";
-		@:privateAccess socket.__socket.onopen = socket.socket_onOpen;
-		@:privateAccess socket.__socket.onmessage = function(buff:Dynamic)
-    {
-      var data = Unserializer.run(buff.data);
-      if(data != null)
-      {
-        if(onMessage != null) onMessage(data);
-        if (mainMessage != null) mainMessage(data);
-      }
+    trace("connect attempt");
+    try { 
+      socket.connect(host,port);
+      socket.setBlocking(false);
+      socket.setFastSend(true);
+      closed = false;
+    }catch(e:Dynamic) {
+      trace("connect error " + e);
     }
-		@:privateAccess socket.__socket.onclose = socket.socket_onClose;
-    @:privateAccess socket.__socket.onerror = socket.socket_onError;
-    @:privateAccess openfl.Lib.current.addEventListener(Event.ENTER_FRAME, socket.this_onEnterFrame);
     #end
   }
-  /**
-   * send data
-   */
+  private function cleanSocket()
+  {
+    #if (cpp || neko)
+    try {
+      socket.close();
+    }catch (e:Dynamic) {}
+    socket = null;
+    connected = false;
+    closed = true;
+    #end
+  }
+  public function reConnect()
+  {
+    cleanSocket();
+    socket = new Socket();
+    connect();
+  }
+  #if (js || html)
+  public function _message(buffer:Dynamic)
+  {
+
+  }
+  #end
   public function send(obj:Dynamic)
   {
+    #if (js || html)
+    write(Serializer.run(obj));
+    #else
+    write(Serializer.run(obj) + "\r");
+    #end
+  }
+  private function write(string:String)
+  {
+    try {
       #if (js || html)
-      @:privateAccess socket.__socket.send(Serializer.run(obj));
-      #else
-      socket.writeUTFBytes(Serializer.run(obj) + "\r");
-      socket.flush();
+      socket.send(string);
+      #else 
+      socket.output.writeString(string);
       #end
+    }catch(e:Dynamic)
+    {
+      _close(null);
+    }
   }
   public function update()
   {
-    //_message(null);
+    #if (neko || cpp)
+    //trace("co " + connected + " cl " + closed);
+    if(!connected)
+    {
+      if(!closed)
+      {
+        trace("socket test");
+        var r = Socket.select(null,[socket],null,0);
+        if(r.write[0] == socket) _connect(null);
+      }
+    }else{
+      try {
+      var obj = Unserializer.run(socket.input.readUntil(0x0D));
+      if (onMessage != null) onMessage(obj);
+      if (mainMessage != null) mainMessage(obj);
+      }catch(e:Dynamic)
+      {
+        if(e == haxe.io.Eof)
+        {
+          _close(null);
+        }
+      }
+    }
+    #end 
   }
 }
