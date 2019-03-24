@@ -232,9 +232,7 @@ class NativeTextField extends EditText implements View.OnFocusChangeListener
         if (show)
         {
             in.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT);
-        }
-        else
-        {
+        }else{
             in.hideSoftInputFromWindow(getApplicationWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
     }

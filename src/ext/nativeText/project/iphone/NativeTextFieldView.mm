@@ -180,7 +180,7 @@
         case NativeTextFieldConfig::KB_DEFAULT:
             self.keyboardType = UIKeyboardTypeDefault;
             self.spellCheckingType = UITextSpellCheckingTypeDefault;
-            self.autocapitalizationType = UITextAutocapitalizationTypeWords;
+            self.autocapitalizationType = UITextAutocapitalizationTypeSentences;
             break;
 
         case NativeTextFieldConfig::KB_PASSWORD:

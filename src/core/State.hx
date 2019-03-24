@@ -66,10 +66,10 @@ class State extends DisplayObjectContainer
 	public var omY:Float = 0;
 	public var omX:Float = 0;
 	//CameraScroll
-	public var cameraMinY:Int = 0;
-	public var cameraMaxY:Int = 0;
-	public var cameraMinX:Int = 0;
-	public var cameraMaxX:Int = 0;
+	public var cameraMinY:Float = 0;
+	public var cameraMaxY:Float = 0;
+	public var cameraMinX:Float = 0;
+	public var cameraMaxX:Float = 0;
 	
 	public var maxEventY:Void->Void;
 	public var minEventY:Void->Void;
@@ -86,14 +86,14 @@ class State extends DisplayObjectContainer
 	public var moveBool:Bool = false;
 	public var dragRect:Rectangle;
 	public var mouseDownBool:Bool = false;
-	public var camY:Int = 0;
-	public var camX:Int = 0;
+	public var camY:Float = 0;
+	public var camX:Float = 0;
 	//start posistion
 	public var spY:Int = 0;
 	public var spX:Int = 0;
 	//y
-	public var scrollSpeed:Int = 0;
-	public var slideSpeed:Int = 0;
+	public var scrollSpeed:Float = 0;
+	public var slideSpeed:Float = 0;
 	//x
 	public var scrollDuration:Int = 0;
 	public var slideDuration:Int = 0;
@@ -102,8 +102,8 @@ class State extends DisplayObjectContainer
 	public var scrollInt:Int = 0;
 	public var slideInt:Int = 0;
 	
-	public var vectorY:Vector<Int>;
-	public var vectorX:Vector<Int>;
+	public var vectorY:Vector<Float>;
+	public var vectorX:Vector<Float>;
 	public static var prev:String = "";
 	private var animate:Animation;
 	
@@ -148,13 +148,9 @@ class State extends DisplayObjectContainer
 	}
 	private function animation()
 	{
-		occupied = true;
-		if(animate == Animation.NONE)
-		{
-			completeAnimation();
-			return;
-		}
 		App.main.addChild(this);
+		if (pastBitmap == null) return;
+		occupied = true;
 		App.main.addChild(pastBitmap);
 		switch(animate)
 		{
@@ -172,7 +168,6 @@ class State extends DisplayObjectContainer
 			{
 				completeAnimation();
 			});
-			trace("right");
 			case Animation.SLIDEUP:
 			y = (pastBitmap.height + State.py);
 			Actuate.tween(App.main, 0.6, {y:-pastBitmap.height - State.py}).ease(Quad.easeInOut).onComplete(function(_)
@@ -256,27 +251,25 @@ class State extends DisplayObjectContainer
 		}
 	}
 	
-	public function velocityVector(length:Int, velocity:Float):Vector<Int>
+	public function velocityVector(length:Int, velocity:Float):Vector<Float>
 	{
-		var vector = new Vector<Int>(length);
+		var vector = new Vector<Float>(length);
 		for (i in 0...length)
 		{
 			velocity *= 0.95;
-			vector[i] = Math.round(velocity);
+			vector[i] = velocity;
 		}
 		return vector;
 	}
-	public function easeVector(distance:Float):Vector<Int>
+	public function easeVector(distance:Float):Vector<Float>
 	{
-	var ease:Array<Float> = [0.05,0.05,0.15,0.15,0.1,0.1, 0.1,0.1, 0.05,0.05, 0.035,0.035,0.015,0.015];
-	var vector = new Vector<Int>(ease.length);
-	for (i in 0... ease.length)
-	{
-	vector[i] =  Math.floor(ease.pop() * distance);
-	}
-	return vector;
-	
-	
+		var ease:Array<Float> = [0.05,0.05,0.15,0.15,0.1,0.1, 0.1,0.1, 0.05,0.05, 0.035,0.035,0.015,0.015];
+		var vector = new Vector<Float>(ease.length);
+		for (i in 0... ease.length)
+		{
+			vector[i] =  ease.pop() * distance;
+		}
+		return vector;
 	}
 	
 	
@@ -291,8 +284,8 @@ class State extends DisplayObjectContainer
 	//drag and scroll
 	if (mouseDownBool)
 	{
-		scrollSpeed = Math.round((mouseY - omY) * elapsed);
-		slideSpeed = Math.round((mouseX - omX) * elapsed);
+		scrollSpeed = (mouseY - omY) * elapsed;
+		slideSpeed = (mouseX - omX) * elapsed;
 		
 	}else{
 	if (scrollBool || moveBool)
@@ -494,17 +487,9 @@ class State extends DisplayObjectContainer
 		pastBitmap = createScreenBitmap();
 		//set prev
 		prev = App.getStateName();
-		trace("prev " + prev);
 		//Assets.cache.clear();
 		App.main.removeChild(this);
 		App.state = null;
-		trace("num " + numChildren);
-		/*for (i in 0...numChildren)
-		{
-			var child = getChildAt(i);
-			removeChild(child);
-			child = null;
-		}*/
 		//input text focus out
 		#if mobile
 		nativetext.NativeTextField.returnKey = null;
@@ -530,10 +515,11 @@ class State extends DisplayObjectContainer
 		}
 	}
 	
-	public function setHeader(obj:DisplayObject,widthBool:Bool=true)
+	public function setHeader(obj:DisplayObject,widthBool:Bool=true,yBool:Bool=true)
 	{
 		if (App.state == this)
 		{
+			if (yBool) obj.y = -py * 1/App.scale;
 			obj.x = -px * 1/App.scale;
 			if (widthBool) obj.width = Lib.current.stage.stageWidth * 1 / App.scale;
 		}

@@ -44,7 +44,6 @@ class Network {
   }
   private function _connect(_)
   {
-    trace("connect");
     connected = true;
     //write
     #if (cpp || neko)
@@ -70,7 +69,6 @@ class Network {
     socket.onclose = _close;
     socket.onmessage = _message;
     #else
-    trace("connect attempt");
     try { 
       socket.connect(host,port);
       socket.setBlocking(false);
@@ -133,7 +131,6 @@ class Network {
     {
       if(!closed)
       {
-        trace("socket test");
         var r = Socket.select(null,[socket],null,0);
         if(r.write[0] == socket) _connect(null);
       }
