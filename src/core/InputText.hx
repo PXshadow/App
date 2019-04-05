@@ -165,24 +165,17 @@ class InputText extends DisplayObjectContainer
 		if (align == TextFormatAlign.CENTER) nativeTextAlign = NativeTextFieldAlignment.Center;
 		if (align == TextFormatAlign.RIGHT) nativeTextAlign = NativeTextFieldAlignment.Right;
 		if (passwordBool)_keyType = NativeTextFieldKeyboardType.Password;
-		var setHeight:Dynamic;
-		if (textfieldHeight > 0)
-		{
-		setHeight = textfieldHeight;
-		}else{
-		setHeight = NativeTextField.AUTOSIZE;
-		}
 		
 		nativeText = new NativeTextField({
 		x:0, 
 		y:0,
-		width:Math.round(fieldWidth * App.scale),
-		height:setHeight,
+		width:Std.int(fieldWidth * App.scale),
+		height:(textfieldHeight == 0 ? NativeTextField.AUTOSIZE : Std.int(textfieldHeight * App.scale)),
 		visible:false,
 		enabled:false,
 		placeholder:placeString,
 		fontAsset:App.font.format,
-		fontSize:Math.round(fsize * App.scale),
+		fontSize: Std.int(fsize * App.scale),
 		fontColor:color,
 		textAlignment:nativeTextAlign,
 		keyboardType:_keyType,
